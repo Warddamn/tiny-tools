@@ -52,6 +52,20 @@ if (views && clones) {
   if (refs.length) console.log(`  top referrers: ${refs.slice(0, 5).map((r) => `${r.referrer} (${r.count})`).join(", ")}`);
 } else console.log("  views/clones need `gh auth login` (only the repo owner can see them)");
 
+console.log("\nGitHub release downloads (exact counts, per file, all time)");
+const rels = (await getJson(`https://api.github.com/repos/${OWNER}/${REPO}/releases`)) ?? gh(`repos/${OWNER}/${REPO}/releases`) ?? [];
+if (!Array.isArray(rels) || rels.length === 0) console.log("  no releases yet");
+else {
+  let grand = 0;
+  for (const r of rels) {
+    const total = (r.assets ?? []).reduce((a, x) => a + (x.download_count ?? 0), 0);
+    grand += total;
+    console.log(`  ${r.tag_name.padEnd(10)} ${fmt(total)} download${total === 1 ? "" : "s"}  (published ${String(r.published_at).slice(0, 10)})`);
+    for (const a of r.assets ?? []) console.log(`      ${a.name.padEnd(40)} ${fmt(a.download_count ?? 0)}`);
+  }
+  console.log(`  ${"TOTAL".padEnd(10)} ${fmt(grand)}`);
+}
+
 console.log("\nDirectories (open in a browser)");
 console.log(`  MCP Registry   https://registry.modelcontextprotocol.io/v0/servers?search=tiny-context`);
 console.log(`  Smithery       https://smithery.ai/search?q=tiny-context`);
