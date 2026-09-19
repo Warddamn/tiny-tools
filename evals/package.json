@@ -1,0 +1,10 @@
+{
+  "name": "@tinytools/evals",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "dependencies": {
+    "@tinytools/shared": "^0.1.0"
+  }
+}

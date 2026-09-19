@@ -1,0 +1,16 @@
+# DECISIONS — one line each: decision + why
+
+- **Repo location:** `~/Desktop/pw papps/tiny-tools` (sibling of the other apps) — the session's cwd was the VR rug project, wrong home for a new monorepo.
+- **Package naming:** `@tinytools/<name>` scope for every package — `tiny-context`, `tiny-images`, `tiny-audio`, `tiny-context-mcp` are taken on npm (§13 fallback). Bins remain `tiny-<name>` / `tiny-<name>-mcp`.
+- **TypeScript 5.9, not 7.0:** TS 7 (the native port) shipped recently; staying on 5.x avoids tooling surprises. Easy to bump later.
+- **zod 4:** MCP SDK 1.30 peer-accepts `^3.25 || ^4`; new code starts on 4.
+- **Glob expansion hand-rolled** (`*`, `**`, `?`, `{a,b}`, `[…]`): ~60 lines vs a 1 MB fast-glob dependency. Tiny is the product.
+- **OOXML (docx/pptx/xlsx) parsed with regex over the XML** after `fflate` unzip — no XML-parser dependency; the formats are regular enough and we only need text + structure.
+- **PDF text via `unpdf`** (pdf.js wrapper, ESM, lazy-loaded) — `pdf-lib` writes PDFs but cannot extract text.
+- **DuckDB is an `optionalDependency`, lazy-imported** — native binary; install failures on exotic platforms must not break the rest of `context`. Missing → teach-error with the install command.
+- **XLSX → DuckDB goes through the shared xlsx→CSV extractor** (temp file) rather than DuckDB's `excel` extension — the extension needs a network download on first use; local-first wins.
+- **`extract.jq`:** use system `jq` when on PATH (macOS ships it); otherwise a tiny path subset (`.a.b`, `.items[]`, `.items[2].name`, `keys`, `length`). Documented in DOES NOT.
+- **`diff_files` line diff is a hand-rolled Myers O(ND)** — ~80 lines vs the `diff` package.
+- **`validate_file` lazy-loads `yaml`, `ajv`, `fast-xml-parser`** only for the check that needs them; JSON/CSV/markdown/HTML checks are dependency-free.
+- **Token estimate = bytes/4** everywhere (spec rule 11); the ledger says "≈".
+- **`mcpName` owner placeholder:** `io.github.OWNER/…` until the GitHub org/user for publishing is confirmed (Phase 5).

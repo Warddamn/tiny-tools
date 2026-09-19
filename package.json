@@ -1,0 +1,25 @@
+{
+  "name": "tiny-tools",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Small, local-first tools that AI agents install with one config line. Core library → CLI → MCP server, from one codebase.",
+  "type": "module",
+  "license": "MIT",
+  "workspaces": ["packages/*", "bench", "evals"],
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "rm -rf packages/*/dist packages/*/*.tsbuildinfo bench/dist bench/*.tsbuildinfo evals/dist evals/*.tsbuildinfo",
+    "test": "npm run build && vitest run",
+    "test:unit": "vitest run",
+    "bench:fixtures": "npm run build && node bench/dist/fixtures.js",
+    "bench": "npm run build && node bench/dist/run.js",
+    "evals": "npm run build && node evals/dist/run.js"
+  },
+  "devDependencies": {
+    "@types/node": "^24",
+    "tsx": "^4",
+    "typescript": "^5.9",
+    "vitest": "^5"
+  },
+  "engines": { "node": ">=20" }
+}

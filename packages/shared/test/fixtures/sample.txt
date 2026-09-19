@@ -1,0 +1,12 @@
+Line one of the plain text file.
+Line two mentions pricing.
+Line three.
+Line four talks about termination clauses.
+Line five.
+Line six.
+Line seven.
+Line eight.
+Line nine.
+Line ten.
+Line eleven mentions pricing again.
+Line twelve is the last.

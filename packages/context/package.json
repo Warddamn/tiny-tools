@@ -1,0 +1,49 @@
+{
+  "name": "@tinytools/context",
+  "version": "0.1.0",
+  "description": "Token-saver toolkit for AI agents: know things about files without reading them. file_map · query_file · read_section · query_table · summarize_log · diff_files · validate_file · extract. CLI + MCP server (stdio).",
+  "type": "module",
+  "license": "MIT",
+  "keywords": [
+    "mcp",
+    "mcp-server",
+    "agent",
+    "tokens",
+    "context",
+    "duckdb",
+    "pdf",
+    "docx",
+    "xlsx",
+    "pptx",
+    "logs",
+    "diff",
+    "validate"
+  ],
+  "bin": {
+    "tiny-context": "./dist/cli.js",
+    "tiny-context-mcp": "./dist/mcp.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "docs"
+  ],
+  "mcpName": "io.github.OWNER/tiny-context",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "@tinytools/shared": "^0.1.0",
+    "ajv": "^8.17.0",
+    "commander": "^15.0.0",
+    "fast-xml-parser": "^5.0.0",
+    "yaml": "^2.9.0",
+    "zod": "^4.0.0"
+  },
+  "optionalDependencies": {
+    "@duckdb/node-api": "1.5.5-r.5"
+  }
+}
