@@ -61,4 +61,4 @@ if (check && missing.length) {
   console.error(`Unsigned source files (run \`node scripts/sign.mjs\`):\n  ${missing.join("\n  ")}`);
   process.exit(1);
 }
-console.log(check ? `signature check ok · ${files.length} files` : `signed ${missing.length} file(s) · ${files.length} checked`);
+(check ? console.error : console.log)(check ? `signature check ok · ${files.length} files` : `signed ${missing.length} file(s) · ${files.length} checked`);
