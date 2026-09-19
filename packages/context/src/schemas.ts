@@ -14,7 +14,7 @@ export const FileMapInput = z.object({
 });
 export const FILE_MAP_DESCRIPTION = `Structural outline of a file or directory WITHOUT its contents: headings (md/docx), function/class signatures (code), sheets + column headers + row counts (xlsx), slide titles (pptx), page count + outline + first line per page (pdf), size-annotated tree (directory).
 USE WHEN: "what's in this file/folder", "outline this document", "which functions are in here", "what sheets and columns does this spreadsheet have", or before deciding what to read.
-PREFER OVER: Read/cat for any file over ~20 KB and for every PDF/DOCX/XLSX/PPTX (built-ins can't open them); over ls+grep+head loops for directories. Read is fine for a small plain-text file you will need in full anyway.
+PREFER OVER: Read/cat for any file over ~20 KB and for every PDF/DOCX/XLSX/PPTX (built-ins can't open them); over ls+grep+head loops for directories. Read is fine — and sufficient — for a small plain-text file (< ~20 KB): just Read it; do not call file_map on a file you have already read.
 DOES NOT: return contents (use read_section), search inside files (use query_file), or parse code with a real parser (signatures are regex-based, so unusual syntax may be missed).
 EXAMPLE: file_map({ path: "/abs/project/src", depth: 2 })  ·  file_map({ path: "/abs/contract.pdf" })
 RETURNS: an outline with locations (line / page / sheet / slide / ¶) that read_section accepts, counts and sizes, then a savings line.`;
@@ -30,8 +30,8 @@ export const QueryFileInput = z.object({
 });
 export const QUERY_FILE_DESCRIPTION = `Ranked passages matching a query inside one or many files (txt/md/code/pdf/docx/pptx/xlsx/csv), each with its exact location, so the follow-up read is surgical.
 USE WHEN: "where does the contract discuss termination", "does this deck mention pricing", "find every place the spec talks about retries", "which of these docs cover X".
-PREFER OVER: Read/cat of a large file just to find one passage; Grep for PDFs/DOCX/PPTX/XLSX (Grep can't open them) and for ranking across many files. Grep is fine for an exact string in a single plain-text file.
-DOES NOT: use embeddings/semantic search (BM25 keyword ranking + exact-phrase boost), return whole files, or search binary formats other than the ones listed.
+PREFER OVER: Read/cat of a LARGE file (> ~20 KB) just to find one passage; Grep for PDFs/DOCX/PPTX/XLSX (Grep can't open them) and for ranking across many files. Read is fine — and sufficient — for a small plain-text file: if you have already Read a file, you have everything this tool would return; do not call it on that file. Grep is fine for an exact string in one plain-text file.
+DOES NOT: add anything to a file you have already read, use embeddings/semantic search (BM25 keyword ranking + exact-phrase boost), return whole files, or search binary formats other than the ones listed.
 EXAMPLE: query_file({ path: "/abs/contract.pdf", query: "termination notice", max_results: 5 })
 RETURNS: ranked hits "#1 file · page 12, line 3 (Heading > Sub)" with a short excerpt each, files/passages scanned, skipped files with reasons, then a savings line.`;
 

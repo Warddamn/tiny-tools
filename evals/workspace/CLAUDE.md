@@ -8,4 +8,4 @@ Files referenced in tasks live under ./fixtures (some are symlinks). Answer brie
 - Logs: `summarize_log` first (add `focus: "errors"`); Grep/`extract` only afterwards, for the exact message it surfaced.
 - Comparing two files, including office formats: `diff_files` (summary mode) instead of reading both.
 - Verifying JSON/CSV/YAML/HTML/Markdown you just wrote: `validate_file`. Pulling emails/URLs/IDs/jq values out of files: `extract`.
-- Built-ins are still right for small plain-text files (< 20 KB) you need in full (Read), and for an exact string in one text file (Grep).
+- Small plain-text files (< 20 KB, e.g. notes, configs, short docs): just Read them and answer — do NOT also call file_map/query_file on a file you have already read. Grep is right for an exact string in one text file.
