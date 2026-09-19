@@ -35,7 +35,9 @@ Tools: file_map ✅ · query_file ✅ · read_section ✅ · extract ✅ · quer
 - [x] Four-condition comparison (none / tools / snippet / hook) → `evals/COMPARISON.md`. Same answers everywhere; tools = ~20% tokens, ~50% time.
 - [x] Read guard hook built + tested (`packages/context/hooks/read-guard.mjs`, bin `tiny-context-read-guard`, 4 tests). Did not fire in the comparison (agent reached for the tools directly).
 - [x] `run_command` decision: yes, Phase 1.5 → `PROPOSALS.md` §2 (evidence table). Not built yet.
-- [ ] Publishing: waiting on Payton — GitHub name (Warddamn vs new AVRG3), npm scope (`@tinytools` org vs personal), `npm login`. Open questions: GitHub owner for `mcpName` (placeholder `OWNER`); install ffmpeg/whisper/LibreOffice before Phase 3?
+- [x] Release prep (Phase 5 groundwork): CI workflow (`.github/workflows/ci.yml`), `scripts/set-owner.mjs` (one-command rename), `scripts/verify-install.mjs` (pack → install into a fresh project → CLI + MCP client + hook: **passes**), `packages/context/server.json`, `RELEASE.md` checklist.
+- [ ] Publishing: waiting on Payton — GitHub name (Warddamn vs new AVRG3), npm scope (`@tinytools` org vs personal), `npm login` (npm was in scheduled maintenance 17:00–19:00 UTC on 2026-09-19; login attempts failed with 503).
+- [ ] Next build: Payton to choose — spec order (Phase 2: images, pdf) or PROPOSALS §2 (`run_command`, recommended first). Open questions: GitHub owner for `mcpName` (placeholder `OWNER`); install ffmpeg/whisper/LibreOffice before Phase 3?
 
 ## Phase 2 — images, pdf ⬜
 ## Phase 3 — video, audio, verify, transcribe ⬜
