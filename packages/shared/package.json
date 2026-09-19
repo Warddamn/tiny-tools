@@ -23,5 +23,14 @@
   "author": "AVRG3",
   "engines": {
     "node": ">=20"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Warddamn/tiny-tools.git",
+    "directory": "packages/shared"
+  },
+  "homepage": "https://github.com/Warddamn/tiny-tools/tree/main/packages/shared#readme",
+  "bugs": {
+    "url": "https://github.com/Warddamn/tiny-tools/issues"
   }
 }

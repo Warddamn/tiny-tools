@@ -2,7 +2,7 @@
   "name": "tiny-tools",
   "version": "0.1.0",
   "private": true,
-  "description": "Small, local-first tools that AI agents install with one config line. Core library \u2192 CLI \u2192 MCP server, from one codebase.",
+  "description": "Small, local-first tools that AI agents install with one config line. Core library → CLI → MCP server, from one codebase.",
   "type": "module",
   "license": "MIT",
   "workspaces": [
@@ -30,5 +30,13 @@
   "engines": {
     "node": ">=20"
   },
-  "author": "AVRG3"
+  "author": "AVRG3",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Warddamn/tiny-tools.git"
+  },
+  "homepage": "https://github.com/Warddamn/tiny-tools#readme",
+  "bugs": {
+    "url": "https://github.com/Warddamn/tiny-tools/issues"
+  }
 }

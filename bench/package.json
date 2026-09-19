@@ -5,10 +5,19 @@
   "type": "module",
   "license": "MIT",
   "dependencies": {
-    "@tinytools/context": "^0.1.0",
-    "@tinytools/shared": "^0.1.0",
     "pdf-lib": "^1.17.1",
-    "fflate": "^0.8.2"
+    "fflate": "^0.8.2",
+    "@tinytools/context": "^0.1.0",
+    "@tinytools/shared": "^0.1.0"
   },
-  "author": "AVRG3"
+  "author": "AVRG3",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Warddamn/tiny-tools.git",
+    "directory": "bench"
+  },
+  "homepage": "https://github.com/Warddamn/tiny-tools/tree/main/bench#readme",
+  "bugs": {
+    "url": "https://github.com/Warddamn/tiny-tools/issues"
+  }
 }

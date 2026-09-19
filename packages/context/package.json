@@ -1,7 +1,7 @@
 {
   "name": "@tinytools/context",
   "version": "0.1.0",
-  "description": "Token-saver toolkit for AI agents: know things about files without reading them. file_map \u00b7 query_file \u00b7 read_section \u00b7 query_table \u00b7 summarize_log \u00b7 diff_files \u00b7 validate_file \u00b7 extract. CLI + MCP server (stdio).",
+  "description": "Token-saver toolkit for AI agents: know things about files without reading them. file_map · query_file · read_section · query_table · summarize_log · diff_files · validate_file · extract. CLI + MCP server (stdio).",
   "type": "module",
   "license": "MIT",
   "keywords": [
@@ -35,15 +35,15 @@
     "docs",
     "hooks"
   ],
-  "mcpName": "io.github.avrg3/tiny-context",
+  "mcpName": "io.github.warddamn/tiny-context",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.30.0",
-    "@tinytools/shared": "^0.1.0",
     "ajv": "^8.17.0",
     "commander": "^15.0.0",
     "fast-xml-parser": "^5.0.0",
     "yaml": "^2.9.0",
-    "zod": "^4.0.0"
+    "zod": "^4.0.0",
+    "@tinytools/shared": "^0.1.0"
   },
   "optionalDependencies": {
     "@duckdb/node-api": "1.5.5-r.5"
@@ -54,5 +54,14 @@
   },
   "scripts": {
     "prepack": "node ../../scripts/sign.mjs --check"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Warddamn/tiny-tools.git",
+    "directory": "packages/context"
+  },
+  "homepage": "https://github.com/Warddamn/tiny-tools/tree/main/packages/context#readme",
+  "bugs": {
+    "url": "https://github.com/Warddamn/tiny-tools/issues"
   }
 }

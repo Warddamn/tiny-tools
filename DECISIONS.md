@@ -13,7 +13,7 @@
 - **`diff_files` line diff is a hand-rolled Myers O(ND)** — ~80 lines vs the `diff` package.
 - **`validate_file` lazy-loads `yaml`, `ajv`, `fast-xml-parser`** only for the check that needs them; JSON/CSV/markdown/HTML checks are dependency-free.
 - **Token estimate = bytes/4** everywhere (spec rule 11); the ledger says "≈".
-- **`mcpName` owner placeholder:** `io.github.OWNER/…` until the GitHub org/user for publishing is confirmed (Phase 5).
+- **`mcpName` owner placeholder:** `io.github.warddamn/…` until the GitHub org/user for publishing is confirmed (Phase 5).
 - **Ledger "raw" for binary documents = extracted-text bytes,** not file bytes — the honest naive alternative for a PDF/DOCX is "convert and read the text"; for directories it's a full recursive listing, not the files' contents.
 - **`summarize_log` "errors" focus:** `5xx` counts only after `status`/`HTTP/1.1"` — bare 3-digit numbers (user ids, item ids) were false positives.
 - **`extract` with every input skipped throws** (teach-error listing each reason); partial failure reports `skipped:` and continues (rule 8).
@@ -22,7 +22,7 @@
 - **Durations under 100 ms print as `NNms`** (spec example `0.4s` still holds above that) — `0.0s` hid real timings; percentages print two decimals only when one would round to 100.0.
 - **Formatting glyphs:** the log timeline uses `#` bars (ASCII) so responses survive any terminal/font.
 - **Negative eval fix (11/12 → 12/12):** the agent Read a 2 KB file and then also called `query_file` on it. Fixed in wording only — snippet + `query_file`/`file_map` PREFER OVER now say a file you have already read needs no further tool call. 3/3 stable afterwards.
-- **Author credit = `AVRG3`** (Payton's handle) everywhere: `@author AVRG3` comment line in every source file (enforced by `scripts/sign.mjs --check` in `npm test`), `author` in every package.json, LICENSE holder, README footers, git author on all commits, and `mcpName` `io.github.avrg3/...` (assumes AVRG3 is also the GitHub username — confirm before publishing).
+- **Author credit = `AVRG3`** (Payton's handle) everywhere: `@author AVRG3` comment line in every source file (enforced by `scripts/sign.mjs --check` in `npm test`), `author` in every package.json, LICENSE holder, README footers, git author on all commits, and `mcpName` `io.github.warddamn/...` (assumes AVRG3 is also the GitHub username — confirm before publishing).
 - **Eval "pass" requires a correct answer** (regex expectations per task). The earlier 12/12 counted a hollow pass: symlinked fixtures outside the workspace made Read a permission failure. Fixtures are now copied; every condition allows the same built-ins.
 - **Honest baseline = a shell-capable agent, not "read the whole file".** Comparison shows identical correctness and ~20% token / ~50% time savings from tiny-context; the README now says so next to the 99.9% figure.
 - **`callers` stays soft:** Grep across a source tree is the right tool for "who calls X"; the descriptions say so, and the agent agreed in all four conditions.

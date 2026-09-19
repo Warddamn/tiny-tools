@@ -7,5 +7,14 @@
   "dependencies": {
     "@tinytools/shared": "^0.1.0"
   },
-  "author": "AVRG3"
+  "author": "AVRG3",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Warddamn/tiny-tools.git",
+    "directory": "evals"
+  },
+  "homepage": "https://github.com/Warddamn/tiny-tools/tree/main/evals#readme",
+  "bugs": {
+    "url": "https://github.com/Warddamn/tiny-tools/issues"
+  }
 }
