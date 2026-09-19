@@ -31,6 +31,6 @@ export function truncateLine(s: string, max = 200): string {
 
 /** "showing 8 of 143 matches" / "143 matches" */
 export function shownOf(shown: number, total: number, unit: string): string {
-  const u = total === 1 ? unit : `${unit}s`;
+  const u = total === 1 ? unit : /(s|x|z|ch|sh)$/.test(unit) ? `${unit}es` : `${unit}s`;
   return shown < total ? `showing ${shown} of ${fmtInt(total)} ${u}` : `${fmtInt(total)} ${u}`;
 }
