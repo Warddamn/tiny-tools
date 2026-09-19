@@ -1,0 +1,93 @@
+# @author AVRG3
+#
+# Daily snapshot of GitHub traffic for this repo (views, clones, top referrers,
+# top paths) into stats/traffic/<YYYY-MM-DD>.json, committed to main.
+# GitHub only keeps 14 days of traffic data; this workflow keeps it forever.
+#
+# TOKEN: the default github.token can NOT read traffic (that needs
+# "Administration: read"). Add a repository secret named TRAFFIC_TOKEN holding
+# a fine-grained PAT (Settings → Developer settings → Fine-grained tokens →
+# repo Warddamn/tiny-tools → Repository permissions → Administration: Read-only).
+# Without it the workflow still passes; it just prints a hint and writes nothing.
+#
+# `npm run stats` (scripts/stats.mjs) shows the same numbers on demand.
+name: traffic
+
+on:
+  schedule:
+    - cron: "23 5 * * *" # daily, 05:23 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: traffic-snapshot
+  cancel-in-progress: false
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch traffic from the GitHub API
+        id: fetch
+        env:
+          GH_TOKEN: ${{ secrets.TRAFFIC_TOKEN || github.token }}
+          TRAFFIC_TOKEN_SET: ${{ secrets.TRAFFIC_TOKEN != '' }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -uo pipefail
+          DATE="$(date -u +%F)"
+          OUT="stats/traffic/${DATE}.json"
+          TMP="${RUNNER_TEMP}/traffic"
+          mkdir -p "$TMP" stats/traffic
+          echo "token: $([ "$TRAFFIC_TOKEN_SET" = "true" ] && echo TRAFFIC_TOKEN || echo github.token)"
+          for ep in views clones popular/referrers popular/paths; do
+            name="${ep#popular/}"
+            if ! gh api "repos/${REPO}/traffic/${ep}" > "$TMP/${name}.json" 2> "$TMP/${name}.err"; then
+              err="$(tr '\n' ' ' < "$TMP/${name}.err")"
+              case "$err" in
+                *"HTTP 401"*|*"HTTP 403"*|*"HTTP 404"*|*"Resource not accessible"*|*"Must have push access"*|*"Must have admin"*)
+                  echo "::warning::Traffic API refused ${ep} (${err}). Hint: add (or renew, if expired) a fine-grained PAT as repository secret TRAFFIC_TOKEN with 'Administration: read' on ${REPO} — the default github.token cannot read traffic."
+                  echo "ok=false" >> "$GITHUB_OUTPUT"
+                  exit 0
+                  ;;
+                *)
+                  echo "::error::gh api repos/${REPO}/traffic/${ep} failed: ${err}"
+                  exit 1
+                  ;;
+              esac
+            fi
+          done
+          jq -n \
+            --arg date "$DATE" \
+            --arg repo "$REPO" \
+            --arg fetched_at "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            --slurpfile views "$TMP/views.json" \
+            --slurpfile clones "$TMP/clones.json" \
+            --slurpfile referrers "$TMP/referrers.json" \
+            --slurpfile paths "$TMP/paths.json" \
+            '{date: $date, repo: $repo, fetched_at: $fetched_at,
+              views: $views[0], clones: $clones[0], referrers: $referrers[0], paths: $paths[0]}' \
+            > "$OUT"
+          echo "wrote $OUT: views $(jq -r '.views.count' "$OUT") (uniques $(jq -r '.views.uniques' "$OUT")) · clones $(jq -r '.clones.count' "$OUT") (uniques $(jq -r '.clones.uniques' "$OUT")) · $(jq -r '.referrers | length' "$OUT") referrers · $(jq -r '.paths | length' "$OUT") paths"
+          echo "ok=true" >> "$GITHUB_OUTPUT"
+          echo "file=$OUT" >> "$GITHUB_OUTPUT"
+
+      - name: Commit the snapshot to main
+        if: steps.fetch.outputs.ok == 'true'
+        env:
+          FILE: ${{ steps.fetch.outputs.file }}
+        run: |
+          set -euo pipefail
+          git config user.name "tiny-tools-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$FILE"
+          if git diff --cached --quiet; then
+            echo "nothing new to commit"
+            exit 0
+          fi
+          git commit -m "stats: traffic snapshot $(basename "$FILE" .json) [skip ci]"
+          git push origin HEAD:main || { git pull --rebase origin main && git push origin HEAD:main; }

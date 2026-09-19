@@ -1,0 +1,96 @@
+# @author AVRG3
+#
+# Publish packages/context to the official MCP Registry.
+#
+# TRIGGER: pushing a git tag that matches `context-v*`, e.g.
+#     git tag context-v0.1.0 && git push origin context-v0.1.0
+# (Only the context package uses this prefix; later packages get their own
+#  prefix + workflow so one tag never publishes the wrong server.)
+#
+# ORDER OF OPERATIONS (see RELEASE.md §3): npm publish happens FIRST, by hand,
+# because npm requires a 2FA code. This workflow does NOT publish to npm — it
+# refuses to run unless @tinytools/context@<version> is already on npm, and
+# unless packages/context/server.json says the same version as the tag.
+# The registry then verifies ownership through the npm package's `mcpName`
+# field and this repo's GitHub OIDC identity (no secrets needed).
+#
+# Steps for mcp-publisher (download URL, `login github-oidc`, `publish`) are
+# copied verbatim from https://modelcontextprotocol.io/registry/github-actions
+name: Publish to MCP Registry
+
+on:
+  push:
+    tags: ["context-v*"] # Triggers on tags like context-v0.1.0
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write # Required for OIDC authentication
+      contents: read
+    defaults:
+      run:
+        working-directory: packages/context
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Check server.json version matches the tag
+        id: version
+        run: |
+          set -euo pipefail
+          TAG="${GITHUB_REF_NAME}"
+          VERSION="${TAG#context-v}"
+          if [ -z "$VERSION" ] || [ "$VERSION" = "$TAG" ]; then
+            echo "::error::Tag '$TAG' does not look like context-v<semver> (e.g. context-v0.1.0)."
+            exit 1
+          fi
+          SERVER_VERSION="$(jq -r '.version' server.json)"
+          PACKAGE_VERSIONS="$(jq -r '[.packages[].version] | unique | join(",")' server.json)"
+          NPM_PKG_VERSION="$(jq -r '.version' package.json)"
+          echo "tag=$TAG  server.json=$SERVER_VERSION  server.json.packages=$PACKAGE_VERSIONS  package.json=$NPM_PKG_VERSION"
+          if [ "$SERVER_VERSION" != "$VERSION" ]; then
+            echo "::error::packages/context/server.json .version is '$SERVER_VERSION' but the tag says '$VERSION'. Set both .version and .packages[].version in server.json to $VERSION, commit, then delete and re-push the tag."
+            exit 1
+          fi
+          if [ "$PACKAGE_VERSIONS" != "$VERSION" ]; then
+            echo "::error::packages/context/server.json .packages[].version is '$PACKAGE_VERSIONS' but the tag says '$VERSION'. Update it to $VERSION, commit, then delete and re-push the tag."
+            exit 1
+          fi
+          if [ "$NPM_PKG_VERSION" != "$VERSION" ]; then
+            echo "::error::packages/context/package.json version is '$NPM_PKG_VERSION' but the tag says '$VERSION'. Run: npm version $VERSION -w packages/context, commit, then delete and re-push the tag."
+            exit 1
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Check @tinytools/context@<version> is already on npm
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          set -euo pipefail
+          URL="https://registry.npmjs.org/@tinytools%2Fcontext/${VERSION}"
+          CODE="$(curl -sS -o "${RUNNER_TEMP}/npm-version.json" -w '%{http_code}' "$URL")"
+          echo "GET $URL -> HTTP $CODE"
+          if [ "$CODE" != "200" ]; then
+            echo "::error::@tinytools/context@${VERSION} is not on npm (HTTP $CODE). The registry only lists packages that already exist on npm. Publish first — npm publish --access public -w packages/context (see RELEASE.md §3) — wait a minute for npm to propagate, then re-run this workflow from the Actions tab."
+            exit 1
+          fi
+          # The registry proves you own the npm package by reading its `mcpName` field; warn early if it is wrong.
+          NPM_MCP_NAME="$(jq -r '.mcpName // ""' "${RUNNER_TEMP}/npm-version.json")"
+          SERVER_NAME="$(jq -r '.name' server.json)"
+          if [ "$NPM_MCP_NAME" != "$SERVER_NAME" ]; then
+            echo "::warning::npm package mcpName is '${NPM_MCP_NAME:-<missing>}' but server.json name is '$SERVER_NAME' — the registry will reject the publish unless they match."
+          fi
+
+      ### Publish MCP server:
+
+      - name: Install mcp-publisher
+        run: |
+          curl -L "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_$(uname -s | tr '[:upper:]' '[:lower:]')_$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/').tar.gz" | tar xz mcp-publisher
+
+      - name: Authenticate to MCP Registry
+        run: ./mcp-publisher login github-oidc
+
+      - name: Publish server to MCP Registry
+        run: ./mcp-publisher publish

@@ -1,8 +1,73 @@
 # tiny-tools
 
-Small, local-first tools that AI agents install with one config line and *actually use* to cut their time and token spend. Every tool ships in three layers from one codebase: **core library → CLI → MCP server**. No accounts, no uploads, no cloud calls, no telemetry — your files never leave your device.
+Small, local-first tools that AI agents install with one config line and *actually use* to cut their time and token spend — starting with **`tiny-context`**, an MCP server that lets an agent know things about files (PDF, DOCX, XLSX, CSV, logs, code) without reading them.
+
+[![npm version](https://img.shields.io/npm/v/@tinytools/context)](https://www.npmjs.com/package/@tinytools/context)
+[![npm downloads](https://img.shields.io/npm/dw/@tinytools/context)](https://www.npmjs.com/package/@tinytools/context)
+[![CI](https://github.com/Warddamn/tiny-tools/actions/workflows/ci.yml/badge.svg)](https://github.com/Warddamn/tiny-tools/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/Warddamn/tiny-tools/blob/main/LICENSE)
+[![Install in Cursor](https://cursor.com/deeplink/mcp-install-dark.svg)](https://cursor.com/en/install-mcp?name=tiny-context&config=eyJjb21tYW5kIjoibnB4IiwiYXJncyI6WyIteSIsIi1wIiwiQHRpbnl0b29scy9jb250ZXh0IiwidGlueS1jb250ZXh0LW1jcCJdfQ%3D%3D)
+[![Install in VS Code](https://img.shields.io/badge/VS_Code-Install_Server-0098FF)](https://insiders.vscode.dev/redirect?url=vscode%3Amcp%2Finstall%3F%257B%2522name%2522%253A%2522tiny-context%2522%252C%2522command%2522%253A%2522npx%2522%252C%2522args%2522%253A%255B%2522-y%2522%252C%2522-p%2522%252C%2522%2540tinytools%252Fcontext%2522%252C%2522tiny-context-mcp%2522%255D%257D)
+
+**Before → after, measured on this repo's fixtures** (read both columns together — the first is the ceiling, the second is what a capable coding agent actually gains):
+
+| vs. reading whole files | vs. a shell-capable agent |
+|---|---|
+| **17 tasks · 7,415,930 naive tokens → 9,169 tool tokens · 99.9% saved** | **same answers, ~20% fewer tokens, ~50% less time** |
+| what an agent pays when it `Read`s / `cat`s the file, or cannot open a PDF/DOCX/XLSX at all | headless Claude Code with Bash/Read/Grep/Glob, 12 tasks, with vs. without the tools |
+
+Method and full tables: [Benchmarks](#benchmarks--tiny-context) · [Does it actually help?](#does-it-actually-help-measured-honestly)
 
 **Why:** reducing tokens-per-step and wall-clock-per-step is what lets an agent take more steps before its context degrades. It's a capability multiplier, not just a cost saving.
+
+## Install
+
+The server runs locally over stdio; every client below launches the same command, `npx -y -p @tinytools/context tiny-context-mcp`.
+
+**Claude Code**
+
+```bash
+claude mcp add tiny-context -- npx -y -p @tinytools/context tiny-context-mcp
+```
+
+**Codex CLI** (writes `[mcp_servers.tiny-context]` to `~/.codex/config.toml`)
+
+```bash
+codex mcp add tiny-context -- npx -y -p @tinytools/context tiny-context-mcp
+```
+
+**Cursor** — `.cursor/mcp.json`, or click the *Install in Cursor* badge above
+
+```json
+{ "mcpServers": { "tiny-context": { "command": "npx", "args": ["-y", "-p", "@tinytools/context", "tiny-context-mcp"] } } }
+```
+
+**VS Code** — `.vscode/mcp.json` (note the `servers` key), or click the *Install in VS Code* badge above
+
+```json
+{ "servers": { "tiny-context": { "type": "stdio", "command": "npx", "args": ["-y", "-p", "@tinytools/context", "tiny-context-mcp"] } } }
+```
+
+**Windsurf** — `~/.codeium/windsurf/mcp_config.json`
+
+```json
+{ "mcpServers": { "tiny-context": { "command": "npx", "args": ["-y", "-p", "@tinytools/context", "tiny-context-mcp"] } } }
+```
+
+**Claude Desktop** — `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) · `%APPDATA%\Claude\claude_desktop_config.json` (Windows)
+
+```json
+{ "mcpServers": { "tiny-context": { "command": "npx", "args": ["-y", "-p", "@tinytools/context", "tiny-context-mcp"] } } }
+```
+
+Then paste the snippet below into `CLAUDE.md` / `AGENTS.md` / `.cursorrules` so the agent reaches for the tools at the right moments. Claude Code users can also add the [Read guard hook](packages/context#the-read-guard-hook-recommended), which turns that choice into a rule.
+
+## Privacy
+
+- **No telemetry.** Nothing is counted, phoned home or reported — not installs, not calls, not errors.
+- **No network calls from any tool.** All eight tools read local files and return text; nothing here calls a model or an API.
+- **Files never leave the device.** The server talks MCP over stdio to a client on the same machine; there is no upload path.
+- The only optional network use is at **install time**, when npm downloads the optional `@duckdb/node-api` native dependency (needed only by `query_table`). Install with `npm install --omit=optional` to skip it; every other tool still works.
 
 ## Packages
 
@@ -16,18 +81,6 @@ Small, local-first tools that AI agents install with one config line and *actual
 | `@tinytools/verify` | `tiny-verify` | render html/pdf/docs to PNG, visual diff, link check (system Chrome) | phase 3 |
 | `@tinytools/transcribe` | `tiny-transcribe` | audio/video → text + deterministic transcript summary (system whisper.cpp) | phase 3 |
 | `@tinytools/bgremove` | `tiny-bgremove` | background removal / replacement (ONNX, cached model) | phase 4 |
-
-## Install (MCP)
-
-```json
-{
-  "mcpServers": {
-    "tiny-context": { "command": "npx", "args": ["-y", "-p", "@tinytools/context", "tiny-context-mcp"] }
-  }
-}
-```
-
-Then paste the snippet below into `CLAUDE.md` / `AGENTS.md` / `.cursorrules` so the agent reaches for the tools at the right moments.
 
 ## Agent usage snippet (all installed packages)
 

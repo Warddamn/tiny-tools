@@ -1,0 +1,27 @@
+{
+  "name": "tiny-tools",
+  "owner": {
+    "name": "AVRG3",
+    "url": "https://github.com/Warddamn"
+  },
+  "description": "Small, local-first tools that AI agents install with one config line. Core library → CLI → MCP server, from one codebase.",
+  "version": "0.1.0",
+  "plugins": [
+    {
+      "name": "tiny-context",
+      "source": "./plugins/tiny-context",
+      "displayName": "tiny-context",
+      "description": "Know things about files without reading them: outline, ranked search, surgical reads, SQL over CSV/XLSX/Parquet, log clustering, diffs, validation and extraction — including PDF/DOCX/PPTX/XLSX. Eight MCP tools plus a skill that tells Claude when to reach for them. Local, deterministic, bounded responses with a token-savings line on every call.",
+      "version": "0.1.0",
+      "author": {
+        "name": "AVRG3",
+        "url": "https://github.com/Warddamn"
+      },
+      "homepage": "https://github.com/Warddamn/tiny-tools/tree/main/packages/context#readme",
+      "repository": "https://github.com/Warddamn/tiny-tools",
+      "license": "MIT",
+      "keywords": ["mcp", "context", "tokens", "pdf", "docx", "xlsx", "pptx", "csv", "logs", "diff", "validate", "duckdb"],
+      "category": "productivity"
+    }
+  ]
+}

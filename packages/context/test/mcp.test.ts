@@ -44,6 +44,14 @@ describe("tiny-context MCP server", () => {
     }
   });
 
+  it("exposes server instructions for clients with tool search", () => {
+    const ins = client.getInstructions() ?? "";
+    expect(ins.length).toBeGreaterThan(300);
+    expect(ins.length).toBeLessThan(2000);
+    for (const name of ["file_map", "query_file", "read_section", "query_table", "summarize_log", "diff_files", "validate_file", "extract"]) expect(ins).toContain(name);
+    expect(ins).toMatch(/PDF.*DOCX.*PPTX.*XLSX/);
+  });
+
   it("file_map", async () => {
     const r = await call("file_map", { path: fx("sample.ts") });
     expect(r.isError).toBeFalsy();

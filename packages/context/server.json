@@ -1,7 +1,8 @@
 {
-  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-09-29/server.schema.json",
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.warddamn/tiny-context",
-  "description": "Know things about files without reading them: outline, ranked search, surgical reads, SQL over CSV/XLSX/Parquet, log clustering, diffs, validation, extraction — incl. PDF/DOCX/PPTX/XLSX. Local-first, bounded responses, savings line on every call.",
+  "title": "tiny-context",
+  "description": "Outline, search, SQL-query, diff, validate PDF/DOCX/PPTX/XLSX/CSV/logs without reading whole files",
   "version": "0.1.0",
   "repository": {
     "url": "https://github.com/Warddamn/tiny-tools",
@@ -15,16 +16,40 @@
       "registryBaseUrl": "https://registry.npmjs.org",
       "identifier": "@tinytools/context",
       "version": "0.1.0",
-      "transport": { "type": "stdio" },
+      "transport": {
+        "type": "stdio"
+      },
       "runtimeHint": "npx",
       "runtimeArguments": [
-        { "type": "positional", "value": "-y", "isRequired": true },
-        { "type": "positional", "value": "-p", "isRequired": true },
-        { "type": "positional", "value": "@tinytools/context", "isRequired": true },
-        { "type": "positional", "value": "tiny-context-mcp", "isRequired": true }
+        {
+          "type": "positional",
+          "value": "-y",
+          "isRequired": true
+        },
+        {
+          "type": "positional",
+          "value": "-p",
+          "isRequired": true
+        },
+        {
+          "type": "positional",
+          "value": "@tinytools/context",
+          "isRequired": true
+        },
+        {
+          "type": "positional",
+          "value": "tiny-context-mcp",
+          "isRequired": true
+        }
       ],
       "environmentVariables": [
-        { "name": "TINY_TOOLS_DEBUG", "description": "Set to 1 to log each call to stderr.", "isRequired": false, "isSecret": false, "default": "0" }
+        {
+          "name": "TINY_TOOLS_DEBUG",
+          "description": "Set to 1 to log each call to stderr.",
+          "isRequired": false,
+          "isSecret": false,
+          "default": "0"
+        }
       ]
     }
   ]

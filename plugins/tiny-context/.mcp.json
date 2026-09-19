@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "tiny-context": {
+      "command": "npx",
+      "args": ["-y", "-p", "@tinytools/context", "tiny-context-mcp"]
+    }
+  }
+}
