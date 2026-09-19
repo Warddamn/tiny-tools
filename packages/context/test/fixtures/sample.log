@@ -1,0 +1,60 @@
+2026-09-18T10:00:11 DEBUG worker 4 heartbeat
+2026-09-18T10:00:13 INFO GET /api/items/549 200 15ms
+2026-09-18T10:00:25 INFO user 619 logged in from 10.0.3.10
+2026-09-18T10:00:28 INFO GET /api/items/72 200 33ms
+2026-09-18T10:00:31 INFO user 160 logged in from 10.0.9.32
+2026-09-18T10:00:39 INFO user 696 logged in from 10.0.0.148
+2026-09-18T10:00:58 INFO GET /api/items/227 200 8ms
+2026-09-18T10:01:16 WARN cache miss for key item:297
+2026-09-18T10:01:30 INFO GET /api/items/121 200 76ms
+2026-09-18T10:01:40 INFO user 798 logged in from 10.0.2.27
+2026-09-18T10:01:59 INFO user 292 logged in from 10.0.5.25
+2026-09-18T10:02:17 INFO user 677 logged in from 10.0.0.159
+2026-09-18T10:02:24 INFO GET /api/items/545 200 57ms
+2026-09-18T10:02:35 INFO GET /api/items/946 200 61ms
+2026-09-18T10:02:47 INFO GET /api/items/814 200 26ms
+2026-09-18T10:02:55 INFO GET /api/items/308 200 70ms
+2026-09-18T10:03:11 WARN cache miss for key item:747
+2026-09-18T10:03:26 INFO GET /api/items/75 200 18ms
+2026-09-18T10:03:43 INFO GET /api/items/776 200 46ms
+2026-09-18T10:03:48 DEBUG worker 4 heartbeat
+2026-09-18T10:03:50 DEBUG worker 1 heartbeat
+2026-09-18T10:04:08 INFO user 996 logged in from 10.0.5.88
+2026-09-18T10:04:20 INFO user 693 logged in from 10.0.7.18
+2026-09-18T10:04:23 DEBUG worker 4 heartbeat
+2026-09-18T10:04:26 INFO GET /api/items/719 200 42ms
+2026-09-18T10:04:45 DEBUG worker 4 heartbeat
+2026-09-18T10:04:55 INFO user 784 logged in from 10.0.5.6
+2026-09-18T10:05:10 INFO GET /api/items/626 200 17ms
+2026-09-18T10:05:26 INFO GET /api/items/787 200 39ms
+2026-09-18T10:05:31 INFO user 507 logged in from 10.0.6.235
+2026-09-18T10:05:47 ERROR upstream timeout after 5000ms for request 8f3a1ec (status 502)
+2026-09-18T10:06:02 ERROR upstream timeout after 5000ms for request 8f3a1fc (status 502)
+2026-09-18T10:06:11 ERROR upstream timeout after 5000ms for request 8f3a20c (status 502)
+2026-09-18T10:06:25 ERROR upstream timeout after 5000ms for request 8f3a21c (status 502)
+2026-09-18T10:06:34 ERROR upstream timeout after 5000ms for request 8f3a22c (status 502)
+2026-09-18T10:06:46 ERROR upstream timeout after 5000ms for request 8f3a23c (status 502)
+2026-09-18T10:06:59 ERROR upstream timeout after 5000ms for request 8f3a24c (status 502)
+2026-09-18T10:07:04 ERROR upstream timeout after 5000ms for request 8f3a25c (status 502)
+2026-09-18T10:07:09 INFO GET /api/items/239 200 4ms
+2026-09-18T10:07:25 WARN cache miss for key item:187
+2026-09-18T10:07:34 INFO GET /api/items/150 200 56ms
+2026-09-18T10:07:52 INFO GET /api/items/580 200 43ms
+2026-09-18T10:07:57 INFO user 627 logged in from 10.0.9.168
+2026-09-18T10:07:59 INFO GET /api/items/892 200 74ms
+2026-09-18T10:08:12 INFO GET /api/items/404 200 16ms
+2026-09-18T10:08:28 INFO user 163 logged in from 10.0.3.18
+2026-09-18T10:08:35 INFO GET /api/items/113 200 46ms
+2026-09-18T10:08:55 INFO GET /api/items/1 200 75ms
+2026-09-18T10:09:00 INFO user 472 logged in from 10.0.9.7
+2026-09-18T10:09:03 WARN cache miss for key item:629
+2026-09-18T10:09:16 INFO GET /api/items/259 200 47ms
+2026-09-18T10:09:36 INFO GET /api/items/126 200 17ms
+2026-09-18T10:09:52 DEBUG worker 4 heartbeat
+2026-09-18T10:10:08 INFO GET /api/items/88 200 21ms
+2026-09-18T10:10:12 INFO user 858 logged in from 10.0.4.123
+2026-09-18T10:10:18 INFO user 310 logged in from 10.0.8.93
+2026-09-18T10:10:23 INFO user 127 logged in from 10.0.8.77
+2026-09-18T10:10:26 INFO user 367 logged in from 10.0.8.94
+2026-09-18T10:10:32 INFO GET /api/items/229 200 71ms
+2026-09-18T10:10:50 INFO user 437 logged in from 10.0.3.157

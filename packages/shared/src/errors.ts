@@ -43,10 +43,10 @@ export function formatError(err: unknown): string {
   return String(err);
 }
 
-export interface ToolErrorResult {
+export type ToolErrorResult = {
   isError: true;
   content: Array<{ type: "text"; text: string }>;
-}
+};
 
 /** MCP-shaped error result (rule 4). The CLI prints `.content[0].text` to stderr and exits 1. */
 export function toolError(err: unknown): ToolErrorResult {

@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["items", "meta"],
+  "properties": {
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "price"],
+        "properties": { "name": { "type": "string" }, "price": { "type": "number", "minimum": 0 } }
+      }
+    },
+    "meta": { "type": "object", "required": ["count"] }
+  }
+}

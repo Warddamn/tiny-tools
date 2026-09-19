@@ -1,0 +1,73 @@
+[
+  {
+    "id": "sales-by-region",
+    "prompt": "What are the total sales by region in fixtures/sales.csv? Just give me the numbers.",
+    "expect_tool": ["query_table"],
+    "forbid_read_of": ["sales.csv"]
+  },
+  {
+    "id": "negative-total",
+    "prompt": "How many rows in fixtures/sales.csv have a negative total?",
+    "expect_tool": ["query_table"],
+    "forbid_read_of": ["sales.csv"]
+  },
+  {
+    "id": "5xx-spike",
+    "prompt": "What's causing the 5xx spike in fixtures/app.log? Keep it short.",
+    "expect_tool": ["summarize_log"],
+    "forbid_read_of": ["app.log"]
+  },
+  {
+    "id": "contract-termination",
+    "prompt": "Where does fixtures/contract.pdf discuss termination, and what is the notice period for termination for convenience?",
+    "expect_tool": ["query_file", "read_section", "file_map"],
+    "forbid_read_of": ["contract.pdf"]
+  },
+  {
+    "id": "deck-pricing",
+    "prompt": "Does fixtures/deck.pptx mention pricing? If so, what does it say?",
+    "expect_tool": ["query_file", "file_map", "read_section"],
+    "forbid_read_of": ["deck.pptx"]
+  },
+  {
+    "id": "handbook-outline",
+    "prompt": "Give me a short outline of the sections in fixtures/handbook.docx.",
+    "expect_tool": ["file_map"],
+    "forbid_read_of": ["handbook.docx"]
+  },
+  {
+    "id": "handbook-remote",
+    "prompt": "What does fixtures/handbook.docx say about remote work? Quote the relevant sentence.",
+    "expect_tool": ["query_file", "read_section", "file_map"],
+    "forbid_read_of": ["handbook.docx"]
+  },
+  {
+    "id": "callers",
+    "prompt": "In the TypeScript under fixtures/src, which functions call resolveInputs? List file and function names.",
+    "expect_tool": ["query_file", "file_map"],
+    "soft": true
+  },
+  {
+    "id": "validate-json",
+    "prompt": "I just wrote fixtures/out/config.json. Check that it is valid JSON and conforms to fixtures/schema.json.",
+    "expect_tool": ["validate_file"]
+  },
+  {
+    "id": "emails",
+    "prompt": "List every email address mentioned in fixtures/handbook.docx.",
+    "expect_tool": ["extract", "query_file"],
+    "forbid_read_of": ["handbook.docx"]
+  },
+  {
+    "id": "diff",
+    "prompt": "What changed between fixtures/handbook.docx and fixtures/handbook-v2.docx?",
+    "expect_tool": ["diff_files"],
+    "forbid_read_of": ["handbook.docx", "handbook-v2.docx"]
+  },
+  {
+    "id": "negative-small-file",
+    "prompt": "What time is the meeting according to fixtures/notes.md?",
+    "negative": true,
+    "expect_builtin": "Read"
+  }
+]
