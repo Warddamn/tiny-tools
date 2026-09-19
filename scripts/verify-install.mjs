@@ -45,7 +45,8 @@ await fs.writeFile(
   JSON.stringify({ name: "stranger", private: true, type: "module", overrides: { [sharedName]: `file:${tarballs[sharedName]}` } }, null, 2),
 );
 try {
-  npm(["install", "--no-audit", "--no-fund", "--loglevel=error", tarballs[sharedName], tarballs[contextName]], proj);
+  // only the context tarball is a direct dependency; the override resolves its @…/shared dependency to the local tarball
+  npm(["install", "--no-audit", "--no-fund", "--loglevel=error", tarballs[contextName]], proj);
 } catch (e) {
   fail(`npm install failed (registry down for maintenance?):\n${String(e.stderr ?? e.message).slice(-800)}`);
 }
