@@ -1,0 +1,65 @@
+# @author AVRG3
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    name: test (${{ matrix.os }}, node ${{ matrix.node }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        node: [20, 22, 24]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - run: npm ci
+      - run: npm test
+
+  test-windows:
+    name: test (windows, node 22) — advisory
+    runs-on: windows-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+
+  bench:
+    name: benchmark numbers stay honest
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run bench
+      - name: fail if any context tool saves less than 80% vs the whole-file read
+        run: |
+          node -e '
+            const md = require("fs").readFileSync("bench/RESULTS.md", "utf8");
+            const rows = [...md.matchAll(/^\| `(\w+)` \| .*? \| ([\d,]+) \| ([\d,]+) \| ([\d.]+)% \|/gm)];
+            const bad = rows.filter(r => parseFloat(r[4]) < 80);
+            console.log(`${rows.length} bench rows`);
+            if (!rows.length) { console.error("no bench rows parsed"); process.exit(1); }
+            if (bad.length) { console.error("below 80% saved:", bad.map(r => `${r[1]} ${r[4]}%`).join(", ")); process.exit(1); }
+          '
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bench-results
+          path: bench/RESULTS.md

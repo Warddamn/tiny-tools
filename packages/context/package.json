@@ -48,5 +48,11 @@
   "optionalDependencies": {
     "@duckdb/node-api": "1.5.5-r.5"
   },
-  "author": "AVRG3"
+  "author": "AVRG3",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "prepack": "node ../../scripts/sign.mjs --check"
+  }
 }

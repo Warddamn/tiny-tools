@@ -20,5 +20,8 @@
   "devDependencies": {
     "pdf-lib": "^1.17.1"
   },
-  "author": "AVRG3"
+  "author": "AVRG3",
+  "engines": {
+    "node": ">=20"
+  }
 }
