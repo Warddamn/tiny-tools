@@ -1,3 +1,4 @@
+// @author AVRG3
 import { describe, expect, it } from "vitest";
 import { TeachError, formatError, teach, toolError } from "../src/index.js";
 

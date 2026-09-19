@@ -148,3 +148,6 @@ Then paste [`docs/AGENT_USAGE.md`](docs/AGENT_USAGE.md) into your `CLAUDE.md` / 
 No embeddings — `query_file` is keyword ranking. Code outlines are regex-based. PDFs without a text layer (scans) report `NO TEXT LAYER`; OCR is out of scope. `query_table` sees one file as one table (no joins). Nothing here calls a network or a model.
 
 License: MIT.
+
+---
+Built by **AVRG3** · MIT

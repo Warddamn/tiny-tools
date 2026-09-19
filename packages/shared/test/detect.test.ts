@@ -1,3 +1,4 @@
+// @author AVRG3
 import { afterEach, describe, expect, it } from "vitest";
 import { detect, installHint, requireBinary, resetDetectCache } from "../src/index.js";
 

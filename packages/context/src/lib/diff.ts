@@ -1,3 +1,4 @@
+// @author AVRG3
 /** Patience diff (unique-line anchors + recursion, DP LCS for small gaps). Good quality, bounded memory. */
 export type DiffOp = { type: "eq"; a: number; b: number } | { type: "del"; a: number } | { type: "add"; b: number };
 

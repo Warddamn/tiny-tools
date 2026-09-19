@@ -1,3 +1,4 @@
+// @author AVRG3
 import { promises as fs } from "node:fs";
 import { teach } from "../errors.js";
 import type { ExtractedText, TextBlock } from "./types.js";

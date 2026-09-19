@@ -1,3 +1,4 @@
+// @author AVRG3
 import { promises as fs } from "node:fs";
 import { teach } from "../errors.js";
 import { assertZip, attr, decodeXml, readZipEntries, relsMap, resolveTarget } from "./ooxml.js";

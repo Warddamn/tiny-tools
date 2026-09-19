@@ -1,3 +1,4 @@
+// @author AVRG3
 /** Minimal DOCX/PPTX builders for benchmark fixtures (no dependency beyond fflate). */
 import { strToU8, zipSync } from "fflate";
 

@@ -1,3 +1,4 @@
+// @author AVRG3
 import { describe, expect, it } from "vitest";
 import { TeachError, colToIndex, extractText, formatLocation, indexToCol } from "../src/index.js";
 import type { SheetMeta } from "../src/index.js";

@@ -1,3 +1,4 @@
+// @author AVRG3
 import { promises as fs } from "node:fs";
 import * as path from "node:path";
 import { decodeText, fmtInt, isProbablyBinary, parseCsv, pathExists, resolveInputs, teach, toAbsolute, truncateLine } from "@tinytools/shared";

@@ -91,3 +91,6 @@ npm run evals     # headless Claude Code tool-selection evals → evals/RESULTS.
 ```
 
 Node ≥ 20, TypeScript, ESM. See `ENV.md`, `PROGRESS.md`, `DECISIONS.md`. MIT.
+
+---
+Built by **AVRG3** · MIT

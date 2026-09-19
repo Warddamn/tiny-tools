@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 /**
+ * @author AVRG3
  * tiny-context CLI — thin commander wrapper over the same zod schemas + lib as the MCP server.
  * Exit codes: 0 ok · 1 error (message on stderr).
  */

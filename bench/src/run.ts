@@ -1,4 +1,5 @@
 /**
+ * @author AVRG3
  * Benchmark harness (§8): each task both ways — naive (tokens to read the raw content) vs tool (tokens of the full response).
  * Writes bench/RESULTS.md and embeds the table into the package + root READMEs. Run: `npm run bench`.
  */

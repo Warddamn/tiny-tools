@@ -1,3 +1,4 @@
+// @author AVRG3
 import { byteLength, estimateTokens, fmtInt } from "./ledger.js";
 
 /** Rule 9 — bound every response. Default ≤ 4,000 tokens ≈ 16 KB. */

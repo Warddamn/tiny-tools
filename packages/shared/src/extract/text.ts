@@ -1,3 +1,4 @@
+// @author AVRG3
 import { promises as fs } from "node:fs";
 import * as path from "node:path";
 import { teach } from "../errors.js";

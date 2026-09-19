@@ -1,3 +1,4 @@
+// @author AVRG3
 import { execFile } from "node:child_process";
 import * as path from "node:path";
 import { fileURLToPath } from "node:url";

@@ -1,3 +1,4 @@
+// @author AVRG3
 import { describe, expect, it } from "vitest";
 import { TeachError } from "@tinytools/shared";
 import { evalJqSubset, extract, fileMap, queryFile, readSection } from "../src/index.js";

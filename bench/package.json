@@ -9,5 +9,6 @@
     "@tinytools/shared": "^0.1.0",
     "pdf-lib": "^1.17.1",
     "fflate": "^0.8.2"
-  }
+  },
+  "author": "AVRG3"
 }

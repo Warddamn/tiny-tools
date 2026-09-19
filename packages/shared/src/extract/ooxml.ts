@@ -1,3 +1,4 @@
+// @author AVRG3
 import { strFromU8, unzipSync } from "fflate";
 import { teach } from "../errors.js";
 

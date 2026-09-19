@@ -1,3 +1,4 @@
+// @author AVRG3
 /** Where a block of text lives inside its document. Only the fields relevant to the format are set. */
 export interface Location {
   /** 1-based line (text/code/markdown; within the page for pdf; within the slide for pptx). */

@@ -1,3 +1,4 @@
+// @author AVRG3
 import { describe, expect, it } from "vitest";
 import { estimateTokens, filesLine, formatDuration, ledger } from "../src/index.js";
 

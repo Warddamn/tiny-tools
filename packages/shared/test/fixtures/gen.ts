@@ -1,4 +1,5 @@
 /**
+ * @author AVRG3
  * Generates the binary test fixtures (docx/pptx/xlsx via minimal OOXML, pdf via pdf-lib).
  * Run once: `npx tsx packages/shared/test/fixtures/gen.ts`. Outputs are committed.
  */

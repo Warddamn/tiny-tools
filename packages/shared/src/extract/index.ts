@@ -1,3 +1,4 @@
+// @author AVRG3
 import { toAbsolute } from "../paths.js";
 import { extractDocx } from "./docx.js";
 import { extractPdf } from "./pdf.js";

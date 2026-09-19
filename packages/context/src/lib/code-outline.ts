@@ -1,4 +1,5 @@
 /**
+ * @author AVRG3
  * Regex-based signatures per language for file_map (not a parser — good enough for an outline).
  */
 export interface Signature {

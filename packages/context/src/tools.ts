@@ -1,4 +1,5 @@
 /**
+ * @author AVRG3
  * The tool table: one definition drives the MCP server AND the CLI, so params/descriptions never drift.
  */
 import { teach, timed } from "@tinytools/shared";

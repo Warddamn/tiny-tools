@@ -1,3 +1,4 @@
+// @author AVRG3
 /** Small RFC 4180 parser: quotes, escaped quotes, CRLF, any single-char delimiter. */
 export function detectDelimiter(sample: string): string {
   const firstLines = sample.split(/\r?\n/).slice(0, 5).join("\n");

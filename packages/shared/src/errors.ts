@@ -1,4 +1,5 @@
 /**
+ * @author AVRG3
  * Rule 4 — errors that teach. Every error says what went wrong AND what to do next.
  */
 export class TeachError extends Error {

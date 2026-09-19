@@ -22,4 +22,5 @@ npm run evals       # runs evals/tasks/context.json through claude -p
 - Every response is bounded (`boundText`, ≤ ~16 KB) and ends with the ledger line (`Returned ~N tokens · raw ≈ M tokens · X% saved · T`).
 - Tool descriptions follow the template: one sentence · USE WHEN · PREFER OVER (and when the built-in is fine) · DOES NOT · EXAMPLE · RETURNS. Every param `.describe()` states default + example.
 - ≤ 8 tools per server. Tests gate progress — never weaken a test to pass. If an eval fails, fix the description/snippet, not the eval.
+- Every source file carries the author signature `@author AVRG3` (a single comment line). `npm run sign` adds it to new files; `npm test` refuses to run if any file lacks it.
 - Commit per package at Definition of Done (conventional commits, e.g. `feat(images): resize_images`).

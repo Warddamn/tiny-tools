@@ -6,5 +6,6 @@
   "license": "MIT",
   "dependencies": {
     "@tinytools/shared": "^0.1.0"
-  }
+  },
+  "author": "AVRG3"
 }

@@ -22,3 +22,4 @@
 - **Durations under 100 ms print as `NNms`** (spec example `0.4s` still holds above that) — `0.0s` hid real timings; percentages print two decimals only when one would round to 100.0.
 - **Formatting glyphs:** the log timeline uses `#` bars (ASCII) so responses survive any terminal/font.
 - **Negative eval fix (11/12 → 12/12):** the agent Read a 2 KB file and then also called `query_file` on it. Fixed in wording only — snippet + `query_file`/`file_map` PREFER OVER now say a file you have already read needs no further tool call. 3/3 stable afterwards.
+- **Author credit = `AVRG3`** (Payton's handle) everywhere: `@author AVRG3` comment line in every source file (enforced by `scripts/sign.mjs --check` in `npm test`), `author` in every package.json, LICENSE holder, README footers, git author on all commits, and `mcpName` `io.github.avrg3/...` (assumes AVRG3 is also the GitHub username — confirm before publishing).

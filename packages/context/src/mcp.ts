@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 /**
+ * @author AVRG3
  * tiny-context MCP server (stdio). Handlers contain no logic: validate (zod) → lib → format.
  * stdout is the protocol channel — log to stderr only.
  */

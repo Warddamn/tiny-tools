@@ -1,4 +1,5 @@
 /**
+ * @author AVRG3
  * Generates benchmark fixtures. Large ones go to bench/fixtures/large (gitignored), small ones to bench/fixtures/small (committed).
  * Deterministic (seeded) so numbers are reproducible. Run: `npm run bench:fixtures`.
  */

@@ -1,3 +1,4 @@
+// @author AVRG3
 export * from "./schemas.js";
 export { fileMap } from "./lib/file-map.js";
 export { queryFile, tokenize, chunkBlocks, bm25 } from "./lib/query-file.js";

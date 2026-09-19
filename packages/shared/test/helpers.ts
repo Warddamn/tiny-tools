@@ -1,3 +1,4 @@
+// @author AVRG3
 import * as path from "node:path";
 import { fileURLToPath } from "node:url";
 

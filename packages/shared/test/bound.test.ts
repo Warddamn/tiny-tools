@@ -1,3 +1,4 @@
+// @author AVRG3
 import { describe, expect, it } from "vitest";
 import { boundText, shownOf, truncateLine } from "../src/index.js";
 

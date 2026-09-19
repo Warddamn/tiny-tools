@@ -1,4 +1,5 @@
 /**
+ * @author AVRG3
  * Rule 11 — report the savings. tokens ≈ bytes/4.
  */
 export function estimateTokens(bytes: number): number {

@@ -1,4 +1,5 @@
 /**
+ * @author AVRG3
  * Single source of truth for tool params + descriptions (§4.2). Shared by the CLI and the MCP server.
  * Every param description includes its default and an example.
  */

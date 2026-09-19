@@ -1,7 +1,7 @@
 {
   "name": "@tinytools/context",
   "version": "0.1.0",
-  "description": "Token-saver toolkit for AI agents: know things about files without reading them. file_map · query_file · read_section · query_table · summarize_log · diff_files · validate_file · extract. CLI + MCP server (stdio).",
+  "description": "Token-saver toolkit for AI agents: know things about files without reading them. file_map \u00b7 query_file \u00b7 read_section \u00b7 query_table \u00b7 summarize_log \u00b7 diff_files \u00b7 validate_file \u00b7 extract. CLI + MCP server (stdio).",
   "type": "module",
   "license": "MIT",
   "keywords": [
@@ -33,7 +33,7 @@
     "dist",
     "docs"
   ],
-  "mcpName": "io.github.OWNER/tiny-context",
+  "mcpName": "io.github.avrg3/tiny-context",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.30.0",
     "@tinytools/shared": "^0.1.0",
@@ -45,5 +45,6 @@
   },
   "optionalDependencies": {
     "@duckdb/node-api": "1.5.5-r.5"
-  }
+  },
+  "author": "AVRG3"
 }
