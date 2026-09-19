@@ -20,6 +20,15 @@ Method and full tables: [Benchmarks](#benchmarks) · [evals/COMPARISON.md](https
 
 ## Install
 
+
+**No npm account needed.** Every release ships a self-contained bundle:
+
+```bash
+npm install -g https://github.com/Warddamn/tiny-tools/releases/download/v0.1.0/tiny-context-standalone-0.1.0.tgz
+```
+
+then `claude mcp add tiny-context -- tiny-context-mcp`, or `{ "mcpServers": { "tiny-context": { "command": "tiny-context-mcp" } } }` in any MCP client.
+
 The server runs locally over stdio; every client below launches the same command, `npx -y -p @tiny_tools_pw/context tiny-context-mcp`.
 
 **Claude Code**

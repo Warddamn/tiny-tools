@@ -6,3 +6,4 @@ bench/fixtures/large/
 evals/runs/
 .tmp/
 evals/workspace/
+.tmp/
