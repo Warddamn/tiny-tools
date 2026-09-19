@@ -19,16 +19,16 @@ Legend: ✅ done · 🔄 in progress · ⬜ not started · — n/a
 | Batch partial-failure tested | ✅ query_file + extract report `skipped:` |
 | No raw contents/base64; responses bounded | ✅ boundText 16 KB; read_section max_tokens ≤ 8000 |
 | Ledger/timing line on every response | ✅ asserted in MCP + CLI tests |
-| docs/AGENT_USAGE.md; evals pass incl. negative case | 🔄 snippet written; evals harness written, run pending |
-| Benchmark table generated + embedded in README | 🔄 harness written, run pending |
-| README complete (replaces · Size · benchmarks · CLI · MCP config · tool reference) | 🔄 written; bench/size numbers embed on `npm run bench` |
-| PROGRESS.md updated; committed | 🔄 |
+| docs/AGENT_USAGE.md; evals pass incl. negative case | 🔄 snippet written; harness + 12 tasks ready; **run blocked: local `claude` CLI login expired** (see evals/RESULTS.md) |
+| Benchmark table generated + embedded in README | ✅ 17 tasks, bench/RESULTS.md + both READMEs |
+| README complete (replaces · Size · benchmarks · CLI · MCP config · tool reference) | ✅ |
+| PROGRESS.md updated; committed | ✅ |
 
 Tools: file_map ✅ · query_file ✅ · read_section ✅ · extract ✅ · query_table ✅ · summarize_log ✅ · diff_files ✅ · validate_file ✅
 
-- [ ] `bench/` fixtures + harness + RESULTS.md (harness written)
-- [ ] `evals/` harness + tasks + run (harness + 12 tasks written)
-- [ ] CHECKPOINT B — stop for review
+- [x] `bench/` fixtures + harness + RESULTS.md
+- [ ] `evals/` harness + tasks ✅ · run ⛔ blocked until `claude` CLI is logged in (`claude` once in Terminal, then `npm run evals`)
+- [x] CHECKPOINT B — stopped for review (2026-09-19). Open questions: GitHub owner for `mcpName` (placeholder `OWNER`); install ffmpeg/whisper/LibreOffice before Phase 3?
 
 ## Phase 2 — images, pdf ⬜
 ## Phase 3 — video, audio, verify, transcribe ⬜

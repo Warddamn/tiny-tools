@@ -1,0 +1,15 @@
+{
+  "name": "colorway-export",
+  "version": 3,
+  "retries": 2,
+  "targets": [
+    {
+      "id": "showroom",
+      "dpi": 300
+    },
+    {
+      "id": "web",
+      "dpi": 72
+    }
+  ]
+}

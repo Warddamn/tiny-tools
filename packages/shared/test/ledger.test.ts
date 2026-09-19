@@ -15,12 +15,14 @@ describe("ledger", () => {
   });
 
   it("says when there is no saving", () => {
-    expect(ledger({ returnedText: "x".repeat(400), rawBytes: 100, elapsedMs: 10 })).toMatch(/0\.0% saved · 0\.0s \(no saving here/);
+    expect(ledger({ returnedText: "x".repeat(400), rawBytes: 100, elapsedMs: 10 })).toMatch(/0\.0% saved · 10ms \(no saving here/);
   });
 
   it("filesLine + durations", () => {
     expect(filesLine(3, 2100)).toBe("files: 3 · 2.1s");
     expect(formatDuration(62_000)).toBe("1m 02s");
     expect(formatDuration(59_940)).toBe("59.9s");
+    expect(formatDuration(42)).toBe("42ms");
+    expect(formatDuration(100)).toBe("0.1s");
   });
 });

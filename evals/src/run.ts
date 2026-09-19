@@ -197,6 +197,13 @@ async function main(): Promise<void> {
     const t0 = Date.now();
     const { lines, code, stderr } = await runClaude(task.prompt, model, 420_000);
     const parsed = parseTranscript(lines);
+    if (/Failed to authenticate|OAuth session expired|not logged in|Invalid API key/i.test(parsed.answer + stderr)) {
+      console.log("BLOCKED");
+      console.log(`\nHeadless claude could not authenticate: ${parsed.answer.trim() || stderr.trim()}`);
+      console.log("Fix: open a terminal, run `claude` once (it will prompt you to log in; or run `claude auth login`), then re-run `npm run evals`.");
+      process.exitCode = 2;
+      return;
+    }
     const verdict = judge(task, parsed.calls);
     if (code !== 0 && parsed.calls.length === 0) verdict.reasons.push(`claude exited ${code}: ${stderr.trim().split("\n").slice(-2).join(" ") || "no output"}`);
     const outcome: Outcome = {

@@ -14,3 +14,10 @@
 - **`validate_file` lazy-loads `yaml`, `ajv`, `fast-xml-parser`** only for the check that needs them; JSON/CSV/markdown/HTML checks are dependency-free.
 - **Token estimate = bytes/4** everywhere (spec rule 11); the ledger says "≈".
 - **`mcpName` owner placeholder:** `io.github.OWNER/…` until the GitHub org/user for publishing is confirmed (Phase 5).
+- **Ledger "raw" for binary documents = extracted-text bytes,** not file bytes — the honest naive alternative for a PDF/DOCX is "convert and read the text"; for directories it's a full recursive listing, not the files' contents.
+- **`summarize_log` "errors" focus:** `5xx` counts only after `status`/`HTTP/1.1"` — bare 3-digit numbers (user ids, item ids) were false positives.
+- **`extract` with every input skipped throws** (teach-error listing each reason); partial failure reports `skipped:` and continues (rule 8).
+- **Bench source-tree fixture = a snapshot of this repo's own `src/`** (MIT) instead of vendoring a third-party project — no network, still a realistic mid-size TypeScript tree; regenerated on each bench run.
+- **Evals need the local `claude` CLI logged in;** the runner detects "OAuth session expired" and stops with the fix instead of recording false failures. `CLAUDECODE` is unset when spawning so it can run from inside a Claude Code session.
+- **Durations under 100 ms print as `NNms`** (spec example `0.4s` still holds above that) — `0.0s` hid real timings; percentages print two decimals only when one would round to 100.0.
+- **Formatting glyphs:** the log timeline uses `#` bars (ASCII) so responses survive any terminal/font.

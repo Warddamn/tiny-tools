@@ -7,7 +7,7 @@ import * as os from "node:os";
 import * as path from "node:path";
 import { fileURLToPath } from "node:url";
 import { type LibResult, diffFiles, extract, fileMap, finish, queryFile, queryTable, readSection, summarizeLog, validateFile } from "@tinytools/context";
-import { byteLength, estimateTokens, fmtInt, formatDuration } from "@tinytools/shared";
+import { byteLength, estimateTokens, fmtInt, fmtPct, formatDuration } from "@tinytools/shared";
 import { BENCH_DIR, LARGE, REPO_DIR, generateFixtures } from "./fixtures.js";
 
 interface Task {
@@ -95,7 +95,7 @@ async function depClosure(startPkgDir: string): Promise<Map<string, number>> {
   return sizes;
 }
 
-const mb = (n: number): string => `${(n / 1024 / 1024).toFixed(1)} MB`;
+const mb = (n: number): string => (n < 1024 * 1024 ? `${(n / 1024).toFixed(0)} KB` : `${(n / 1024 / 1024).toFixed(1)} MB`);
 
 async function replaceBetween(file: string, start: string, end: string, body: string): Promise<boolean> {
   let text: string;
@@ -131,7 +131,7 @@ async function main(): Promise<void> {
     const naiveTokens = estimateTokens(result.rawBytes);
     const savedPct = naiveTokens > 0 ? Math.max(0, (1 - toolTokens / naiveTokens) * 100) : 0;
     rows.push({ ...t, naiveTokens, toolTokens, savedPct, ms, bytes: result.rawBytes });
-    console.log(`  ${t.tool.padEnd(14)} ${fmtInt(naiveTokens).padStart(9)} → ${fmtInt(toolTokens).padStart(6)} tokens · ${savedPct.toFixed(1).padStart(5)}% · ${formatDuration(ms)}  ${t.task}`);
+    console.log(`  ${t.tool.padEnd(14)} ${fmtInt(naiveTokens).padStart(9)} → ${fmtInt(toolTokens).padStart(6)} tokens · ${fmtPct(savedPct).padStart(6)}% · ${formatDuration(ms)}  ${t.task}`);
   }
 
   const fixtureStats: string[] = [];
@@ -151,12 +151,12 @@ async function main(): Promise<void> {
   const table = [
     "| Tool | Task | Naive tokens | Tool tokens | Saved | Time |",
     "|---|---|---:|---:|---:|---:|",
-    ...rows.map((r) => `| \`${r.tool}\` | ${r.task} (${r.fixture}) | ${fmtInt(r.naiveTokens)} | ${fmtInt(r.toolTokens)} | ${r.savedPct.toFixed(1)}% | ${formatDuration(r.ms)} |`),
+    ...rows.map((r) => `| \`${r.tool}\` | ${r.task} (${r.fixture}) | ${fmtInt(r.naiveTokens)} | ${fmtInt(r.toolTokens)} | ${fmtPct(r.savedPct)}% | ${formatDuration(r.ms)} |`),
   ].join("\n");
-  const quotable = rows.map((r) => `${r.tool} · ${fmtInt(r.naiveTokens)} → ${fmtInt(r.toolTokens)} tokens · ${r.savedPct.toFixed(1)}% · ${formatDuration(r.ms)}`).join("\n");
+  const quotable = rows.map((r) => `${r.tool} · ${fmtInt(r.naiveTokens)} → ${fmtInt(r.toolTokens)} tokens · ${fmtPct(r.savedPct)}% · ${formatDuration(r.ms)}`).join("\n");
   const totalNaive = rows.reduce((a, r) => a + r.naiveTokens, 0);
   const totalTool = rows.reduce((a, r) => a + r.toolTokens, 0);
-  const summary = `**${rows.length} tasks · ${fmtInt(totalNaive)} naive tokens → ${fmtInt(totalTool)} tool tokens · ${((1 - totalTool / totalNaive) * 100).toFixed(1)}% saved overall · median ${formatDuration(rows.map((r) => r.ms).sort((a, b) => a - b)[Math.floor(rows.length / 2)] ?? 0)} per call**`;
+  const summary = `**${rows.length} tasks · ${fmtInt(totalNaive)} naive tokens → ${fmtInt(totalTool)} tool tokens · ${fmtPct((1 - totalTool / totalNaive) * 100)}% saved overall · median ${formatDuration(rows.map((r) => r.ms).sort((a, b) => a - b)[Math.floor(rows.length / 2)] ?? 0)} per call**`;
   const fixtures = `Fixtures (generated locally, seeded): ${fixtureStats.join(" · ")} (100,000 rows · 50,000 lines · 100 pages · ~18k words) · src/ ${srcFiles} TypeScript files.`;
   const method = "Naive = tokens (bytes/4) an agent would spend reading the raw content the task needs — the file for text formats, the extracted text for PDF/DOCX (the built-in can't open them at all), the whole file for a section read. Tool = tokens of the tool's complete response including its savings line.";
 

@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "tiny-context": {
+      "command": "/usr/local/bin/node",
+      "args": [
+        "/Users/payton/Desktop/pw papps/tiny-tools/packages/context/dist/mcp.js"
+      ]
+    }
+  }
+}
