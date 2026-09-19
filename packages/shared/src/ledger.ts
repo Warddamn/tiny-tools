@@ -31,7 +31,11 @@ export interface LedgerInput {
 
 /** 99.6 · 99.97 (two decimals only when rounding would print 100.0). */
 export function fmtPct(pct: number): string {
-  return pct >= 99.95 && pct < 100 ? pct.toFixed(2) : pct.toFixed(1);
+  if (pct >= 99.95 && pct < 100) {
+    const two = pct.toFixed(2);
+    return two === "100.00" ? "99.99" : two;
+  }
+  return pct.toFixed(1);
 }
 
 /** `Returned ~214 tokens · raw ≈ 48,200 tokens · 99.6% saved · 0.4s` */

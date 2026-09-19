@@ -3,7 +3,7 @@
 **Know things about files without reading them.** Eight local, deterministic tools that let an AI agent outline, search, slice, query, cluster, diff, validate and extract from files — including PDF, DOCX, PPTX and XLSX — and get back only what it needs, with a savings line on every response.
 
 ```json
-{ "mcpServers": { "tiny-context": { "command": "npx", "args": ["-y", "@tinytools/context", "tiny-context-mcp"] } } }
+{ "mcpServers": { "tiny-context": { "command": "npx", "args": ["-y", "-p", "@tinytools/context", "tiny-context-mcp"] } } }
 ```
 
 ## What it replaces
@@ -19,15 +19,15 @@ Reducing tokens-per-step and wall-clock-per-step is what lets an agent take more
 ## Benchmarks
 
 <!-- bench:start -->
-**17 tasks · 7,413,786 naive tokens → 9,169 tool tokens · 99.9% saved overall · median 32ms per call**
+**17 tasks · 7,413,803 naive tokens → 9,169 tool tokens · 99.9% saved overall · median 35ms per call**
 
 | Tool | Task | Naive tokens | Tool tokens | Saved | Time |
 |---|---|---:|---:|---:|---:|
 | `query_table` | total sales by region (sales.csv) | 1,370,762 | 75 | 99.99% | 0.5s |
-| `query_table` | how many rows have a negative total (sales.csv) | 1,370,762 | 37 | 100.00% | 0.4s |
+| `query_table` | how many rows have a negative total (sales.csv) | 1,370,762 | 37 | 99.99% | 0.4s |
 | `query_table` | which columns exist and their types (sales.csv) | 1,370,762 | 186 | 99.99% | 0.3s |
-| `summarize_log` | what's causing the 5xx spike (app.log) | 731,145 | 380 | 99.9% | 32ms |
-| `summarize_log` | summarize this log (app.log) | 731,145 | 698 | 99.9% | 89ms |
+| `summarize_log` | what's causing the 5xx spike (app.log) | 731,145 | 380 | 99.9% | 35ms |
+| `summarize_log` | summarize this log (app.log) | 731,145 | 698 | 99.9% | 80ms |
 | `file_map` | what's in this 100-page contract (contract.pdf) | 72,055 | 2,065 | 97.1% | 0.2s |
 | `query_file` | where does the contract discuss termination (contract.pdf) | 72,055 | 713 | 99.0% | 0.1s |
 | `read_section` | read the termination pages (2 of 100) (contract.pdf) | 72,055 | 1,528 | 97.9% | 0.1s |
@@ -36,10 +36,10 @@ Reducing tokens-per-step and wall-clock-per-step is what lets an agent take more
 | `read_section` | read the handbook's Termination section (handbook.docx) | 31,699 | 1,166 | 96.3% | 2ms |
 | `extract` | every email address in the handbook (handbook.docx) | 31,699 | 51 | 99.8% | 3ms |
 | `diff_files` | what changed between two handbook versions (handbook.docx ↔ handbook-v2.docx) | 63,429 | 293 | 99.5% | 4ms |
-| `file_map` | what's in this source tree (src/) | 2,697 | 318 | 88.2% | 3ms |
+| `file_map` | what's in this source tree (src/) | 2,697 | 318 | 88.2% | 2ms |
 | `file_map` | which functions are in this module (src/…/paths.ts) | 1,603 | 259 | 83.8% | 3ms |
-| `query_file` | which functions call resolveInputs (src/**/*.ts) | 57,758 | 570 | 99.0% | 5ms |
-| `validate_file` | is this 100k-row CSV well-formed (sales.csv) | 1,370,762 | 37 | 100.00% | 53ms |
+| `query_file` | which functions call resolveInputs (src/**/*.ts) | 57,775 | 570 | 99.0% | 5ms |
+| `validate_file` | is this 100k-row CSV well-formed (sales.csv) | 1,370,762 | 37 | 99.99% | 53ms |
 
 _Fixtures (generated locally, seeded): sales.csv 5.2 MB · app.log 2.8 MB · contract.pdf 206 KB · handbook.docx 29 KB (100,000 rows · 50,000 lines · 100 pages · ~18k words) · src/ 37 TypeScript files._ · _Generated 2026-09-19; re-run with `npm run bench`._
 <!-- bench:end -->
@@ -108,7 +108,7 @@ Claude Code / Claude Desktop / Cursor / any MCP client (stdio):
 ```json
 {
   "mcpServers": {
-    "tiny-context": { "command": "npx", "args": ["-y", "@tinytools/context", "tiny-context-mcp"] }
+    "tiny-context": { "command": "npx", "args": ["-y", "-p", "@tinytools/context", "tiny-context-mcp"] }
   }
 }
 ```
