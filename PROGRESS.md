@@ -28,7 +28,14 @@ Tools: file_map ✅ · query_file ✅ · read_section ✅ · extract ✅ · quer
 
 - [x] `bench/` fixtures + harness + RESULTS.md
 - [x] `evals/` harness + 12 tasks · run 12/12 pass → evals/RESULTS.md
-- [x] CHECKPOINT B — Phase 1 complete (2026-09-19); stopped for review. Open questions: GitHub owner for `mcpName` (placeholder `OWNER`); install ffmpeg/whisper/LibreOffice before Phase 3?
+- [x] CHECKPOINT B — Phase 1 complete (2026-09-19); stopped for review.
+
+## Post-checkpoint (2026-09-19, at Payton's request: "steer it toward agents")
+- [x] Eval harness fixed: fixtures copied (symlinks outside cwd made Read fail permission → false results), same built-ins in every condition, **pass now requires a correct answer**.
+- [x] Four-condition comparison (none / tools / snippet / hook) → `evals/COMPARISON.md`. Same answers everywhere; tools = ~20% tokens, ~50% time.
+- [x] Read guard hook built + tested (`packages/context/hooks/read-guard.mjs`, bin `tiny-context-read-guard`, 4 tests). Did not fire in the comparison (agent reached for the tools directly).
+- [x] `run_command` decision: yes, Phase 1.5 → `PROPOSALS.md` §2 (evidence table). Not built yet.
+- [ ] Publishing: waiting on Payton — GitHub name (Warddamn vs new AVRG3), npm scope (`@tinytools` org vs personal), `npm login`. Open questions: GitHub owner for `mcpName` (placeholder `OWNER`); install ffmpeg/whisper/LibreOffice before Phase 3?
 
 ## Phase 2 — images, pdf ⬜
 ## Phase 3 — video, audio, verify, transcribe ⬜

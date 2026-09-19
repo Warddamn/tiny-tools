@@ -23,3 +23,7 @@
 - **Formatting glyphs:** the log timeline uses `#` bars (ASCII) so responses survive any terminal/font.
 - **Negative eval fix (11/12 → 12/12):** the agent Read a 2 KB file and then also called `query_file` on it. Fixed in wording only — snippet + `query_file`/`file_map` PREFER OVER now say a file you have already read needs no further tool call. 3/3 stable afterwards.
 - **Author credit = `AVRG3`** (Payton's handle) everywhere: `@author AVRG3` comment line in every source file (enforced by `scripts/sign.mjs --check` in `npm test`), `author` in every package.json, LICENSE holder, README footers, git author on all commits, and `mcpName` `io.github.avrg3/...` (assumes AVRG3 is also the GitHub username — confirm before publishing).
+- **Eval "pass" requires a correct answer** (regex expectations per task). The earlier 12/12 counted a hollow pass: symlinked fixtures outside the workspace made Read a permission failure. Fixtures are now copied; every condition allows the same built-ins.
+- **Honest baseline = a shell-capable agent, not "read the whole file".** Comparison shows identical correctness and ~20% token / ~50% time savings from tiny-context; the README now says so next to the 99.9% figure.
+- **`callers` stays soft:** Grep across a source tree is the right tool for "who calls X"; the descriptions say so, and the agent agreed in all four conditions.
+- **Read guard hook shipped but not oversold:** it never fired when the MCP tools were visible; it is insurance for hosts where Read would be attempted.

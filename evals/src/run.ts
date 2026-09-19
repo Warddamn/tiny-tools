@@ -1,17 +1,26 @@
+// @author AVRG3
 /**
- * @author AVRG3
- * Tool-selection evals (§9): run each natural-language task through headless Claude Code with the tiny-context
- * server attached and the AGENT_USAGE snippet in CLAUDE.md; assert the intended tool was called with sane params
- * and that the large fixture was never read raw. A negative case checks the built-in is chosen for a small file.
+ * Tool-selection + honest-comparison evals (§9). Each task runs through headless Claude Code in one of four modes:
+ *   none    — no tiny-context server, no snippet (what an agent has today)
+ *   tools   — server attached, no snippet (descriptions alone must trigger)
+ *   snippet — server attached + AGENT_USAGE snippet in CLAUDE.md (the recommended install)
+ *   hook    — server attached + the Read guard hook, no snippet (the smart path is the default path)
+ * Every mode allows the same built-ins (Bash, Read, Grep, Glob). A task passes only if the answer is correct
+ * AND the tool-selection rules hold (intended tool used; the large fixture never read raw; negative case uses Read).
  *
- *   npm run evals                 # all tasks
- *   npm run evals -- --only diff  # one task
+ *   npm run evals                      # snippet mode
+ *   npm run evals -- --mode hook       # one mode
+ *   npm run evals -- --compare         # all four modes → evals/COMPARISON.md
+ *   npm run evals -- --only diff       # one task
  *   EVAL_MODEL=sonnet npm run evals
  */
 import { spawn } from "node:child_process";
 import { promises as fs } from "node:fs";
 import * as path from "node:path";
 import { fileURLToPath } from "node:url";
+
+type Mode = "none" | "tools" | "snippet" | "hook";
+const MODES: Mode[] = ["none", "tools", "snippet", "hook"];
 
 interface Task {
   id: string;
@@ -20,22 +29,36 @@ interface Task {
   forbid_read_of?: string[];
   negative?: boolean;
   expect_builtin?: string;
-  /** Report but don't fail the run. */
   soft?: boolean;
+  /** Answer is correct if ANY of these regexes (case-insensitive) matches. */
+  expect_answer_any?: string[];
+  /** Answer is correct only if ALL of these regexes match. */
+  expect_answer_all?: string[];
+  /** Answer is correct if at least `min` of these regexes match. */
+  expect_answer_min?: { of: string[]; min: number };
 }
 
 interface Call {
+  id: string;
   name: string;
   input: Record<string, unknown>;
+  /** Set from the matching tool_result. */
+  error?: string | null;
+  denied?: boolean;
+  blockedByHook?: boolean;
 }
 
 interface Outcome {
+  mode: Mode;
   id: string;
   pass: boolean;
+  correct: boolean;
   soft: boolean;
   reasons: string[];
   calls: Call[];
   turns: number;
+  totalTokens: number;
+  finalContext: number;
   costUsd: number | null;
   durationMs: number;
   answer: string;
@@ -44,12 +67,13 @@ interface Outcome {
 const here = path.dirname(fileURLToPath(import.meta.url));
 const EVALS = path.resolve(here, "..");
 const REPO = path.resolve(EVALS, "..");
-const WORKSPACE = path.join(EVALS, "workspace");
 const RUNS = path.join(EVALS, "runs");
 const SERVER = path.join(REPO, "packages", "context", "dist", "mcp.js");
+const HOOK = path.join(REPO, "packages", "context", "hooks", "read-guard.mjs");
 const LARGE = path.join(REPO, "bench", "fixtures", "large");
 const SMALL = path.join(REPO, "bench", "fixtures", "small");
 const PREFIX = "mcp__tiny-context__";
+const BUILTINS = ["Bash", "Read", "Grep", "Glob"];
 
 async function exists(p: string): Promise<boolean> {
   try {
@@ -60,10 +84,20 @@ async function exists(p: string): Promise<boolean> {
   }
 }
 
-async function setupWorkspace(): Promise<void> {
-  await fs.mkdir(path.join(WORKSPACE, "fixtures", "out"), { recursive: true });
+async function copyTree(src: string, dst: string): Promise<void> {
+  const st = await fs.stat(src);
+  if (st.isDirectory()) {
+    await fs.mkdir(dst, { recursive: true });
+    for (const e of await fs.readdir(src)) await copyTree(path.join(src, e), path.join(dst, e));
+  } else await fs.copyFile(src, dst);
+}
+
+async function setupWorkspace(mode: Mode): Promise<string> {
+  const ws = path.join(EVALS, "workspace", mode);
+  await fs.rm(ws, { recursive: true, force: true });
+  await fs.mkdir(path.join(ws, "fixtures", "out"), { recursive: true });
   await fs.mkdir(RUNS, { recursive: true });
-  const links: Array<[string, string]> = [
+  const files: Array<[string, string]> = [
     [path.join(LARGE, "sales.csv"), "sales.csv"],
     [path.join(LARGE, "app.log"), "app.log"],
     [path.join(LARGE, "contract.pdf"), "contract.pdf"],
@@ -75,29 +109,37 @@ async function setupWorkspace(): Promise<void> {
     [path.join(SMALL, "schema.json"), "schema.json"],
     [path.join(SMALL, "out", "config.json"), path.join("out", "config.json")],
   ];
-  for (const [target, name] of links) {
-    if (!(await exists(target))) throw new Error(`Missing fixture ${target} — run \`npm run bench:fixtures\` first.`);
-    const link = path.join(WORKSPACE, "fixtures", name);
-    if (await exists(link)) await fs.rm(link, { recursive: true, force: true });
-    await fs.symlink(target, link);
+  for (const [src, name] of files) {
+    if (!(await exists(src))) throw new Error(`Missing fixture ${src} — run \`npm run bench:fixtures\` first.`);
+    await copyTree(src, path.join(ws, "fixtures", name));
   }
-  if (!(await exists(SERVER))) throw new Error(`Missing ${SERVER} — run \`npm run build\` first.`);
-  await fs.writeFile(path.join(WORKSPACE, "mcp.json"), JSON.stringify({ mcpServers: { "tiny-context": { command: process.execPath, args: [SERVER] } } }, null, 2));
+  if (mode !== "none" && !(await exists(SERVER))) throw new Error(`Missing ${SERVER} — run \`npm run build\` first.`);
+  const base = "# Eval workspace\n\nFiles referenced in tasks live under ./fixtures. Answer briefly and directly.\n";
   const usage = await fs.readFile(path.join(REPO, "packages", "context", "docs", "AGENT_USAGE.md"), "utf8");
-  await fs.writeFile(
-    path.join(WORKSPACE, "CLAUDE.md"),
-    `# Eval workspace\n\nFiles referenced in tasks live under ./fixtures (some are symlinks). Answer briefly.\n\n${usage}`,
-  );
+  await fs.writeFile(path.join(ws, "CLAUDE.md"), mode === "snippet" ? `${base}\n${usage}` : base);
+  if (mode !== "none") {
+    await fs.writeFile(path.join(ws, "mcp.json"), JSON.stringify({ mcpServers: { "tiny-context": { command: process.execPath, args: [SERVER] } } }, null, 2));
+  }
+  if (mode === "hook") {
+    const settings = {
+      hooks: { PreToolUse: [{ matcher: "Read", hooks: [{ type: "command", command: `"${process.execPath}" "${HOOK}"`, timeout: 30 }] }] },
+    };
+    await fs.writeFile(path.join(ws, "settings.json"), JSON.stringify(settings, null, 2));
+  }
+  return ws;
 }
 
-function runClaude(prompt: string, model: string | undefined, timeoutMs: number): Promise<{ lines: string[]; code: number | null; stderr: string }> {
+function runClaude(ws: string, mode: Mode, prompt: string, model: string | undefined, timeoutMs: number): Promise<{ lines: string[]; code: number | null; stderr: string }> {
   return new Promise((resolve) => {
-    const args = ["-p", prompt, "--output-format", "stream-json", "--verbose", "--mcp-config", "mcp.json", "--strict-mcp-config", "--allowedTools", `${PREFIX}*`, "--max-turns", "12"];
+    const allowed = [...BUILTINS, ...(mode === "none" ? [] : [`${PREFIX}*`])];
+    const args = ["-p", prompt, "--output-format", "stream-json", "--verbose", "--max-turns", "12", "--strict-mcp-config", "--allowedTools", ...allowed];
+    if (mode !== "none") args.push("--mcp-config", "mcp.json");
+    if (mode === "hook") args.push("--settings", "settings.json");
     if (model) args.push("--model", model);
     const env = { ...process.env };
     delete env["CLAUDECODE"];
     delete env["CLAUDE_CODE_ENTRYPOINT"];
-    const child = spawn("claude", args, { cwd: WORKSPACE, env, stdio: ["ignore", "pipe", "pipe"] });
+    const child = spawn("claude", args, { cwd: ws, env, stdio: ["ignore", "pipe", "pipe"] });
     let out = "";
     let err = "";
     child.stdout.on("data", (d: Buffer) => (out += d.toString()));
@@ -110,12 +152,27 @@ function runClaude(prompt: string, model: string | undefined, timeoutMs: number)
   });
 }
 
-function parseTranscript(lines: string[]): { calls: Call[]; answer: string; turns: number; costUsd: number | null; durationMs: number } {
+interface Parsed {
+  calls: Call[];
+  answer: string;
+  turns: number;
+  costUsd: number | null;
+  durationMs: number;
+  totalTokens: number;
+  finalContext: number;
+  authError: string | null;
+}
+
+function parseTranscript(lines: string[]): Parsed {
   const calls: Call[] = [];
+  const byId = new Map<string, Call>();
   let answer = "";
   let turns = 0;
   let costUsd: number | null = null;
   let durationMs = 0;
+  let totalTokens = 0;
+  let finalContext = 0;
+  let authError: string | null = null;
   for (const line of lines) {
     let msg: Record<string, unknown>;
     try {
@@ -123,126 +180,218 @@ function parseTranscript(lines: string[]): { calls: Call[]; answer: string; turn
     } catch {
       continue;
     }
-    if (msg["type"] === "assistant") {
-      const m = msg["message"] as { content?: Array<{ type: string; name?: string; input?: Record<string, unknown>; text?: string }> };
+    const type = msg["type"];
+    if (type === "assistant") {
+      const m = msg["message"] as { content?: Array<{ type: string; id?: string; name?: string; input?: Record<string, unknown>; text?: string }>; usage?: Record<string, number> };
       for (const block of m?.content ?? []) {
-        if (block.type === "tool_use") calls.push({ name: block.name ?? "?", input: block.input ?? {} });
+        if (block.type === "tool_use") {
+          const c: Call = { id: block.id ?? "", name: block.name ?? "?", input: block.input ?? {} };
+          calls.push(c);
+          byId.set(c.id, c);
+        }
         if (block.type === "text" && block.text) answer = block.text;
       }
-    }
-    if (msg["type"] === "result") {
+      const u = m?.usage;
+      if (u) finalContext = (u["input_tokens"] ?? 0) + (u["cache_read_input_tokens"] ?? 0) + (u["cache_creation_input_tokens"] ?? 0);
+    } else if (type === "user") {
+      const m = msg["message"] as { content?: unknown };
+      if (Array.isArray(m?.content)) {
+        for (const block of m.content as Array<{ type: string; tool_use_id?: string; is_error?: boolean; content?: unknown }>) {
+          if (block.type !== "tool_result" || !block.tool_use_id) continue;
+          const c = byId.get(block.tool_use_id);
+          if (!c) continue;
+          const text = typeof block.content === "string" ? block.content : JSON.stringify(block.content ?? "");
+          if (block.is_error) c.error = text.slice(0, 300);
+          if (/read guard/i.test(text)) c.blockedByHook = true;
+          if (/requested permissions|haven't granted|permission/i.test(text) && block.is_error) c.denied = true;
+        }
+      }
+    } else if (type === "result") {
       turns = Number(msg["num_turns"] ?? 0);
       costUsd = typeof msg["total_cost_usd"] === "number" ? (msg["total_cost_usd"] as number) : null;
       durationMs = Number(msg["duration_ms"] ?? 0);
+      const u = (msg["usage"] ?? {}) as Record<string, number>;
+      totalTokens = (u["input_tokens"] ?? 0) + (u["cache_read_input_tokens"] ?? 0) + (u["cache_creation_input_tokens"] ?? 0) + (u["output_tokens"] ?? 0);
+      for (const d of (msg["permission_denials"] ?? []) as Array<{ tool_use_id?: string }>) {
+        const c = d.tool_use_id ? byId.get(d.tool_use_id) : undefined;
+        if (c) c.denied = true;
+      }
       if (typeof msg["result"] === "string") answer = msg["result"] as string;
+      if (msg["is_error"] && /authenticate|OAuth|logged in|API key/i.test(answer)) authError = answer;
     }
   }
-  return { calls, answer, turns, costUsd, durationMs };
-}
-
-function inputPaths(input: Record<string, unknown>): string[] {
-  const out: string[] = [];
-  for (const k of ["path", "a", "b", "file_path", "schema", "out"]) if (typeof input[k] === "string") out.push(input[k] as string);
-  if (Array.isArray(input["paths"])) for (const p of input["paths"] as unknown[]) if (typeof p === "string") out.push(p);
-  return out;
+  return { calls, answer, turns, costUsd, durationMs, totalTokens, finalContext, authError };
 }
 
 function mentions(call: Call, base: string): boolean {
-  const s = JSON.stringify(call.input);
-  return s.includes(base);
+  return JSON.stringify(call.input).includes(base);
 }
 
-function judge(task: Task, calls: Call[]): { pass: boolean; reasons: string[] } {
+function judgeAnswer(task: Task, answer: string): { correct: boolean; why: string | null } {
+  const test = (re: string): boolean => new RegExp(re, "i").test(answer);
+  if (task.expect_answer_all && !task.expect_answer_all.every(test)) return { correct: false, why: `answer missing one of: ${task.expect_answer_all.join(" · ")}` };
+  if (task.expect_answer_any && !task.expect_answer_any.some(test)) return { correct: false, why: `answer lacks any of: ${task.expect_answer_any.join(" · ")}` };
+  if (task.expect_answer_min) {
+    const n = task.expect_answer_min.of.filter(test).length;
+    if (n < task.expect_answer_min.min) return { correct: false, why: `answer names ${n} of ${task.expect_answer_min.of.length} expected items (need ${task.expect_answer_min.min})` };
+  }
+  return { correct: true, why: null };
+}
+
+function judgeTools(task: Task, mode: Mode, calls: Call[]): string[] {
   const reasons: string[] = [];
   const mcp = calls.filter((c) => c.name.startsWith(PREFIX)).map((c) => ({ ...c, short: c.name.slice(PREFIX.length) }));
   const builtin = calls.filter((c) => !c.name.startsWith(PREFIX));
+  const rawReads = (base: string): Call[] => builtin.filter((c) => (c.name === "Read" || c.name === "Bash" || c.name === "Grep") && mentions(c, base) && !c.denied && !c.blockedByHook && !c.error);
   if (task.negative) {
     if (mcp.length) reasons.push(`used ${mcp.map((c) => c.short).join(", ")} on a small plain-text file — the built-in was the right call`);
     const want = task.expect_builtin ?? "Read";
-    if (!builtin.some((c) => c.name === want)) reasons.push(`expected the built-in ${want}, saw ${builtin.map((c) => c.name).join(", ") || "no tool calls"}`);
-    return { pass: reasons.length === 0, reasons };
+    if (!builtin.some((c) => c.name === want && !c.denied && !c.error)) reasons.push(`expected a successful built-in ${want}, saw ${calls.map((c) => c.name.replace(PREFIX, "")).join(", ") || "no tool calls"}`);
+    return reasons;
   }
+  if (mode === "none") return reasons; // nothing to select from; correctness + cost tell the story
   const expected = task.expect_tool ?? [];
-  if (!mcp.some((c) => expected.includes(c.short))) {
-    reasons.push(`expected one of [${expected.join(", ")}], saw ${calls.map((c) => c.name.replace(PREFIX, "")).join(", ") || "no tool calls"}`);
-  }
+  if (!mcp.some((c) => expected.includes(c.short))) reasons.push(`expected one of [${expected.join(", ")}], saw ${calls.map((c) => c.name.replace(PREFIX, "")).join(", ") || "no tool calls"}`);
   for (const base of task.forbid_read_of ?? []) {
-    const raw = builtin.filter((c) => (c.name === "Read" || c.name === "Bash" || c.name === "Grep") && mentions(c, base));
-    if (raw.length) reasons.push(`raw ${raw.map((c) => c.name).join("/")} of ${base}`);
+    const raw = rawReads(base);
+    if (raw.length) reasons.push(`raw ${raw.map((c) => c.name).join("/")} of ${base} (${raw.length}×)`);
   }
-  for (const c of mcp) {
-    for (const p of inputPaths(c.input)) {
-      if (p.includes("*")) continue;
-      const abs = path.isAbsolute(p) ? p : path.join(WORKSPACE, p);
-      if (c.short === "query_table" && c.input["out"] === p) continue;
-      if (!/^~|^\//.test(p) && !p.startsWith("fixtures")) reasons.push(`${c.short}: suspicious path '${p}'`);
-      else if (!(p.startsWith("~"))) {
-        // existence check (sync via fs.promises would need await; keep it simple with a best-effort stat)
-        void abs;
-      }
+  return reasons;
+}
+
+function fmt(n: number): string {
+  return Math.round(n).toLocaleString("en-US");
+}
+
+function toolChain(o: Outcome): string {
+  return (
+    o.calls
+      .map((c) => `${c.name.replace(PREFIX, "")}${c.blockedByHook ? "⛔" : c.denied ? "✗" : c.error ? "!" : ""}`)
+      .join(" → ") || "—"
+  );
+}
+
+async function runMode(mode: Mode, tasks: Task[], model: string | undefined): Promise<Outcome[]> {
+  const ws = await setupWorkspace(mode);
+  const outcomes: Outcome[] = [];
+  console.log(`\n[${mode}] ${tasks.length} task(s)${model ? ` · model ${model}` : ""}`);
+  for (const task of tasks) {
+    process.stdout.write(`  ${task.id.padEnd(22)} `);
+    const t0 = Date.now();
+    const { lines, code, stderr } = await runClaude(ws, mode, task.prompt, model, 480_000);
+    const p = parseTranscript(lines);
+    if (p.authError) {
+      console.log("BLOCKED");
+      console.log(`\nHeadless claude could not authenticate: ${p.authError}\nFix: run \`claude auth login\` in a terminal, then re-run.`);
+      process.exit(2);
     }
+    const reasons = judgeTools(task, mode, p.calls);
+    const { correct, why } = judgeAnswer(task, p.answer);
+    if (!correct && why) reasons.push(why);
+    if (code !== 0 && p.calls.length === 0) reasons.push(`claude exited ${code}: ${stderr.trim().split("\n").slice(-2).join(" ") || "no output"}`);
+    const o: Outcome = {
+      mode,
+      id: task.id,
+      pass: reasons.length === 0,
+      correct,
+      soft: Boolean(task.soft),
+      reasons,
+      calls: p.calls,
+      turns: p.turns,
+      totalTokens: p.totalTokens,
+      finalContext: p.finalContext,
+      costUsd: p.costUsd,
+      durationMs: p.durationMs || Date.now() - t0,
+      answer: p.answer,
+    };
+    outcomes.push(o);
+    await fs.writeFile(path.join(RUNS, `${mode}-${task.id}.json`), JSON.stringify({ task, ...o, raw: lines }, null, 2));
+    console.log(`${o.pass ? "PASS" : o.soft ? "soft" : "FAIL"} ${o.correct ? "✓" : "✗"}  ${toolChain(o)}  ${(o.durationMs / 1000).toFixed(0)}s · ${fmt(o.totalTokens)} tok${o.costUsd !== null ? ` · $${o.costUsd.toFixed(3)}` : ""}`);
+    for (const r of o.reasons) console.log(`      ↳ ${r}`);
   }
-  return { pass: reasons.length === 0, reasons };
+  return outcomes;
+}
+
+function modeTable(outcomes: Outcome[], mode: Mode, model: string | undefined, date: string): string {
+  const passN = outcomes.filter((o) => o.pass).length;
+  return [
+    `# Tool-selection eval results — tiny-context (mode: ${mode})`,
+    ``,
+    `_${date} · headless \`claude -p\`${model ? ` · model ${model}` : ""} · ${passN}/${outcomes.length} pass · pass = correct answer AND tool rules hold_`,
+    ``,
+    `| Task | Result | Correct | Tools called (⛔ blocked by hook · ✗ denied · ! error) | Turns | Tokens | Time | Cost |`,
+    `|---|---|---|---|---:|---:|---:|---:|`,
+    ...outcomes.map(
+      (o) =>
+        `| ${o.id} | ${o.pass ? "✅" : o.soft ? "⚠️ soft" : "❌"}${o.reasons.length ? `<br>${o.reasons.join("<br>")}` : ""} | ${o.correct ? "✓" : "✗"} | ${toolChain(o)} | ${o.turns} | ${fmt(o.totalTokens)} | ${(o.durationMs / 1000).toFixed(0)}s | ${o.costUsd !== null ? `$${o.costUsd.toFixed(3)}` : "—"} |`,
+    ),
+    ``,
+  ].join("\n");
+}
+
+function comparison(all: Map<Mode, Outcome[]>, tasks: Task[], model: string | undefined, date: string): string {
+  const modes = [...all.keys()];
+  const head = `| Task | ${modes.map((m) => `${m}: ok / turns / tokens / $`).join(" | ")} |`;
+  const sep = `|---|${modes.map(() => "---").join("|")}|`;
+  const rows = tasks.map((t) => {
+    const cells = modes.map((m) => {
+      const o = all.get(m)!.find((x) => x.id === t.id);
+      if (!o) return "—";
+      return `${o.pass ? "✅" : o.correct ? "⚠️" : "❌"} / ${o.turns} / ${fmt(o.totalTokens)} / ${o.costUsd !== null ? o.costUsd.toFixed(2) : "?"}`;
+    });
+    return `| ${t.id} | ${cells.join(" | ")} |`;
+  });
+  const totals = modes.map((m) => {
+    const os = all.get(m)!;
+    const sum = (f: (o: Outcome) => number): number => os.reduce((a, o) => a + f(o), 0);
+    return `| **${m}** | ${os.filter((o) => o.pass).length}/${os.length} pass · ${os.filter((o) => o.correct).length}/${os.length} correct | ${fmt(sum((o) => o.turns) / os.length * 10) === "0" ? "" : (sum((o) => o.turns) / os.length).toFixed(1)} | ${fmt(sum((o) => o.totalTokens))} | $${sum((o) => o.costUsd ?? 0).toFixed(2)} | ${(sum((o) => o.durationMs) / 1000).toFixed(0)}s |`;
+  });
+  return [
+    `# Honest comparison — the same ${tasks.length} tasks in ${modes.length} conditions`,
+    ``,
+    `_${date} · headless \`claude -p\`${model ? ` · model ${model}` : ""} · every condition allows the same built-ins (Bash, Read, Grep, Glob) · max 12 turns._`,
+    ``,
+    `- **none** — no tiny-context, no snippet (what an agent has today)`,
+    `- **tools** — server attached, no snippet in CLAUDE.md (descriptions alone)`,
+    `- **snippet** — server attached + the 6-line AGENT_USAGE snippet in CLAUDE.md (recommended install)`,
+    `- **hook** — server attached + the Read guard hook (Read of PDF/Office/>20 KB files is intercepted and answered with an outline), no snippet`,
+    ``,
+    `Cell = pass? / turns / total tokens processed (input + cache + output, all turns) / cost in USD. ✅ pass · ⚠️ correct answer but tool rules broken · ❌ wrong or no answer.`,
+    ``,
+    head,
+    sep,
+    ...rows,
+    ``,
+    `| Condition | Pass / correct | Avg turns | Total tokens | Total cost | Total time |`,
+    `|---|---|---:|---:|---:|---:|`,
+    ...totals,
+    ``,
+  ].join("\n");
 }
 
 async function main(): Promise<void> {
   const argv = process.argv.slice(2);
-  const only = argv.includes("--only") ? argv[argv.indexOf("--only") + 1] : undefined;
+  const arg = (k: string): string | undefined => (argv.includes(k) ? argv[argv.indexOf(k) + 1] : undefined);
+  const only = arg("--only");
+  const modeArg = (arg("--mode") ?? "snippet") as Mode;
+  const compare = argv.includes("--compare");
   const model = process.env["EVAL_MODEL"];
   const tasks = (JSON.parse(await fs.readFile(path.join(EVALS, "tasks", "context.json"), "utf8")) as Task[]).filter((t) => !only || t.id === only);
-  await setupWorkspace();
-  const outcomes: Outcome[] = [];
-  console.log(`running ${tasks.length} eval task(s) with headless claude${model ? ` (model ${model})` : ""}…\n`);
-  for (const task of tasks) {
-    process.stdout.write(`  ${task.id.padEnd(24)} `);
-    const t0 = Date.now();
-    const { lines, code, stderr } = await runClaude(task.prompt, model, 420_000);
-    const parsed = parseTranscript(lines);
-    if (/Failed to authenticate|OAuth session expired|not logged in|Invalid API key/i.test(parsed.answer + stderr)) {
-      console.log("BLOCKED");
-      console.log(`\nHeadless claude could not authenticate: ${parsed.answer.trim() || stderr.trim()}`);
-      console.log("Fix: open a terminal, run `claude` once (it will prompt you to log in; or run `claude auth login`), then re-run `npm run evals`.");
-      process.exitCode = 2;
-      return;
-    }
-    const verdict = judge(task, parsed.calls);
-    if (code !== 0 && parsed.calls.length === 0) verdict.reasons.push(`claude exited ${code}: ${stderr.trim().split("\n").slice(-2).join(" ") || "no output"}`);
-    const outcome: Outcome = {
-      id: task.id,
-      pass: verdict.reasons.length === 0,
-      soft: Boolean(task.soft),
-      reasons: verdict.reasons,
-      calls: parsed.calls,
-      turns: parsed.turns,
-      costUsd: parsed.costUsd,
-      durationMs: parsed.durationMs || Date.now() - t0,
-      answer: parsed.answer,
-    };
-    outcomes.push(outcome);
-    await fs.writeFile(path.join(RUNS, `${task.id}.json`), JSON.stringify({ task, ...outcome, raw: lines }, null, 2));
-    console.log(`${outcome.pass ? "PASS" : outcome.soft ? "soft-FAIL" : "FAIL"}  ${parsed.calls.map((c) => c.name.replace(PREFIX, "")).join(" → ") || "(no tools)"}  ${(outcome.durationMs / 1000).toFixed(0)}s${outcome.costUsd !== null ? ` $${outcome.costUsd.toFixed(3)}` : ""}`);
-    for (const r of outcome.reasons) console.log(`      ↳ ${r}`);
-  }
-  const hardFails = outcomes.filter((o) => !o.pass && !o.soft);
+  if (!MODES.includes(modeArg)) throw new Error(`--mode must be one of ${MODES.join(", ")}`);
   const date = new Date().toISOString().slice(0, 10);
-  const md = [
-    `# Tool-selection eval results — tiny-context`,
-    ``,
-    `_${date} · headless \`claude -p\`${model ? ` · model ${model}` : ""} · ${outcomes.filter((o) => o.pass).length}/${outcomes.length} pass_`,
-    ``,
-    `| Task | Result | Tools called | Turns | Time | Cost |`,
-    `|---|---|---|---:|---:|---:|`,
-    ...outcomes.map(
-      (o) =>
-        `| ${o.id} | ${o.pass ? "✅ pass" : o.soft ? "⚠️ soft fail" : "❌ fail"}${o.reasons.length ? `<br>${o.reasons.join("<br>")}` : ""} | ${o.calls.map((c) => c.name.replace(PREFIX, "")).join(" → ") || "—"} | ${o.turns} | ${(o.durationMs / 1000).toFixed(0)}s | ${o.costUsd !== null ? `$${o.costUsd.toFixed(3)}` : "—"} |`,
-    ),
-    ``,
-    `Prompts are natural user language (see \`tasks/context.json\`). Pass = the intended tool was called with sane params and the large fixture was never read raw; the negative case passes when the built-in Read is used for a 2 KB file and no tiny-context tool is called.`,
-    ``,
-  ].join("\n");
-  await fs.writeFile(path.join(EVALS, "RESULTS.md"), md);
-  console.log(`\n${outcomes.filter((o) => o.pass).length}/${outcomes.length} pass · wrote evals/RESULTS.md`);
-  if (hardFails.length) process.exitCode = 1;
+  const all = new Map<Mode, Outcome[]>();
+  for (const mode of compare ? MODES : [modeArg]) all.set(mode, await runMode(mode, tasks, model));
+  for (const [mode, outcomes] of all) {
+    await fs.writeFile(path.join(EVALS, `RESULTS-${mode}.md`), modeTable(outcomes, mode, model, date));
+    if (mode === "snippet") await fs.writeFile(path.join(EVALS, "RESULTS.md"), modeTable(outcomes, mode, model, date));
+  }
+  if (compare) {
+    await fs.writeFile(path.join(EVALS, "COMPARISON.md"), comparison(all, tasks, model, date));
+    console.log("\nwrote evals/COMPARISON.md");
+  }
+  for (const [mode, outcomes] of all) console.log(`[${mode}] ${outcomes.filter((o) => o.pass).length}/${outcomes.length} pass · ${outcomes.filter((o) => o.correct).length} correct · $${outcomes.reduce((a, o) => a + (o.costUsd ?? 0), 0).toFixed(2)}`);
+  const hard = [...all.values()].flat().filter((o) => !o.pass && !o.soft && o.mode !== "none");
+  if (hard.length && !compare) process.exitCode = 1;
 }
 
 await main();

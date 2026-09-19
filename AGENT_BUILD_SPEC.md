@@ -376,3 +376,9 @@ Each package ships `docs/AGENT_USAGE.md` (§5). Requirements: ≤ 8 lines; imper
 - License: MIT.
 
 **Out of scope — do not build:** web UIs; remote/HTTP MCP transport, auth, accounts; daemons/watch modes; any cloud API or LLM calls inside tools (everything deterministic and local); embeddings/vector search (v2 at the earliest).
+
+---
+
+## 14. Post-checkpoint proposals (added 2026-09-19 after Checkpoint B)
+
+See `PROPOSALS.md` for evidence and designs. In brief: (a) ship an agent-native delivery of `context` — a Claude Code PreToolUse hook that turns oversized/binary `Read` calls into outlines, so the smart path is the default path (built; measured in `evals/COMPARISON.md`); (b) `run_command`, a bounded, type-aware digest of shell command output with the full log saved to disk — the largest remaining context hog for coding agents.

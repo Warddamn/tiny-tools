@@ -19,32 +19,34 @@ Reducing tokens-per-step and wall-clock-per-step is what lets an agent take more
 ## Benchmarks
 
 <!-- bench:start -->
-**17 tasks · 7,413,803 naive tokens → 9,169 tool tokens · 99.9% saved overall · median 35ms per call**
+**17 tasks · 7,415,930 naive tokens → 9,169 tool tokens · 99.9% saved overall · median 34ms per call**
 
 | Tool | Task | Naive tokens | Tool tokens | Saved | Time |
 |---|---|---:|---:|---:|---:|
-| `query_table` | total sales by region (sales.csv) | 1,370,762 | 75 | 99.99% | 0.5s |
-| `query_table` | how many rows have a negative total (sales.csv) | 1,370,762 | 37 | 99.99% | 0.4s |
+| `query_table` | total sales by region (sales.csv) | 1,370,762 | 75 | 99.99% | 0.6s |
+| `query_table` | how many rows have a negative total (sales.csv) | 1,370,762 | 37 | 99.99% | 0.5s |
 | `query_table` | which columns exist and their types (sales.csv) | 1,370,762 | 186 | 99.99% | 0.3s |
-| `summarize_log` | what's causing the 5xx spike (app.log) | 731,145 | 380 | 99.9% | 35ms |
-| `summarize_log` | summarize this log (app.log) | 731,145 | 698 | 99.9% | 80ms |
+| `summarize_log` | what's causing the 5xx spike (app.log) | 731,145 | 380 | 99.9% | 34ms |
+| `summarize_log` | summarize this log (app.log) | 731,145 | 698 | 99.9% | 93ms |
 | `file_map` | what's in this 100-page contract (contract.pdf) | 72,055 | 2,065 | 97.1% | 0.2s |
 | `query_file` | where does the contract discuss termination (contract.pdf) | 72,055 | 713 | 99.0% | 0.1s |
 | `read_section` | read the termination pages (2 of 100) (contract.pdf) | 72,055 | 1,528 | 97.9% | 0.1s |
-| `file_map` | outline the 40-page handbook (handbook.docx) | 31,699 | 483 | 98.5% | 5ms |
-| `query_file` | does the handbook cover remote work (handbook.docx) | 31,699 | 310 | 99.0% | 5ms |
+| `file_map` | outline the 40-page handbook (handbook.docx) | 31,699 | 483 | 98.5% | 6ms |
+| `query_file` | does the handbook cover remote work (handbook.docx) | 31,699 | 310 | 99.0% | 6ms |
 | `read_section` | read the handbook's Termination section (handbook.docx) | 31,699 | 1,166 | 96.3% | 2ms |
 | `extract` | every email address in the handbook (handbook.docx) | 31,699 | 51 | 99.8% | 3ms |
 | `diff_files` | what changed between two handbook versions (handbook.docx ↔ handbook-v2.docx) | 63,429 | 293 | 99.5% | 4ms |
-| `file_map` | what's in this source tree (src/) | 2,697 | 318 | 88.2% | 2ms |
-| `file_map` | which functions are in this module (src/…/paths.ts) | 1,603 | 259 | 83.8% | 3ms |
-| `query_file` | which functions call resolveInputs (src/**/*.ts) | 57,775 | 570 | 99.0% | 5ms |
-| `validate_file` | is this 100k-row CSV well-formed (sales.csv) | 1,370,762 | 37 | 99.99% | 53ms |
+| `file_map` | what's in this source tree (src/) | 2,697 | 318 | 88.2% | 3ms |
+| `file_map` | which functions are in this module (src/…/paths.ts) | 1,607 | 259 | 83.9% | 3ms |
+| `query_file` | which functions call resolveInputs (src/**/*.ts) | 59,898 | 570 | 99.0% | 5ms |
+| `validate_file` | is this 100k-row CSV well-formed (sales.csv) | 1,370,762 | 37 | 99.99% | 55ms |
 
 _Fixtures (generated locally, seeded): sales.csv 5.2 MB · app.log 2.8 MB · contract.pdf 206 KB · handbook.docx 29 KB (100,000 rows · 50,000 lines · 100 pages · ~18k words) · src/ 37 TypeScript files._ · _Generated 2026-09-19; re-run with `npm run bench`._
 <!-- bench:end -->
 
 Measured the way an agent would experience it: **naive** = tokens to read the raw content the task needs (bytes/4); **tool** = tokens of the tool's full response. Fixtures are generated locally by `bench/`.
+
+**Against a shell-capable agent the honest number is smaller:** the same 12 tasks through headless Claude Code with and without tiny-context gave identical answers; the tools cut tokens ~20%, cost ~19%, wall-clock ~50% and turns 4.3 → 3.5, because one call replaces a loop of shell probes. See `evals/COMPARISON.md` and `PROPOSALS.md`.
 
 ## Size
 
@@ -64,6 +66,24 @@ Dependencies and why each one earns its place:
 | `ajv` · `yaml` · `fast-xml-parser` | JSON Schema · YAML · XML checks in `validate_file` | lazily, per check |
 
 No models, no binaries, no network. `extract` uses system `jq` when present and a built-in path subset otherwise.
+
+## The Read guard hook (recommended)
+
+Tool descriptions and the snippet make an agent *choose* tiny-context. The hook removes the choice: it intercepts the built-in **Read** when the target is a PDF/DOCX/PPTX/XLSX (which Read can't open) or a text file over 20 KB, blocks it, and hands the agent the file's outline plus the exact follow-up calls (`read_section`, `query_file`, `query_table`, `summarize_log`). Small files and Reads that already pass `offset`/`limit` are untouched. Any error inside the hook lets the Read through.
+
+Claude Code — add to `~/.claude/settings.json` (all projects) or `.claude/settings.json` (one project):
+
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      { "matcher": "Read", "hooks": [ { "type": "command", "command": "tiny-context-read-guard", "timeout": 30 } ] }
+    ]
+  }
+}
+```
+
+`tiny-context-read-guard` is on PATH after `npm i -g @tinytools/context` (or use the full path to `hooks/read-guard.mjs`). Threshold: `TINY_CONTEXT_READ_GUARD_KB` (default 20). Measured effect: see `evals/COMPARISON.md` (the **hook** condition runs with no snippet at all).
 
 ## Tools
 

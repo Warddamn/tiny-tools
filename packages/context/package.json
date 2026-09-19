@@ -21,7 +21,8 @@
   ],
   "bin": {
     "tiny-context": "./dist/cli.js",
-    "tiny-context-mcp": "./dist/mcp.js"
+    "tiny-context-mcp": "./dist/mcp.js",
+    "tiny-context-read-guard": "./hooks/read-guard.mjs"
   },
   "exports": {
     ".": {
@@ -31,7 +32,8 @@
   },
   "files": [
     "dist",
-    "docs"
+    "docs",
+    "hooks"
   ],
   "mcpName": "io.github.avrg3/tiny-context",
   "dependencies": {
