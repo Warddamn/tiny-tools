@@ -4,7 +4,7 @@ Who does what: **P** = Payton (accounts, logins, one-click approvals) · **A** =
 
 ## 0. Decide names (P) — once
 - GitHub owner: existing `Warddamn`, or a new `AVRG3` account.
-- npm scope: free organisation `tinytools` (→ `@tinytools/context`) or a personal scope (→ `@<npm-username>/context`).
+- npm scope: free organisation `tiny_tools_pw` (→ `@tiny_tools_pw/context`) or a personal scope (→ `@<npm-username>/context`).
 - Then (A): `node scripts/set-owner.mjs --github <owner> --scope <scope>` · `npm install` · `npm test` · commit.
 
 ## 1. Accounts & logins (P)

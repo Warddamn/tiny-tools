@@ -13,7 +13,7 @@ import {
   teach,
   truncateLine,
   wordCount,
-} from "@tinytools/shared";
+} from "@tiny_tools_pw/shared";
 import type { ReadSectionArgs } from "../schemas.js";
 import { type LibResult, describeRange, parseRange } from "./result.js";
 

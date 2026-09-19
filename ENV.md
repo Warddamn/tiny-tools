@@ -16,4 +16,4 @@
 
 **Consequence for this build:** Phase 0–2 (shared, context, images, pdf) are fully testable locally. Phase 3 packages (video, audio, transcribe, verify.render_document) can only test their *missing-binary teach-error* path here unless the binaries above are installed. `verify.render_html` / `render_pdf_page` / `visual_diff` / `check_links` can be tested (Chrome present).
 
-**npm name check:** `tiny-context`, `tiny-images`, `tiny-audio`, `tiny-context-mcp` are already taken on npm → all packages use the `@tinytools/*` scope (§13 fallback). Bin names stay `tiny-<name>` / `tiny-<name>-mcp`.
+**npm name check:** `tiny-context`, `tiny-images`, `tiny-audio`, `tiny-context-mcp` are already taken on npm → all packages use the `@tiny_tools_pw/*` scope (§13 fallback). Bin names stay `tiny-<name>` / `tiny-<name>-mcp`.

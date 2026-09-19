@@ -119,7 +119,7 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { z } from "zod";
 import { queryTable } from "./lib/query-table.js";
 import { QueryTableInput } from "./schemas.js";
-import { toolError, timed } from "@tinytools/shared";
+import { toolError, timed } from "@tiny_tools_pw/shared";
 
 const server = new McpServer({ name: "tiny-context", version: "0.1.0" });
 
@@ -370,7 +370,7 @@ Each package ships `docs/AGENT_USAGE.md` (§5). Requirements: ≤ 8 lines; imper
 
 ## 13. Conventions & Scope
 
-- Package names `tiny-context`, `tiny-images`, `tiny-pdf`, `tiny-video`, `tiny-audio`, `tiny-verify`, `tiny-transcribe`, `tiny-bgremove` (fall back to a scope like `@tinytools/context` if taken — stay consistent across all).
+- Package names `tiny-context`, `tiny-images`, `tiny-pdf`, `tiny-video`, `tiny-audio`, `tiny-verify`, `tiny-transcribe`, `tiny-bgremove` (fall back to a scope like `@tiny_tools_pw/context` if taken — stay consistent across all).
 - Paths: accept `~`, relative (resolved against cwd), absolute, and globs; always *return* absolute. Handle Windows separators.
 - Logging: stderr only in MCP mode. `TINY_TOOLS_DEBUG=1` enables verbose stderr.
 - License: MIT.

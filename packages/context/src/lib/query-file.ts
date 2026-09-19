@@ -12,7 +12,7 @@ import {
   resolveInputs,
   teach,
   truncateLine,
-} from "@tinytools/shared";
+} from "@tiny_tools_pw/shared";
 import type { QueryFileArgs } from "../schemas.js";
 import type { LibResult } from "./result.js";
 

@@ -50,7 +50,7 @@ query_file · 59,898 → 570 tokens · 99.0% · 5ms
 validate_file · 1,370,762 → 37 tokens · 99.99% · 55ms
 ```
 
-## Install size (production dependency closure of @tinytools/context)
+## Install size (production dependency closure of @tiny_tools_pw/context)
 
 Total **134.7 MB** across 108 packages — **21.9 MB without DuckDB** (optional; only `query_table` needs it).
 Largest: @duckdb/node-bindings-darwin-arm64 112.1 MB · zod 5.9 MB · @modelcontextprotocol/sdk 4.1 MB · unpdf 2.0 MB · hono 1.3 MB · fast-xml-parser 1.3 MB.

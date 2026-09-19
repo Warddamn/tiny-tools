@@ -6,7 +6,7 @@
 import { promises as fs } from "node:fs";
 import * as path from "node:path";
 import { fileURLToPath } from "node:url";
-import { toCsvLine } from "@tinytools/shared";
+import { toCsvLine } from "@tiny_tools_pw/shared";
 import { PDFDocument, StandardFonts } from "pdf-lib";
 import { type DocxPara, buildDocx, buildPptx } from "./ooxml.js";
 

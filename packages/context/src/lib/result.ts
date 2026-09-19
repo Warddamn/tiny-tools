@@ -1,5 +1,5 @@
 // @author AVRG3
-import { ledger } from "@tinytools/shared";
+import { ledger } from "@tiny_tools_pw/shared";
 
 /** Every lib function returns text + the bytes an agent would otherwise have read (for the rule-11 ledger). */
 export interface LibResult {

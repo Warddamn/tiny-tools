@@ -1,13 +1,13 @@
-# @tinytools/context — `tiny-context`
+# @tiny_tools_pw/context — `tiny-context`
 
 **Know things about files without reading them.** Eight local, deterministic MCP tools that let an AI agent outline, search, slice, query, cluster, diff, validate and extract from files — including PDF, DOCX, PPTX and XLSX — and get back only what it needs, with a savings line on every response.
 
-[![npm version](https://img.shields.io/npm/v/@tinytools/context)](https://www.npmjs.com/package/@tinytools/context)
-[![npm downloads](https://img.shields.io/npm/dw/@tinytools/context)](https://www.npmjs.com/package/@tinytools/context)
+[![npm version](https://img.shields.io/npm/v/@tiny_tools_pw/context)](https://www.npmjs.com/package/@tiny_tools_pw/context)
+[![npm downloads](https://img.shields.io/npm/dw/@tiny_tools_pw/context)](https://www.npmjs.com/package/@tiny_tools_pw/context)
 [![CI](https://github.com/Warddamn/tiny-tools/actions/workflows/ci.yml/badge.svg)](https://github.com/Warddamn/tiny-tools/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/Warddamn/tiny-tools/blob/main/LICENSE)
-[![Install in Cursor](https://cursor.com/deeplink/mcp-install-dark.svg)](https://cursor.com/en/install-mcp?name=tiny-context&config=eyJjb21tYW5kIjoibnB4IiwiYXJncyI6WyIteSIsIi1wIiwiQHRpbnl0b29scy9jb250ZXh0IiwidGlueS1jb250ZXh0LW1jcCJdfQ%3D%3D)
-[![Install in VS Code](https://img.shields.io/badge/VS_Code-Install_Server-0098FF)](https://insiders.vscode.dev/redirect?url=vscode%3Amcp%2Finstall%3F%257B%2522name%2522%253A%2522tiny-context%2522%252C%2522command%2522%253A%2522npx%2522%252C%2522args%2522%253A%255B%2522-y%2522%252C%2522-p%2522%252C%2522%2540tinytools%252Fcontext%2522%252C%2522tiny-context-mcp%2522%255D%257D)
+[![Install in Cursor](https://cursor.com/deeplink/mcp-install-dark.svg)](https://cursor.com/en/install-mcp?name=tiny-context&config=eyJjb21tYW5kIjoibnB4IiwiYXJncyI6WyIteSIsIi1wIiwiQHRpbnlfdG9vbHNfcHcvY29udGV4dCIsInRpbnktY29udGV4dC1tY3AiXX0%3D)
+[![Install in VS Code](https://img.shields.io/badge/VS_Code-Install_Server-0098FF)](https://insiders.vscode.dev/redirect?url=vscode%3Amcp%2Finstall%3F%257B%2522name%2522%253A%2522tiny-context%2522%252C%2522command%2522%253A%2522npx%2522%252C%2522args%2522%253A%255B%2522-y%2522%252C%2522-p%2522%252C%2522%2540tiny_tools_pw%252Fcontext%2522%252C%2522tiny-context-mcp%2522%255D%257D)
 
 **Before → after, measured on this package's fixtures** (read both columns together — the first is the ceiling, the second is what a capable coding agent actually gains):
 
@@ -20,42 +20,42 @@ Method and full tables: [Benchmarks](#benchmarks) · [evals/COMPARISON.md](https
 
 ## Install
 
-The server runs locally over stdio; every client below launches the same command, `npx -y -p @tinytools/context tiny-context-mcp`.
+The server runs locally over stdio; every client below launches the same command, `npx -y -p @tiny_tools_pw/context tiny-context-mcp`.
 
 **Claude Code**
 
 ```bash
-claude mcp add tiny-context -- npx -y -p @tinytools/context tiny-context-mcp
+claude mcp add tiny-context -- npx -y -p @tiny_tools_pw/context tiny-context-mcp
 ```
 
 **Codex CLI** (writes `[mcp_servers.tiny-context]` to `~/.codex/config.toml`)
 
 ```bash
-codex mcp add tiny-context -- npx -y -p @tinytools/context tiny-context-mcp
+codex mcp add tiny-context -- npx -y -p @tiny_tools_pw/context tiny-context-mcp
 ```
 
 **Cursor** — `.cursor/mcp.json`, or click the *Install in Cursor* badge above
 
 ```json
-{ "mcpServers": { "tiny-context": { "command": "npx", "args": ["-y", "-p", "@tinytools/context", "tiny-context-mcp"] } } }
+{ "mcpServers": { "tiny-context": { "command": "npx", "args": ["-y", "-p", "@tiny_tools_pw/context", "tiny-context-mcp"] } } }
 ```
 
 **VS Code** — `.vscode/mcp.json` (note the `servers` key), or click the *Install in VS Code* badge above
 
 ```json
-{ "servers": { "tiny-context": { "type": "stdio", "command": "npx", "args": ["-y", "-p", "@tinytools/context", "tiny-context-mcp"] } } }
+{ "servers": { "tiny-context": { "type": "stdio", "command": "npx", "args": ["-y", "-p", "@tiny_tools_pw/context", "tiny-context-mcp"] } } }
 ```
 
 **Windsurf** — `~/.codeium/windsurf/mcp_config.json`
 
 ```json
-{ "mcpServers": { "tiny-context": { "command": "npx", "args": ["-y", "-p", "@tinytools/context", "tiny-context-mcp"] } } }
+{ "mcpServers": { "tiny-context": { "command": "npx", "args": ["-y", "-p", "@tiny_tools_pw/context", "tiny-context-mcp"] } } }
 ```
 
 **Claude Desktop** — `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) · `%APPDATA%\Claude\claude_desktop_config.json` (Windows)
 
 ```json
-{ "mcpServers": { "tiny-context": { "command": "npx", "args": ["-y", "-p", "@tinytools/context", "tiny-context-mcp"] } } }
+{ "mcpServers": { "tiny-context": { "command": "npx", "args": ["-y", "-p", "@tiny_tools_pw/context", "tiny-context-mcp"] } } }
 ```
 
 Then paste [`docs/AGENT_USAGE.md`](docs/AGENT_USAGE.md) into your `CLAUDE.md` / `AGENTS.md` / `.cursorrules` so the agent reaches for the tools at the right moments. Claude Code users can also add the [Read guard hook](#the-read-guard-hook-recommended), which turns that choice into a rule.
@@ -124,7 +124,7 @@ Dependencies and why each one earns its place:
 | `@modelcontextprotocol/sdk` | the official MCP server/client (stdio) | at start |
 | `zod` | one schema drives lib, CLI and MCP; param descriptions live here | at start |
 | `commander` | the CLI | CLI only |
-| `@tinytools/shared` | path/glob resolution, safe outputs, teach-errors, ledger, text extraction (pdf via `unpdf`, office via `fflate` + regex) | at start; `unpdf` lazily |
+| `@tiny_tools_pw/shared` | path/glob resolution, safe outputs, teach-errors, ledger, text extraction (pdf via `unpdf`, office via `fflate` + regex) | at start; `unpdf` lazily |
 | `@duckdb/node-api` *(optional, native)* | SQL over CSV/TSV/Parquet/XLSX in `query_table` | lazily, only for `query_table` |
 | `ajv` · `yaml` · `fast-xml-parser` | JSON Schema · YAML · XML checks in `validate_file` | lazily, per check |
 
@@ -146,7 +146,7 @@ Claude Code — add to `~/.claude/settings.json` (all projects) or `.claude/sett
 }
 ```
 
-`tiny-context-read-guard` is on PATH after `npm i -g @tinytools/context` (or use the full path to `hooks/read-guard.mjs`). Threshold: `TINY_CONTEXT_READ_GUARD_KB` (default 20). Measured effect: see `evals/COMPARISON.md` (the **hook** condition runs with no snippet at all).
+`tiny-context-read-guard` is on PATH after `npm i -g @tiny_tools_pw/context` (or use the full path to `hooks/read-guard.mjs`). Threshold: `TINY_CONTEXT_READ_GUARD_KB` (default 20). Measured effect: see `evals/COMPARISON.md` (the **hook** condition runs with no snippet at all).
 
 ## Tools
 

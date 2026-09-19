@@ -14,7 +14,7 @@
     {
       "registryType": "npm",
       "registryBaseUrl": "https://registry.npmjs.org",
-      "identifier": "@tinytools/context",
+      "identifier": "@tiny_tools_pw/context",
       "version": "0.1.0",
       "transport": {
         "type": "stdio"
@@ -33,7 +33,7 @@
         },
         {
           "type": "positional",
-          "value": "@tinytools/context",
+          "value": "@tiny_tools_pw/context",
           "isRequired": true
         },
         {

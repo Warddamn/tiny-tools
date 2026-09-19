@@ -6,7 +6,7 @@
  */
 import { createRequire } from "node:module";
 import { Command, InvalidArgumentError } from "commander";
-import { formatError } from "@tinytools/shared";
+import { formatError } from "@tiny_tools_pw/shared";
 import { TOOLS, runTool } from "./tools.js";
 
 const require = createRequire(import.meta.url);

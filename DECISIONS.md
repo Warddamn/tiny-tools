@@ -1,7 +1,7 @@
 # DECISIONS — one line each: decision + why
 
 - **Repo location:** `~/Desktop/pw papps/tiny-tools` (sibling of the other apps) — the session's cwd was the VR rug project, wrong home for a new monorepo.
-- **Package naming:** `@tinytools/<name>` scope for every package — `tiny-context`, `tiny-images`, `tiny-audio`, `tiny-context-mcp` are taken on npm (§13 fallback). Bins remain `tiny-<name>` / `tiny-<name>-mcp`.
+- **Package naming:** `@tiny_tools_pw/<name>` scope for every package — `tiny-context`, `tiny-images`, `tiny-audio`, `tiny-context-mcp` are taken on npm (§13 fallback). Bins remain `tiny-<name>` / `tiny-<name>-mcp`.
 - **TypeScript 5.9, not 7.0:** TS 7 (the native port) shipped recently; staying on 5.x avoids tooling surprises. Easy to bump later.
 - **zod 4:** MCP SDK 1.30 peer-accepts `^3.25 || ^4`; new code starts on 4.
 - **Glob expansion hand-rolled** (`*`, `**`, `?`, `{a,b}`, `[…]`): ~60 lines vs a 1 MB fast-glob dependency. Tiny is the product.
@@ -28,4 +28,4 @@
 - **`callers` stays soft:** Grep across a source tree is the right tool for "who calls X"; the descriptions say so, and the agent agreed in all four conditions.
 - **Read guard hook shipped but not oversold:** it never fired when the MCP tools were visible; it is insurance for hosts where Read would be attempted.
 - **Discoverability (see DISCOVERY.md):** usage of a local no-telemetry server is unmeasurable by design; proxies are npm downloads, GitHub traffic, directory estimates → `npm run stats`. Registry `description` must be ≤ 100 chars (schema cap) — shortened. Added MCP server `instructions` (Claude Code loads only tool names + instructions at session start) and `anthropic/alwaysLoad` on `file_map` only (one always-visible gateway tool). npm keywords/description rewritten for keyword search (npm search has no popularity weighting). `AGENTS.md` = copy of `CLAUDE.md` (open format read by other agent tools); GitHub topics expanded to 18.
-- **Known gap:** `scripts/set-owner.mjs` does not rewrite URL-encoded scope forms (`%40tinytools%2Fcontext`) inside badge/deeplink URLs; if the npm scope ever changes, regenerate the README badge row by hand.
+- **Known gap:** `scripts/set-owner.mjs` does not rewrite URL-encoded scope forms (`%40tiny_tools_pw%2Fcontext`) inside badge/deeplink URLs; if the npm scope ever changes, regenerate the README badge row by hand.

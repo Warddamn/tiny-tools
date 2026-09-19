@@ -2,7 +2,7 @@
  * @author AVRG3
  * The tool table: one definition drives the MCP server AND the CLI, so params/descriptions never drift.
  */
-import { teach, timed } from "@tinytools/shared";
+import { teach, timed } from "@tiny_tools_pw/shared";
 import type { z } from "zod";
 import { diffFiles } from "./lib/diff-files.js";
 import { extract } from "./lib/extract.js";

@@ -1,7 +1,7 @@
 // @author AVRG3
 import { promises as fs } from "node:fs";
 import * as path from "node:path";
-import { decodeText, fmtInt, isProbablyBinary, parseCsv, pathExists, resolveInputs, teach, toAbsolute, truncateLine } from "@tinytools/shared";
+import { decodeText, fmtInt, isProbablyBinary, parseCsv, pathExists, resolveInputs, teach, toAbsolute, truncateLine } from "@tiny_tools_pw/shared";
 import type { ValidateFileArgs } from "../schemas.js";
 import type { LibResult } from "./result.js";
 

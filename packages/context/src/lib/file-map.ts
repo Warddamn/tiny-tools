@@ -16,7 +16,7 @@ import {
   toAbsolute,
   truncateLine,
   wordCount,
-} from "@tinytools/shared";
+} from "@tiny_tools_pw/shared";
 import type { FileMapArgs } from "../schemas.js";
 import { outlineCode } from "./code-outline.js";
 import { type LibResult, fmtBytes } from "./result.js";

@@ -7,7 +7,7 @@
 import { createRequire } from "node:module";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { formatError, toolError } from "@tinytools/shared";
+import { formatError, toolError } from "@tiny_tools_pw/shared";
 import { TOOLS, runTool } from "./tools.js";
 
 const require = createRequire(import.meta.url);

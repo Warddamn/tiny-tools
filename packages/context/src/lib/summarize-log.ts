@@ -2,7 +2,7 @@
 import { createReadStream, promises as fs } from "node:fs";
 import * as path from "node:path";
 import * as readline from "node:readline";
-import { boundText, fmtInt, resolveInputs, teach, truncateLine } from "@tinytools/shared";
+import { boundText, fmtInt, resolveInputs, teach, truncateLine } from "@tiny_tools_pw/shared";
 import type { SummarizeLogArgs } from "../schemas.js";
 import type { LibResult } from "./result.js";
 

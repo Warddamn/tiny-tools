@@ -9,7 +9,7 @@
 #
 # ORDER OF OPERATIONS (see RELEASE.md §3): npm publish happens FIRST, by hand,
 # because npm requires a 2FA code. This workflow does NOT publish to npm — it
-# refuses to run unless @tinytools/context@<version> is already on npm, and
+# refuses to run unless @tiny_tools_pw/context@<version> is already on npm, and
 # unless packages/context/server.json says the same version as the tag.
 # The registry then verifies ownership through the npm package's `mcpName`
 # field and this repo's GitHub OIDC identity (no secrets needed).
@@ -64,16 +64,16 @@ jobs:
           fi
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
-      - name: Check @tinytools/context@<version> is already on npm
+      - name: Check @tiny_tools_pw/context@<version> is already on npm
         env:
           VERSION: ${{ steps.version.outputs.version }}
         run: |
           set -euo pipefail
-          URL="https://registry.npmjs.org/@tinytools%2Fcontext/${VERSION}"
+          URL="https://registry.npmjs.org/@tiny_tools_pw%2Fcontext/${VERSION}"
           CODE="$(curl -sS -o "${RUNNER_TEMP}/npm-version.json" -w '%{http_code}' "$URL")"
           echo "GET $URL -> HTTP $CODE"
           if [ "$CODE" != "200" ]; then
-            echo "::error::@tinytools/context@${VERSION} is not on npm (HTTP $CODE). The registry only lists packages that already exist on npm. Publish first — npm publish --access public -w packages/context (see RELEASE.md §3) — wait a minute for npm to propagate, then re-run this workflow from the Actions tab."
+            echo "::error::@tiny_tools_pw/context@${VERSION} is not on npm (HTTP $CODE). The registry only lists packages that already exist on npm. Publish first — npm publish --access public -w packages/context (see RELEASE.md §3) — wait a minute for npm to propagate, then re-run this workflow from the Actions tab."
             exit 1
           fi
           # The registry proves you own the npm package by reading its `mcpName` field; warn early if it is wrong.

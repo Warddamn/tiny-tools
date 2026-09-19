@@ -7,8 +7,8 @@ import { promises as fs } from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import { fileURLToPath } from "node:url";
-import { type LibResult, diffFiles, extract, fileMap, finish, queryFile, queryTable, readSection, summarizeLog, validateFile } from "@tinytools/context";
-import { byteLength, estimateTokens, fmtInt, fmtPct, formatDuration } from "@tinytools/shared";
+import { type LibResult, diffFiles, extract, fileMap, finish, queryFile, queryTable, readSection, summarizeLog, validateFile } from "@tiny_tools_pw/context";
+import { byteLength, estimateTokens, fmtInt, fmtPct, formatDuration } from "@tiny_tools_pw/shared";
 import { BENCH_DIR, LARGE, REPO_DIR, generateFixtures } from "./fixtures.js";
 
 interface Task {
@@ -76,7 +76,7 @@ async function depClosure(startPkgDir: string): Promise<Map<string, number>> {
     } catch {
       return;
     }
-    if (name) sizes.set(name, name.startsWith("@tinytools/") ? await dirSize(path.join(pkgDir, "dist")) : await dirSize(pkgDir));
+    if (name) sizes.set(name, name.startsWith("@tiny_tools_pw/") ? await dirSize(path.join(pkgDir, "dist")) : await dirSize(pkgDir));
     for (const dep of Object.keys({ ...(pj.dependencies ?? {}), ...(pj.optionalDependencies ?? {}) })) {
       if (seen.has(dep)) continue;
       seen.add(dep);
@@ -179,7 +179,7 @@ ${method}
 ${quotable}
 \`\`\`
 
-## Install size (production dependency closure of @tinytools/context)
+## Install size (production dependency closure of @tiny_tools_pw/context)
 
 Total **${mb(total)}** across ${closure.size} packages — **${mb(total - duck)} without DuckDB** (optional; only \`query_table\` needs it).
 Largest: ${top.map(([k, v]) => `${k} ${mb(v)}`).join(" · ")}.

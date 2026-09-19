@@ -1,5 +1,5 @@
 {
-  "name": "@tinytools/bench",
+  "name": "@tiny_tools_pw/bench",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -7,8 +7,8 @@
   "dependencies": {
     "pdf-lib": "^1.17.1",
     "fflate": "^0.8.2",
-    "@tinytools/context": "^0.1.0",
-    "@tinytools/shared": "^0.1.0"
+    "@tiny_tools_pw/context": "^0.1.0",
+    "@tiny_tools_pw/shared": "^0.1.0"
   },
   "author": "AVRG3",
   "repository": {

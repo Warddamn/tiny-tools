@@ -2,7 +2,7 @@
 // @author AVRG3
 /**
  * Usage numbers a maintainer can see WITHOUT telemetry in the tools:
- *   - npm downloads (api.npmjs.org): last day / week / month per package — every `npx -y -p @tinytools/context …`
+ *   - npm downloads (api.npmjs.org): last day / week / month per package — every `npx -y -p @tiny_tools_pw/context …`
  *     by a new machine is a download.
  *   - GitHub: stars, forks, watchers; views + unique visitors and clones (last 14 days, needs `gh` login); top referrers.
  *   node scripts/stats.mjs            (also: npm run stats)
@@ -11,7 +11,7 @@ import { execFileSync } from "node:child_process";
 
 const OWNER = "Warddamn";
 const REPO = "tiny-tools";
-const PACKAGES = ["@tinytools/context", "@tinytools/shared"];
+const PACKAGES = ["@tiny_tools_pw/context", "@tiny_tools_pw/shared"];
 
 const fmt = (n) => (typeof n === "number" ? n.toLocaleString("en-US") : "—");
 async function getJson(url) {
@@ -57,5 +57,5 @@ console.log(`  MCP Registry   https://registry.modelcontextprotocol.io/v0/server
 console.log(`  Smithery       https://smithery.ai/search?q=tiny-context`);
 console.log(`  PulseMCP       https://www.pulsemcp.com/servers?q=tiny-context`);
 console.log(`  Glama          https://glama.ai/mcp/servers?query=tiny-context`);
-console.log(`  npm            https://www.npmjs.com/package/@tinytools/context`);
+console.log(`  npm            https://www.npmjs.com/package/@tiny_tools_pw/context`);
 console.log(`  star history   https://star-history.com/#${OWNER}/${REPO}`);

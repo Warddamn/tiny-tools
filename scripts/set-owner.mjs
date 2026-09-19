@@ -3,7 +3,7 @@
 /**
  * One-command rename for publishing. Sets the GitHub owner and the npm scope everywhere they appear:
  *   node scripts/set-owner.mjs --github <owner> --scope <npm-scope>
- * e.g. node scripts/set-owner.mjs --github AVRG3 --scope tinytools
+ * e.g. node scripts/set-owner.mjs --github AVRG3 --scope tiny_tools_pw
  *      node scripts/set-owner.mjs --github Warddamn --scope avrg3
  * Touches: package.json (name/repository/homepage/bugs/mcpName), server.json, README snippets, AGENT_USAGE, evals/bench sources.
  */
@@ -15,11 +15,14 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const argv = process.argv.slice(2);
 const arg = (k) => (argv.includes(k) ? argv[argv.indexOf(k) + 1] : undefined);
 const github = arg("--github");
-const scope = (arg("--scope") ?? "tinytools").replace(/^@/, "");
+const scope = (arg("--scope") ?? "tiny_tools_pw").replace(/^@/, "");
 if (!github) {
   console.error("usage: node scripts/set-owner.mjs --github <owner> [--scope <npm-scope>]");
   process.exit(1);
 }
+const cfg = { command: "npx", args: ["-y", "-p", `@${scope}/context`, "tiny-context-mcp"] };
+const cursorB64 = encodeURIComponent(Buffer.from(JSON.stringify(cfg)).toString("base64"));
+const vscodeUrl = encodeURIComponent("vscode:mcp/install?" + encodeURIComponent(JSON.stringify({ name: "tiny-context", command: "npx", args: cfg.args })));
 const repoUrl = `https://github.com/${github}/tiny-tools`;
 const nsOwner = github.toLowerCase();
 
@@ -40,7 +43,7 @@ for (const rel of pkgs) {
   if (j.name?.startsWith("@")) j.name = `@${scope}/${j.name.split("/")[1]}`;
   for (const field of ["dependencies", "devDependencies", "optionalDependencies"]) {
     for (const k of Object.keys(j[field] ?? {})) {
-      if (k.startsWith("@tinytools/") || k.startsWith(`@${scope}/`)) {
+      if (k.startsWith("@") && ["shared", "context"].includes(k.split("/")[1])) {
         const v = j[field][k];
         delete j[field][k];
         j[field][`@${scope}/${k.split("/")[1]}`] = v;
@@ -63,9 +66,12 @@ for (const f of files) {
   if (pkgs.some((p) => path.join(ROOT, p) === f)) continue;
   const before = await fs.readFile(f, "utf8");
   const after = before
-    .replace(/@tinytools\//g, `@${scope}/`)
+    .replace(/@[\w.-]+\/(shared|context|images|pdf|video|audio|verify|transcribe|bgremove)\b/g, `@${scope}/$1`)
     .replace(/io\.github\.[\w-]+\//g, `io.github.${nsOwner}/`)
-    .replace(/https:\/\/github\.com\/[\w-]+\/tiny-tools/g, repoUrl);
+    .replace(/https:\/\/github\.com\/[\w-]+\/tiny-tools/g, repoUrl)
+    .replace(/%40[\w.-]+%2Fcontext/g, `%40${scope}%2Fcontext`)
+    .replace(/config=[A-Za-z0-9+\/=%]+/g, `config=${cursorB64}`)
+    .replace(/https:\/\/insiders\.vscode\.dev\/redirect\?url=[^)\s]+/g, `https://insiders.vscode.dev/redirect?url=${vscodeUrl}`);
   if (after !== before) {
     await fs.writeFile(f, after);
     changed++;

@@ -14,7 +14,7 @@ import {
   resolveInputs,
   splitRef,
   truncateLine,
-} from "@tinytools/shared";
+} from "@tiny_tools_pw/shared";
 import type { DiffFilesArgs } from "../schemas.js";
 import { type DiffOp, diffLines, hunksOf } from "./diff.js";
 import type { LibResult } from "./result.js";

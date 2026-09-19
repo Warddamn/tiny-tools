@@ -15,7 +15,7 @@ import {
   resolveInputs,
   teach,
   truncateLine,
-} from "@tinytools/shared";
+} from "@tiny_tools_pw/shared";
 import type { ExtractArgs } from "../schemas.js";
 import type { LibResult } from "./result.js";
 

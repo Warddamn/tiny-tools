@@ -15,7 +15,7 @@ import {
   teach,
   toCsvLine,
   truncateLine,
-} from "@tinytools/shared";
+} from "@tiny_tools_pw/shared";
 import type { QueryTableArgs } from "../schemas.js";
 import type { LibResult } from "./result.js";
 
@@ -30,7 +30,7 @@ async function loadDuck(): Promise<Duck> {
       const msg = ((e as Error)?.message ?? String(e)).split("\n")[0];
       throw teach(
         `DuckDB is not available (${msg}).`,
-        "It is an optional native dependency of @tinytools/context — run `npm install @duckdb/node-api` inside the tiny-tools install (macOS/Linux/Windows, x64/arm64), then retry.",
+        "It is an optional native dependency of @tiny_tools_pw/context — run `npm install @duckdb/node-api` inside the tiny-tools install (macOS/Linux/Windows, x64/arm64), then retry.",
       );
     });
   }

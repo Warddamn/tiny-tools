@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // @author AVRG3
 /**
- * Proves the publish path before publishing: packs @tinytools/shared + @tinytools/context exactly as npm would,
+ * Proves the publish path before publishing: packs @tiny_tools_pw/shared + @tiny_tools_pw/context exactly as npm would,
  * installs the tarballs into a throwaway project (with an override so context resolves shared from the local
  * tarball), then — as a stranger would — runs `tiny-context --help`, drives `tiny-context-mcp` over stdio with the
  * official MCP client (listTools + one callTool), and feeds the Read guard hook a simulated Read.
