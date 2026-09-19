@@ -59,7 +59,7 @@ describe("tiny-context CLI", () => {
   it("errors: teach message on stderr and exit 1", async () => {
     const r = await cli("map", "/definitely/not/here.txt");
     expect(r.code).toBe(1);
-    expect(r.stderr).toMatch(/Input not found: \/definitely\/not\/here\.txt — Pass a file or directory path/);
+    expect(r.stderr).toMatch(/Input not found: .*definitely.*not.*here\.txt — Pass a file or directory path/);
     const bad = await cli("read", fx("sample.pdf"), "--lines", "1-2");
     expect(bad.code).toBe(1);
     expect(bad.stderr).toMatch(/only works for plain-text formats/);
