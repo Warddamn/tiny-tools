@@ -1,0 +1,32 @@
+{
+  "fetched_at": "2026-09-21T00:01:48.865Z",
+  "repo": "Warddamn/tiny-tools",
+  "note": "Download events include automation and repeats; not unique people or agents. Traffic counts cover overlapping 14-day windows; do not add them across days.",
+  "releases": [
+    {
+      "tag": "v0.1.0",
+      "assets": [
+        {
+          "id": 575656870,
+          "name": "tiny-context-standalone-0.1.0.tgz",
+          "downloads": 1
+        },
+        {
+          "id": 575656871,
+          "name": "tiny_tools_pw-context-0.1.0.tgz",
+          "downloads": 0
+        },
+        {
+          "id": 575656868,
+          "name": "tiny_tools_pw-shared-0.1.0.tgz",
+          "downloads": 0
+        }
+      ]
+    }
+  ],
+  "traffic_status": "not_configured",
+  "views": null,
+  "clones": null,
+  "referrers": null,
+  "paths": null
+}
