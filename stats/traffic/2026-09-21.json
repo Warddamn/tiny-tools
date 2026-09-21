@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-09-21T00:01:48.865Z",
+  "fetched_at": "2026-09-21T10:50:25.304Z",
   "repo": "Warddamn/tiny-tools",
   "note": "Download events include automation and repeats; not unique people or agents. Traffic counts cover overlapping 14-day windows; do not add them across days.",
   "releases": [
@@ -9,7 +9,7 @@
         {
           "id": 575656870,
           "name": "tiny-context-standalone-0.1.0.tgz",
-          "downloads": 1
+          "downloads": 3
         },
         {
           "id": 575656871,
