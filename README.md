@@ -1,6 +1,6 @@
 # tiny-tools
 
-**Help agents answer questions about large files with less text in their context.** `tiny-context` provides eight local MCP tools for searching PDF and Office documents, querying CSV and spreadsheets, summarizing logs, and comparing or validating files. Built by **AVRG3**.
+**Fewer file-reading steps for AI agents.** `tiny-context` provides eight local MCP tools for searching PDF and Office documents, querying CSV and spreadsheets, summarizing logs, and comparing or validating files. Built by **AVRG3**.
 
 [![GitHub release](https://img.shields.io/github/v/release/Warddamn/tiny-tools)](https://github.com/Warddamn/tiny-tools/releases/latest)
 [![CI](https://github.com/Warddamn/tiny-tools/actions/workflows/ci.yml/badge.svg)](https://github.com/Warddamn/tiny-tools/actions/workflows/ci.yml)
@@ -8,16 +8,15 @@
 [![Install in Cursor](https://cursor.com/deeplink/mcp-install-dark.svg)](https://cursor.com/en/install-mcp?name=tiny-context&config=eyJjb21tYW5kIjoibnB4IiwiYXJncyI6WyIteSIsIi1wIiwiaHR0cHM6Ly9naXRodWIuY29tL1dhcmRkYW1uL3RpbnktdG9vbHMvcmVsZWFzZXMvZG93bmxvYWQvdjAuMS4wL3RpbnktY29udGV4dC1zdGFuZGFsb25lLTAuMS4wLnRneiIsInRpbnktY29udGV4dC1tY3AiXX0%3D)
 [![Install in VS Code](https://img.shields.io/badge/VS_Code-Install_Server-0098FF)](https://insiders.vscode.dev/redirect?url=vscode%3Amcp%2Finstall%3F%257B%2522name%2522%253A%2522tiny-context%2522%252C%2522command%2522%253A%2522npx%2522%252C%2522args%2522%253A%255B%2522-y%2522%252C%2522-p%2522%252C%2522https%253A%252F%252Fgithub.com%252FWarddamn%252Ftiny-tools%252Freleases%252Fdownload%252Fv0.1.0%252Ftiny-context-standalone-0.1.0.tgz%2522%252C%2522tiny-context-mcp%2522%255D%257D)
 
-**Before → after, measured on this repo's fixtures** (the first compares whole-file reads; the second is one 12-task agent comparison, not a guarantee):
+**Designed for agents seeking fewer steps on file tasks:**
 
-| vs. reading whole files | vs. a shell-capable agent |
-|---|---|
-| **17 tasks · 7,415,930 naive tokens → 9,169 tool tokens · 99.9% saved** | **same answers, ~20% fewer tokens, ~50% less time** |
-| what an agent pays when it `Read`s / `cat`s the file, or cannot open a PDF/DOCX/XLSX at all | headless Claude Code with Bash/Read/Grep/Glob, 12 tasks, with vs. without the tools |
+- **Explain a large error log:** `summarize_log` returns repeated errors, counts and time ranges without sending every log line into context.
+- **Answer a spreadsheet question:** `query_table` runs SQL over CSV/XLSX/Parquet and returns the result instead of the source rows.
+- **Find a PDF or Office passage:** `file_map`, `query_file` and `read_section` return an outline, ranked matches and the requested section.
 
-Method and full tables: [Benchmarks](#benchmarks--tiny-context) · [Does it actually help?](#does-it-actually-help-measured-honestly)
+**Measured example:** one log-analysis task took **7 agent turns without the tools → 3 with them**, with the same correct answer. Across the single 12-task comparison, the tools-only setup processed about **20% fewer tokens** and took about **46% less total time**. Some tasks improved less or got worse; short text and exact-string searches often suit built-ins. [Full comparison and limits](evals/COMPARISON.md) · [Try three tasks](QUICKSTART.md).
 
-**Why:** reducing tokens-per-step and wall-clock-per-step is what lets an agent take more steps before its context degrades. It's a capability multiplier, not just a cost saving.
+The whole-file-read benchmark below measures a different baseline; its savings are not a prediction for a capable agent.
 
 ## Install
 

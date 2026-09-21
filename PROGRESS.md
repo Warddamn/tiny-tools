@@ -56,3 +56,11 @@ Tools: file_map ✅ · query_file ✅ · read_section ✅ · extract ✅ · quer
 - No telemetry added. Download counters include our own verification runs. Private visitor/clone history requires TRAFFIC_TOKEN; public release counts can be archived without it.
 
 Validation: `npm test` passes 107 tests; the public release install passes all eight tool checks on macOS with a fresh npm cache and empty npm config. Encoded install buttons and every documented client JSON config match the plugin command.
+
+## Registry distribution (2026-09-21)
+
+- [x] Build self-contained MCPB archives from locked production dependencies, one per OS with x64/arm64 bindings. macOS archive: about 77 MiB compressed / 249 MiB unpacked; larger than the tarball because dependencies are included.
+- [x] Verify the extracted macOS archive outside the checkout with npm absent from PATH: all eight tools plus XLSX pass. Existing 107 tests pass.
+- [x] Replace the npm-dependent registry workflow with bundle builds/tests for Windows, Linux and macOS, followed by GitHub release and OIDC registry publication.
+- [x] Target the public copy at agent efficiency for logs, tables and document retrieval, with measured evidence and limits.
+- [ ] Verify the hosted cross-platform builds and searchable registry publication.

@@ -21,7 +21,9 @@
     "pretest": "node scripts/sign.mjs --check",
     "sign": "node scripts/sign.mjs",
     "stats": "node scripts/stats.mjs",
-    "verify:release": "node scripts/verify-release.mjs"
+    "verify:release": "node scripts/verify-release.mjs",
+    "bundle:mcpb": "npm run build && node scripts/build-mcpb.mjs",
+    "verify:mcpb": "node scripts/verify-mcpb.mjs"
   },
   "devDependencies": {
     "@types/node": "^24",

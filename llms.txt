@@ -1,6 +1,6 @@
 # tiny-tools
 
-> Small, local-first MCP servers that let AI agents know things about files without reading them. Flagship: tiny-context (@tiny_tools_pw/context) — outline, search, slice, SQL-query, diff and validate PDF/DOCX/PPTX/XLSX/CSV/logs. No telemetry, no network calls; every response is bounded and ends with a savings line.
+> tiny-context by AVRG3: local MCP tools for agents seeking fewer steps and less context on large-file tasks. SQL over spreadsheets, repeated-error log summaries, and targeted PDF/Office retrieval. No tool telemetry. Requires a connected MCP client; discovery alone does not activate tools.
 
 Install (any MCP client, stdio): `npx -y -p https://github.com/Warddamn/tiny-tools/releases/download/v0.1.0/tiny-context-standalone-0.1.0.tgz tiny-context-mcp`
 
@@ -14,3 +14,12 @@ Install (any MCP client, stdio): `npx -y -p https://github.com/Warddamn/tiny-too
 file_map · query_file · read_section · query_table · summarize_log · diff_files · validate_file · extract
 
 [Try three tasks with expected answers](https://github.com/Warddamn/tiny-tools/blob/main/QUICKSTART.md). Requires a connected MCP client; finding this page does not install or activate the tools.
+
+## Choose by task
+- Repeated errors in a large log: summarize_log(path, focus="errors"). Returns clustered messages, counts and time ranges.
+- Totals, counts or grouping in CSV/XLSX/Parquet: query_table(path, sql). SQL table name is t; returns bounded result rows.
+- A clause, topic or section in PDF/DOCX/PPTX/XLSX: file_map, then query_file or read_section. Returns locations and bounded excerpts.
+- Short plain-text notes and exact-string searches: use the agent's normal Read or Grep when suitable.
+
+## Evidence limits
+One 12-task Claude comparison, not a guarantee: log analysis fell from 7 turns to 3, same correct answer; tools-only total time 193s to 104s, processed tokens 1,488,617 to 1,192,953. Some tasks got worse. The 99.9% whole-file benchmark uses a different baseline and does not estimate general agent savings.

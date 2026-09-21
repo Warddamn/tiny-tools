@@ -25,7 +25,7 @@ cfg.args = cfg.args.map(value => value.replace(/https:\/\/github\.com\/[\w-]+\/t
 const cursorB64 = encodeURIComponent(Buffer.from(JSON.stringify(cfg)).toString("base64"));
 const vscodeUrl = encodeURIComponent("vscode:mcp/install?" + encodeURIComponent(JSON.stringify({ name: "tiny-context", command: "npx", args: cfg.args })));
 const repoUrl = `https://github.com/${github}/tiny-tools`;
-const nsOwner = github.toLowerCase();
+const nsOwner = github; // Match the owner namespace granted by GitHub OIDC.
 
 async function walk(dir, out) {
   for (const e of await fs.readdir(dir, { withFileTypes: true })) {

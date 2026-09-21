@@ -1,96 +1,109 @@
 # @author AVRG3
-#
-# Publish packages/context to the official MCP Registry.
-#
-# TRIGGER: pushing a git tag that matches `context-v*`, e.g.
-#     git tag context-v0.1.0 && git push origin context-v0.1.0
-# (Only the context package uses this prefix; later packages get their own
-#  prefix + workflow so one tag never publishes the wrong server.)
-#
-# ORDER OF OPERATIONS (see RELEASE.md §3): npm publish happens FIRST, by hand,
-# because npm requires a 2FA code. This workflow does NOT publish to npm — it
-# refuses to run unless @tiny_tools_pw/context@<version> is already on npm, and
-# unless packages/context/server.json says the same version as the tag.
-# The registry then verifies ownership through the npm package's `mcpName`
-# field and this repo's GitHub OIDC identity (no secrets needed).
-#
-# Steps for mcp-publisher (download URL, `login github-oidc`, `publish`) are
-# copied verbatim from https://modelcontextprotocol.io/registry/github-actions
+# Build real bundles before publishing; GitHub OIDC avoids npm accounts and new secrets.
 name: Publish to MCP Registry
 
 on:
-  push:
-    tags: ["context-v*"] # Triggers on tags like context-v0.1.0
+  workflow_dispatch:
+
+concurrency:
+  group: publish-context-registry
+  cancel-in-progress: false
+
+permissions:
+  contents: read
 
 jobs:
-  publish:
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write # Required for OIDC authentication
-      contents: read
-    defaults:
-      run:
-        working-directory: packages/context
-
+  bundle:
+    name: bundle (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v5
-
-      - name: Check server.json version matches the tag
-        id: version
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run bundle:mcpb
+      - name: Verify the exact archive outside the checkout
+        shell: bash
         run: |
-          set -euo pipefail
-          TAG="${GITHUB_REF_NAME}"
-          VERSION="${TAG#context-v}"
-          if [ -z "$VERSION" ] || [ "$VERSION" = "$TAG" ]; then
-            echo "::error::Tag '$TAG' does not look like context-v<semver> (e.g. context-v0.1.0)."
-            exit 1
-          fi
-          SERVER_VERSION="$(jq -r '.version' server.json)"
-          PACKAGE_VERSIONS="$(jq -r '[.packages[].version] | unique | join(",")' server.json)"
-          NPM_PKG_VERSION="$(jq -r '.version' package.json)"
-          echo "tag=$TAG  server.json=$SERVER_VERSION  server.json.packages=$PACKAGE_VERSIONS  package.json=$NPM_PKG_VERSION"
-          if [ "$SERVER_VERSION" != "$VERSION" ]; then
-            echo "::error::packages/context/server.json .version is '$SERVER_VERSION' but the tag says '$VERSION'. Set both .version and .packages[].version in server.json to $VERSION, commit, then delete and re-push the tag."
-            exit 1
-          fi
-          if [ "$PACKAGE_VERSIONS" != "$VERSION" ]; then
-            echo "::error::packages/context/server.json .packages[].version is '$PACKAGE_VERSIONS' but the tag says '$VERSION'. Update it to $VERSION, commit, then delete and re-push the tag."
-            exit 1
-          fi
-          if [ "$NPM_PKG_VERSION" != "$VERSION" ]; then
-            echo "::error::packages/context/package.json version is '$NPM_PKG_VERSION' but the tag says '$VERSION'. Run: npm version $VERSION -w packages/context, commit, then delete and re-push the tag."
-            exit 1
-          fi
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          for file in .tmp/mcpb/*.mcpb; do
+            npm run verify:mcpb -- "$file"
+          done
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bundle-${{ matrix.os }}
+          path: .tmp/mcpb/*
+          include-hidden-files: true
 
-      - name: Check @tiny_tools_pw/context@<version> is already on npm
+  publish:
+    needs: bundle
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: bundle-*
+          path: artifacts
+          merge-multiple: true
+      - run: node scripts/prepare-registry.mjs artifacts
+      - name: Publish bundles to GitHub
         env:
-          VERSION: ${{ steps.version.outputs.version }}
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
         run: |
           set -euo pipefail
-          URL="https://registry.npmjs.org/@tiny_tools_pw%2Fcontext/${VERSION}"
-          CODE="$(curl -sS -o "${RUNNER_TEMP}/npm-version.json" -w '%{http_code}' "$URL")"
-          echo "GET $URL -> HTTP $CODE"
-          if [ "$CODE" != "200" ]; then
-            echo "::error::@tiny_tools_pw/context@${VERSION} is not on npm (HTTP $CODE). The registry only lists packages that already exist on npm. Publish first — npm publish --access public -w packages/context (see RELEASE.md §3) — wait a minute for npm to propagate, then re-run this workflow from the Actions tab."
-            exit 1
-          fi
-          # The registry proves you own the npm package by reading its `mcpName` field; warn early if it is wrong.
-          NPM_MCP_NAME="$(jq -r '.mcpName // ""' "${RUNNER_TEMP}/npm-version.json")"
-          SERVER_NAME="$(jq -r '.name' server.json)"
-          if [ "$NPM_MCP_NAME" != "$SERVER_NAME" ]; then
-            echo "::warning::npm package mcpName is '${NPM_MCP_NAME:-<missing>}' but server.json name is '$SERVER_NAME' — the registry will reject the publish unless they match."
-          fi
+          VERSION=$(jq -r '.version' artifacts/server.json)
+          TAG="context-v${VERSION}"
+          cat > "$RUNNER_TEMP/release-notes.md" <<'NOTES'
+          Eight local MCP tools by **AVRG3** for spreadsheet queries, targeted PDF/Office searches, log summaries, diffs, validation and extraction.
 
-      ### Publish MCP server:
+          Choose the bundle for your OS: **darwin = macOS**, **win32 = Windows**, **linux = Linux**. Each contains x64/arm64 dependencies and requires Node.js 20+ or a compatible host-provided runtime. Open it in an MCPB-compatible client. The existing no-login npx installation remains in the README for other clients.
 
-      - name: Install mcp-publisher
+          All eight tools are checked against known answers after extracting the actual bundle. These are unsigned bundles; the registry metadata includes their SHA-256 hashes. Dependencies are included, so bundles are larger than the npm-style download.
+
+          A single 12-task Claude trial measured about 20% fewer processed tokens and 50% less total time. Results vary. Start with the worked examples: https://github.com/Warddamn/tiny-tools/blob/main/QUICKSTART.md
+          NOTES
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            # Re-runs must not silently replace artifacts already referenced by registry hashes.
+            mkdir -p "$RUNNER_TEMP/published"
+            gh release download "$TAG" --dir "$RUNNER_TEMP/published"
+            for file in artifacts/*; do
+              cmp "$file" "$RUNNER_TEMP/published/$(basename "$file")"
+            done
+          else
+            gh release create "$TAG" artifacts/* --target "$GITHUB_SHA" --title "tiny-context ${VERSION} — agent bundles" --notes-file "$RUNNER_TEMP/release-notes.md"
+          fi
+      - name: Install the pinned official publisher
+        shell: bash
         run: |
-          curl -L "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_$(uname -s | tr '[:upper:]' '[:lower:]')_$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/').tar.gz" | tar xz mcp-publisher
-
-      - name: Authenticate to MCP Registry
-        run: ./mcp-publisher login github-oidc
-
-      - name: Publish server to MCP Registry
-        run: ./mcp-publisher publish
+          set -euo pipefail
+          curl --fail --location --retry 3 https://github.com/modelcontextprotocol/registry/releases/download/v1.8.1/mcp-publisher_linux_amd64.tar.gz -o "$RUNNER_TEMP/publisher.tgz"
+          echo "a06c9096dcb9727c13555b6be26c7effa707b01f06a4c561ba7a3635443cf2cc  $RUNNER_TEMP/publisher.tgz" | sha256sum --check
+          tar -xzf "$RUNNER_TEMP/publisher.tgz" -C "$RUNNER_TEMP" mcp-publisher
+      - name: Publish to the official MCP Registry
+        working-directory: artifacts
+        run: |
+          "$RUNNER_TEMP/mcp-publisher" login github-oidc
+          "$RUNNER_TEMP/mcp-publisher" publish
+      - name: Verify the searchable registry entry
+        shell: bash
+        run: |
+          set -euo pipefail
+          NAME=$(jq -r '.name' artifacts/server.json)
+          curl --fail --get --data-urlencode "search=$NAME" https://registry.modelcontextprotocol.io/v0.1/servers -o "$RUNNER_TEMP/listing.json"
+          jq --exit-status --arg name "$NAME" '.servers[] | select(.server.name == $name)' "$RUNNER_TEMP/listing.json"
+          echo "Published **$NAME** with three GitHub-hosted bundles. No npm account was required." >> "$GITHUB_STEP_SUMMARY"
