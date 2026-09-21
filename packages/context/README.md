@@ -18,7 +18,15 @@
 
 The whole-file-read benchmark below measures a different baseline; its savings are not a prediction for a capable agent.
 
+## Find tiny-context
+
+Listed in the [official MCP Registry](https://registry.modelcontextprotocol.io/?q=io.github.Warddamn%2Ftiny-context) as `io.github.Warddamn/tiny-context` and indexed by [Glama](https://glama.ai/mcp/servers/Warddamn/tiny-tools). These listings expose the tool's purpose and installation information; your client must still connect it before an agent can call it.
+
 ## Install
+
+**MCPB-compatible clients:** download the bundle for your OS from the [agent bundle release](https://github.com/Warddamn/tiny-tools/releases/tag/context-v0.1.0) and open it in your client. `darwin` = macOS, `win32` = Windows, `linux` = Linux. Each bundles dependencies for x64 and arm64; a Node.js 20+ runtime is still required (some clients provide it). These are unsigned bundles with SHA-256 hashes in the registry. Downloads are approximately 77 MiB for macOS, 96 MiB for Linux and 34 MiB for Windows. All eight tools were tested from extracted bundles on macOS, Linux and Windows; not every CPU/OS combination or client UI has been tested.
+
+**Other MCP clients:** use the existing commands below. They download only the dependencies needed for the current machine.
 
 **Node.js 20+ required. No npm account or token needed.** Use the published GitHub release below. The npm package is not yet published; these commands do not depend on it. The server runs locally over stdio. Allow the first launch time to download its dependencies.
 

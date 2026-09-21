@@ -4,6 +4,11 @@
 
 Install (any MCP client, stdio): `npx -y -p https://github.com/Warddamn/tiny-tools/releases/download/v0.1.0/tiny-context-standalone-0.1.0.tgz tiny-context-mcp`
 
+## Discovery and bundles
+- [Official MCP Registry](https://registry.modelcontextprotocol.io/?q=io.github.Warddamn%2Ftiny-context): active listing, io.github.Warddamn/tiny-context version 0.1.0, GitHub-hosted MCPB packages with SHA-256 hashes.
+- [Glama](https://glama.ai/mcp/servers/Warddamn/tiny-tools): existing indexed repository listing.
+- [MCPB bundles](https://github.com/Warddamn/tiny-tools/releases/tag/context-v0.1.0): choose macOS (darwin), Windows (win32) or Linux. Includes dependencies for x64/arm64; requires Node.js 20+ or a compatible host-provided runtime. Use the npx command above for clients without MCPB support.
+
 ## Docs
 - [Repository README](https://github.com/Warddamn/tiny-tools#readme): packages, install, benchmarks, honest comparison
 - [tiny-context README](https://github.com/Warddamn/tiny-tools/tree/main/packages/context#readme): the 8 tools, CLI, MCP config, hook

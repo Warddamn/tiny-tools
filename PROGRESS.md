@@ -39,7 +39,8 @@ Tools: file_map ✅ · query_file ✅ · read_section ✅ · extract ✅ · quer
 - [x] Release prep (Phase 5 groundwork): CI workflow (`.github/workflows/ci.yml`), `scripts/set-owner.mjs` (one-command rename), `scripts/verify-install.mjs` (pack → install into a fresh project → CLI + MCP client + hook: **passes**), `packages/context/server.json`, `RELEASE.md` checklist.
 - [x] Names settled 2026-09-19: GitHub **Warddamn**, npm org **tiny_tools_pw** (`tinytools` was taken), npm user **payton_n_ward**, author credit **AVRG3**. Packages are `@tiny_tools_pw/context` and `@tiny_tools_pw/shared`.
 - [x] Discoverability (DISCOVERY.md, researched + verified): README fronts with install badges/one-liners/privacy · MCP server `instructions` + `alwaysLoad` gateway · registry `server.json` (≤100-char description) · npm keywords/description · `glama.json` · `llms.txt` · `AGENTS.md` · 18 GitHub topics · Claude Code plugin marketplace (`/plugin marketplace add Warddamn/tiny-tools`, validated) · workflows: `publish-mcp.yml` (on `context-v*` tags) and `traffic.yml` (daily snapshot) · `npm run stats`.
-- [ ] Owner-only discovery steps (DISCOVERY.md "Be found"): npm publish → registry publish → Glama claim → awesome-mcp-servers PR → mcp.so / MCP Market / Cursor directory submissions → plugin marketplace submission → a before/after post.
+- [x] Official MCP Registry published via GitHub-hosted MCPB bundles and OIDC; npm is not a prerequisite. Glama public listing verified.
+- [ ] Optional further distribution: npm, directory ownership claims and additional listings; see RELEASE.md for the current verified route.
 - [ ] Next build: Payton to choose — spec order (Phase 2: images, pdf) or PROPOSALS §2 (`run_command`, recommended first). Open question: install ffmpeg/whisper/LibreOffice before Phase 3?
 
 ## Phase 2 — images, pdf ⬜
@@ -63,4 +64,6 @@ Validation: `npm test` passes 107 tests; the public release install passes all e
 - [x] Verify the extracted macOS archive outside the checkout with npm absent from PATH: all eight tools plus XLSX pass. Existing 107 tests pass.
 - [x] Replace the npm-dependent registry workflow with bundle builds/tests for Windows, Linux and macOS, followed by GitHub release and OIDC registry publication.
 - [x] Target the public copy at agent efficiency for logs, tables and document retrieval, with measured evidence and limits.
-- [ ] Verify the hosted cross-platform builds and searchable registry publication.
+- [x] Hosted bundle builds and all eight tool checks pass on Linux/macOS/Windows; official registry is active (run 35621683385). Source CI also passes (35621684626).
+
+Registry read-back verified active version 0.1.0 with three packages; every fileSha256 matches GitHub asset digests. Canonical server.json now contains that live metadata. Glama public page returned HTTP 200 with the expected title/description; its API requires authentication, so no API-based listing edits were made. No independent adoption claimed.

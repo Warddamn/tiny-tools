@@ -1,6 +1,6 @@
 # Discovery & measurement plan (researched 2026-09-19)
 
-> **Current distribution (2026-09-20):** v0.1.0 is published on GitHub. Use the [working install guide](README.md#install) and [first tasks](QUICKSTART.md). The npm package and official MCP Registry listing remain unpublished; the publication and directory steps below are future work. A listing does not automatically connect an agent. GitHub/npm counters include automation and repeat downloads, not unique agents.
+> **Current distribution (2026-09-21):** The [official MCP Registry listing](https://registry.modelcontextprotocol.io/?q=io.github.Warddamn%2Ftiny-context) is active and the repository is also indexed by [Glama](https://glama.ai/mcp/servers/Warddamn/tiny-tools). Three tested GitHub-hosted MCPB bundles are published; npm is still unpublished and is not required for the current installation or registry route. The long research plan below is historical and includes superseded assumptions (notably npm as a prerequisite). Use [RELEASE.md](RELEASE.md) for the current process. Download counters include our tests; they cannot establish independent agent usage.
 
 _How agents and their owners find MCP servers, what usage a maintainer can see, and what to do about it — 13 research/verification agents, 80 sources, 54 of 59 claims verified. Ranked by expected payoff per hour._
 

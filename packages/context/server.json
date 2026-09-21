@@ -1,56 +1,39 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.Warddamn/tiny-context",
-  "title": "tiny-context — efficient file tools by AVRG3",
   "description": "Save agent steps: query spreadsheets, search PDF/Office files, summarize logs with bounded output",
-  "version": "0.1.0",
+  "title": "tiny-context — efficient file tools by AVRG3",
   "repository": {
     "url": "https://github.com/Warddamn/tiny-tools",
     "source": "github",
     "subfolder": "packages/context"
   },
+  "version": "0.1.0",
   "websiteUrl": "https://github.com/Warddamn/tiny-tools/tree/main/packages/context#readme",
   "packages": [
     {
-      "registryType": "npm",
-      "registryBaseUrl": "https://registry.npmjs.org",
-      "identifier": "@tiny_tools_pw/context",
-      "version": "0.1.0",
+      "registryType": "mcpb",
+      "identifier": "https://github.com/Warddamn/tiny-tools/releases/download/context-v0.1.0/tiny-context-0.1.0-darwin.mcpb",
+      "fileSha256": "e3bc344433f73f70cde69ff72b88b019b81d8fcab07b798aac142823c15304fb",
       "transport": {
         "type": "stdio"
-      },
-      "runtimeHint": "npx",
-      "runtimeArguments": [
-        {
-          "type": "positional",
-          "value": "-y",
-          "isRequired": true
-        },
-        {
-          "type": "positional",
-          "value": "-p",
-          "isRequired": true
-        },
-        {
-          "type": "positional",
-          "value": "@tiny_tools_pw/context",
-          "isRequired": true
-        },
-        {
-          "type": "positional",
-          "value": "tiny-context-mcp",
-          "isRequired": true
-        }
-      ],
-      "environmentVariables": [
-        {
-          "name": "TINY_TOOLS_DEBUG",
-          "description": "Set to 1 to log each call to stderr.",
-          "isRequired": false,
-          "isSecret": false,
-          "default": "0"
-        }
-      ]
+      }
+    },
+    {
+      "registryType": "mcpb",
+      "identifier": "https://github.com/Warddamn/tiny-tools/releases/download/context-v0.1.0/tiny-context-0.1.0-linux.mcpb",
+      "fileSha256": "e92fe0795d79b51610239c81fc07e88e6a3377d102fb021b95e45618814fb8c7",
+      "transport": {
+        "type": "stdio"
+      }
+    },
+    {
+      "registryType": "mcpb",
+      "identifier": "https://github.com/Warddamn/tiny-tools/releases/download/context-v0.1.0/tiny-context-0.1.0-win32.mcpb",
+      "fileSha256": "c2af3413f994fb61a6c762ca881d0f862bca9d7a9cffe7a8b994306489eb168f",
+      "transport": {
+        "type": "stdio"
+      }
     }
   ]
 }
