@@ -1,7 +1,7 @@
 {
   "name": "tiny-context",
   "displayName": "tiny-context",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Know things about files without reading them. Eight local MCP tools — file_map, query_file, read_section, query_table, summarize_log, diff_files, validate_file, extract — that outline, search, slice, query, cluster, diff, validate and extract from files including PDF/DOCX/PPTX/XLSX, returning only what the agent needs with a token-savings line on every response. Ships a skill that tells Claude when to use them instead of whole-file reads.",
   "author": {
     "name": "AVRG3",
@@ -10,5 +10,19 @@
   "homepage": "https://github.com/Warddamn/tiny-tools/tree/main/packages/context#readme",
   "repository": "https://github.com/Warddamn/tiny-tools",
   "license": "MIT",
-  "keywords": ["mcp", "mcp-server", "context", "tokens", "pdf", "docx", "xlsx", "pptx", "csv", "logs", "diff", "validate", "duckdb"]
+  "keywords": [
+    "mcp",
+    "mcp-server",
+    "context",
+    "tokens",
+    "pdf",
+    "docx",
+    "xlsx",
+    "pptx",
+    "csv",
+    "logs",
+    "diff",
+    "validate",
+    "duckdb"
+  ]
 }

@@ -1,5 +1,7 @@
 # Release checklist (Phase 5)
 
+> **Current distribution (2026-09-20):** v0.1.0 is published on GitHub. Use the [working install guide](README.md#install) and [first tasks](QUICKSTART.md). The npm package and official MCP Registry listing remain unpublished; the publication and directory steps below are future work. A listing does not automatically connect an agent. GitHub/npm counters include automation and repeat downloads, not unique agents.
+
 Who does what: **P** = Payton (accounts, logins, one-click approvals) · **A** = the agent (everything else).
 
 ## 0. Decide names (P) — once

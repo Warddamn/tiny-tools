@@ -20,7 +20,8 @@ if (!github) {
   console.error("usage: node scripts/set-owner.mjs --github <owner> [--scope <npm-scope>]");
   process.exit(1);
 }
-const cfg = { command: "npx", args: ["-y", "-p", `@${scope}/context`, "tiny-context-mcp"] };
+const cfg = JSON.parse(await fs.readFile(path.join(ROOT, "plugins/tiny-context/.mcp.json"), "utf8")).mcpServers["tiny-context"];
+cfg.args = cfg.args.map(value => value.replace(/https:\/\/github\.com\/[\w-]+\/tiny-tools/g, `https://github.com/${github}/tiny-tools`));
 const cursorB64 = encodeURIComponent(Buffer.from(JSON.stringify(cfg)).toString("base64"));
 const vscodeUrl = encodeURIComponent("vscode:mcp/install?" + encodeURIComponent(JSON.stringify({ name: "tiny-context", command: "npx", args: cfg.args })));
 const repoUrl = `https://github.com/${github}/tiny-tools`;

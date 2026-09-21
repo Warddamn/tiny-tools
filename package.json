@@ -20,7 +20,8 @@
     "evals": "npm run build && node evals/dist/run.js",
     "pretest": "node scripts/sign.mjs --check",
     "sign": "node scripts/sign.mjs",
-    "stats": "node scripts/stats.mjs"
+    "stats": "node scripts/stats.mjs",
+    "verify:release": "node scripts/verify-release.mjs"
   },
   "devDependencies": {
     "@types/node": "^24",

@@ -35,14 +35,24 @@ Tools: file_map ✅ · query_file ✅ · read_section ✅ · extract ✅ · quer
 - [x] Four-condition comparison (none / tools / snippet / hook) → `evals/COMPARISON.md`. Same answers everywhere; tools = ~20% tokens, ~50% time.
 - [x] Read guard hook built + tested (`packages/context/hooks/read-guard.mjs`, bin `tiny-context-read-guard`, 4 tests). Did not fire in the comparison (agent reached for the tools directly).
 - [x] `run_command` decision: yes, Phase 1.5 → `PROPOSALS.md` §2 (evidence table). Not built yet.
-- [x] **Published to GitHub:** https://github.com/Warddamn/tiny-tools (public, topics set, CI green on macOS + Linux × Node 20/22/24 and the benchmark gate; Windows job is advisory and currently fails — path handling in tests, to fix in Phase 5 polish).
+- [x] **Published to GitHub:** https://github.com/Warddamn/tiny-tools (public, topics set, CI green on macOS + Linux × Node 20/22/24 and the benchmark gate; Windows job is advisory; the latest pre-change run also passes).
 - [x] Release prep (Phase 5 groundwork): CI workflow (`.github/workflows/ci.yml`), `scripts/set-owner.mjs` (one-command rename), `scripts/verify-install.mjs` (pack → install into a fresh project → CLI + MCP client + hook: **passes**), `packages/context/server.json`, `RELEASE.md` checklist.
 - [x] Names settled 2026-09-19: GitHub **Warddamn**, npm org **tiny_tools_pw** (`tinytools` was taken), npm user **payton_n_ward**, author credit **AVRG3**. Packages are `@tiny_tools_pw/context` and `@tiny_tools_pw/shared`.
 - [x] Discoverability (DISCOVERY.md, researched + verified): README fronts with install badges/one-liners/privacy · MCP server `instructions` + `alwaysLoad` gateway · registry `server.json` (≤100-char description) · npm keywords/description · `glama.json` · `llms.txt` · `AGENTS.md` · 18 GitHub topics · Claude Code plugin marketplace (`/plugin marketplace add Warddamn/tiny-tools`, validated) · workflows: `publish-mcp.yml` (on `context-v*` tags) and `traffic.yml` (daily snapshot) · `npm run stats`.
 - [ ] Owner-only discovery steps (DISCOVERY.md "Be found"): npm publish → registry publish → Glama claim → awesome-mcp-servers PR → mcp.so / MCP Market / Cursor directory submissions → plugin marketplace submission → a before/after post.
-- [ ] Next build: Payton to choose — spec order (Phase 2: images, pdf) or PROPOSALS §2 (`run_command`, recommended first). Open questions: GitHub owner for `mcpName` (placeholder `OWNER`); install ffmpeg/whisper/LibreOffice before Phase 3?
+- [ ] Next build: Payton to choose — spec order (Phase 2: images, pdf) or PROPOSALS §2 (`run_command`, recommended first). Open question: install ffmpeg/whisper/LibreOffice before Phase 3?
 
 ## Phase 2 — images, pdf ⬜
 ## Phase 3 — video, audio, verify, transcribe ⬜
 ## Phase 4 — bgremove ⬜
 ## Phase 5 — publish & discovery ⬜
+
+## Adoption follow-through (2026-09-20)
+
+- GitHub v0.1.0 is public; npm and official MCP Registry are still unpublished.
+- Client commands, install badges and Claude Code plugin now use the published GitHub tarball. Plugin metadata is 0.1.1; the tool binary remains 0.1.0.
+- QUICKSTART.md provides three tasks with checkable answers and selection/failure guidance.
+- `verify:release` checks the public install using a fresh temporary npm cache and all eight MCP tools; CI runs this separately from source tests.
+- No telemetry added. Download counters include our own verification runs. Private visitor/clone history requires TRAFFIC_TOKEN; public release counts can be archived without it.
+
+Validation: `npm test` passes 107 tests; the public release install passes all eight tool checks on macOS with a fresh npm cache and empty npm config. Encoded install buttons and every documented client JSON config match the plugin command.

@@ -2,8 +2,7 @@
 // @author AVRG3
 /**
  * Usage numbers a maintainer can see WITHOUT telemetry in the tools:
- *   - npm downloads (api.npmjs.org): last day / week / month per package — every `npx -y -p @tiny_tools_pw/context …`
- *     by a new machine is a download.
+ *   - npm downloads (api.npmjs.org): last day / week / month per package — package fetches, including automated runs and repeat downloads.
  *   - GitHub: stars, forks, watchers; views + unique visitors and clones (last 14 days, needs `gh` login); top referrers.
  *   node scripts/stats.mjs            (also: npm run stats)
  */
@@ -16,7 +15,7 @@ const PACKAGES = ["@tiny_tools_pw/context", "@tiny_tools_pw/shared"];
 const fmt = (n) => (typeof n === "number" ? n.toLocaleString("en-US") : "—");
 async function getJson(url) {
   try {
-    const r = await fetch(url, { headers: { "user-agent": "tiny-tools-stats" } });
+    const r = await fetch(url, { headers: { "user-agent": "tiny-tools-stats" }, signal: AbortSignal.timeout(15_000) });
     if (!r.ok) return null;
     return await r.json();
   } catch {
@@ -33,7 +32,7 @@ function gh(path) {
 
 console.log(`tiny-tools usage · ${new Date().toISOString().slice(0, 10)}\n`);
 
-console.log("npm downloads (how many machines pulled the package)");
+console.log("npm downloads (package fetches, not unique people or agents)");
 for (const pkg of PACKAGES) {
   const enc = encodeURIComponent(pkg);
   const [day, week, month] = await Promise.all(["last-day", "last-week", "last-month"].map((p) => getJson(`https://api.npmjs.org/downloads/point/${p}/${enc}`)));
@@ -47,14 +46,15 @@ if (repo) console.log(`  stars ${fmt(repo.stargazers_count)} · forks ${fmt(repo
 const views = gh(`repos/${OWNER}/${REPO}/traffic/views`);
 const clones = gh(`repos/${OWNER}/${REPO}/traffic/clones`);
 if (views && clones) {
-  console.log(`  last 14 days: ${fmt(views.count)} views by ${fmt(views.uniques)} people · ${fmt(clones.count)} clones by ${fmt(clones.uniques)} people`);
+  console.log(`  last 14 days: ${fmt(views.count)} views by ${fmt(views.uniques)} unique visitors · ${fmt(clones.count)} clones by ${fmt(clones.uniques)} unique cloners`);
   const refs = gh(`repos/${OWNER}/${REPO}/traffic/popular/referrers`) ?? [];
   if (refs.length) console.log(`  top referrers: ${refs.slice(0, 5).map((r) => `${r.referrer} (${r.count})`).join(", ")}`);
-} else console.log("  views/clones need `gh auth login` (only the repo owner can see them)");
+} else console.log("  views/clones need `gh auth login` (requires repository access and traffic permissions)");
 
-console.log("\nGitHub release downloads (exact counts, per file, all time)");
-const rels = (await getJson(`https://api.github.com/repos/${OWNER}/${REPO}/releases`)) ?? gh(`repos/${OWNER}/${REPO}/releases`) ?? [];
-if (!Array.isArray(rels) || rels.length === 0) console.log("  no releases yet");
+console.log("\nGitHub release downloads (GitHub counters, per file; includes tests, bots and repeat downloads)");
+const rels = (await getJson(`https://api.github.com/repos/${OWNER}/${REPO}/releases?per_page=100`)) ?? gh(`repos/${OWNER}/${REPO}/releases?per_page=100`);
+if (!Array.isArray(rels)) console.log("  release counts unavailable (API request failed)");
+else if (rels.length === 0) console.log("  no releases yet");
 else {
   let grand = 0;
   for (const r of rels) {
@@ -63,11 +63,11 @@ else {
     console.log(`  ${r.tag_name.padEnd(10)} ${fmt(total)} download${total === 1 ? "" : "s"}  (published ${String(r.published_at).slice(0, 10)})`);
     for (const a of r.assets ?? []) console.log(`      ${a.name.padEnd(40)} ${fmt(a.download_count ?? 0)}`);
   }
-  console.log(`  ${"TOTAL".padEnd(10)} ${fmt(grand)}`);
+  console.log(`  ${"TOTAL (shown releases)".padEnd(10)} ${fmt(grand)}`);
 }
 
-console.log("\nDirectories (open in a browser)");
-console.log(`  MCP Registry   https://registry.modelcontextprotocol.io/v0/servers?search=tiny-context`);
+console.log("\nDirectory searches (not confirmation of a listing)");
+console.log(`  MCP Registry   https://registry.modelcontextprotocol.io/v0.1/servers?search=tiny-context`);
 console.log(`  Smithery       https://smithery.ai/search?q=tiny-context`);
 console.log(`  PulseMCP       https://www.pulsemcp.com/servers?q=tiny-context`);
 console.log(`  Glama          https://glama.ai/mcp/servers?query=tiny-context`);

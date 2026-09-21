@@ -1,20 +1,11 @@
-# stats/
+# Usage counters
 
-Usage numbers for tiny-tools, kept in git so they outlive GitHub's 14-day window. No telemetry runs inside the tools; everything here comes from public or owner-only APIs.
+The daily `traffic` GitHub Actions workflow saves `traffic/<UTC date>.json`. It always records public release asset download counters with the existing Actions token. No extra account is needed for this history, and no telemetry runs inside the tools.
 
-## traffic/
+`releases` contains release tags and stable asset IDs with cumulative `downloads` counts. Compare the same asset ID between two dates to see the increase; do not sum cumulative totals. Automated checks, bots and repeat downloads are included. These numbers cannot identify people or agents, or show whether a task succeeded.
 
-One JSON file per day, `traffic/<YYYY-MM-DD>.json`, written by the `traffic` GitHub Actions workflow (`.github/workflows/traffic.yml`, daily at 05:23 UTC, or run it by hand from the Actions tab). Each file holds the raw responses of four GitHub API calls for `Warddamn/tiny-tools`:
+`traffic_status` is `not_configured` unless the repository has a `TRAFFIC_TOKEN` secret with Administration: read. Without that optional permission, `views`, `clones`, `referrers` and `paths` are null, not zero. When configured, those fields hold GitHub's rolling 14-day traffic responses and `traffic_status` is `available`. A failed API call fails the job rather than saving misleading empty data.
 
-| key         | endpoint                     | what it is                                              |
-| ----------- | ---------------------------- | ------------------------------------------------------- |
-| `views`     | `traffic/views`              | page views + unique visitors, last 14 days, per day     |
-| `clones`    | `traffic/clones`             | git clones + unique cloners, last 14 days, per day      |
-| `referrers` | `traffic/popular/referrers`  | top 10 sites people came from, last 14 days             |
-| `paths`     | `traffic/popular/paths`      | top 10 pages inside the repo, last 14 days              |
+Traffic windows overlap. To retain daily history, use each dated entry in the views/clones arrays; do not add snapshot totals together. Missing days before archiving began cannot be recovered indefinitely.
 
-Because every snapshot covers a rolling 14-day window, consecutive files overlap; to build a full history take each day's own entry from the `views`/`clones` arrays.
-
-The workflow needs a repository secret named `TRAFFIC_TOKEN`: a fine-grained personal access token with **Administration: Read-only** on this repo (the default Actions token cannot read traffic). Without it the workflow still passes but writes nothing and prints a one-line hint.
-
-For a quick look without waiting for the cron: `npm run stats` (npm downloads + the same GitHub numbers, needs `gh auth login`).
+The workflow runs daily at 05:23 UTC. To check it on GitHub, click **Actions → traffic**, open a run and read its summary. To run it immediately, choose **Run workflow → main → Run workflow**. `npm run stats` shows the current counters locally; private traffic requires suitable GitHub CLI access.

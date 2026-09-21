@@ -2,7 +2,7 @@
 
 > Small, local-first MCP servers that let AI agents know things about files without reading them. Flagship: tiny-context (@tiny_tools_pw/context) — outline, search, slice, SQL-query, diff and validate PDF/DOCX/PPTX/XLSX/CSV/logs. No telemetry, no network calls; every response is bounded and ends with a savings line.
 
-Install (any MCP client, stdio): `npx -y -p @tiny_tools_pw/context tiny-context-mcp`
+Install (any MCP client, stdio): `npx -y -p https://github.com/Warddamn/tiny-tools/releases/download/v0.1.0/tiny-context-standalone-0.1.0.tgz tiny-context-mcp`
 
 ## Docs
 - [Repository README](https://github.com/Warddamn/tiny-tools#readme): packages, install, benchmarks, honest comparison
@@ -12,3 +12,5 @@ Install (any MCP client, stdio): `npx -y -p @tiny_tools_pw/context tiny-context-
 
 ## Tools (tiny-context)
 file_map · query_file · read_section · query_table · summarize_log · diff_files · validate_file · extract
+
+[Try three tasks with expected answers](https://github.com/Warddamn/tiny-tools/blob/main/QUICKSTART.md). Requires a connected MCP client; finding this page does not install or activate the tools.
