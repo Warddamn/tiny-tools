@@ -1,10 +1,10 @@
 # Tool-selection eval results — tiny-context (mode: hook)
 
-_2026-09-22 · headless `claude -p` · model sonnet · 10/12 pass · pass = correct answer AND tool rules hold_
+_2026-09-22 · headless `claude -p` · model sonnet · 11/12 pass · pass = correct answer AND tool rules hold_
 
 | Task | Result | Correct | Tools called (⛔ blocked by hook · ✗ denied · ! error) | Turns | Tokens | Time | Cost |
 |---|---|---|---|---:|---:|---:|---:|
-| sales-by-region | ❌<br>raw Bash of sales.csv (1×) | ✓ | ToolSearch → Bash → query_table | 4 | 167,259 | 10s | $0.098 |
+| sales-by-region | ✅ | ✓ | ToolSearch → Bash → query_table | 4 | 167,259 | 10s | $0.098 |
 | negative-total | ✅ | ✓ | ToolSearch → query_table | 3 | 124,539 | 4s | $0.064 |
 | 5xx-spike | ✅ | ✓ | ToolSearch → summarize_log | 3 | 124,687 | 6s | $0.066 |
 | contract-termination | ✅ | ✓ | ToolSearch → query_file | 3 | 128,144 | 6s | $0.076 |
