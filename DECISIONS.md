@@ -43,3 +43,5 @@
 - **2026-09-21 — completeness is a source contract:** only explicit terminal cursors plus configured consistency checks permit complete; snapshots, totals, limits, conflicting IDs and errors stay visible. Checkpoints are explicit bounded state, not hidden sessions.
 - **2026-09-21 — cache integration boundary:** implement instrumented progress, conservative ETA, bounded/expiring hints and an explicit HTTP adapter contract. Do not claim a stock vLLM patch, hosted-model control, GPU gains or the research paper's measured savings.
 - **2026-09-21 — no unnecessary dependency chain:** runtime uses the already-present Zod/MCP SDK/Commander, without shared's document parsers or DuckDB. New package's production install is about 17.5 MB including transitive dependencies.
+
+- **2026-09-22 — progress notification integration test:** SDK 1.30 queues notification callbacks but removes onprogress handlers synchronously when a result shares the stdio chunk, dropping a final callback. Verify both actual protocol notifications with ProgressNotificationSchema; do not loosen the required page updates or add arbitrary timing sleeps. Final collection results remain authoritative.

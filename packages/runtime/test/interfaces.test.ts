@@ -6,6 +6,7 @@ import os from 'node:os';
 import { fileURLToPath } from 'node:url';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
+import { ProgressNotificationSchema } from '@modelcontextprotocol/sdk/types.js';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
 import { collectJob } from '../src/lib/jobs.js';
@@ -44,7 +45,10 @@ describe('real CLI and MCP interfaces', () => {
   });
   it('sends committed-page progress over MCP without streaming source records', async () => {
     const updates: {progress:number;message?:string}[]=[];
-    const r=await client.callTool({name:'collect_pages',arguments:{config:path.join(examples,'collect.json'),output_dir:dir}},undefined,{onprogress:p=>updates.push(p)});
+    // SDK 1.30 defers notification dispatch but synchronously deletes the onprogress
+    // callback on a result in the same stdio chunk. Inspect wire notifications directly.
+    client.setNotificationHandler(ProgressNotificationSchema,n=>{ if(n.params.progressToken==='page-test')updates.push(n.params); });
+    const r=await client.callTool({name:'collect_pages',arguments:{config:path.join(examples,'collect.json'),output_dir:dir},_meta:{progressToken:'page-test'}});
     expect(r.isError).toBeFalsy();expect(updates.map(p=>p.progress)).toEqual([1,2]);expect(updates[1].message).toContain('3 records');
   });
   it('job cancellation preserves the committed page and skips further work', async () => {
