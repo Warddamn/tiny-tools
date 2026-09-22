@@ -3,6 +3,7 @@
   "references": [
     { "path": "packages/shared" },
     { "path": "packages/context" },
+    { "path": "packages/runtime" },
     { "path": "bench" },
     { "path": "evals" }
   ]

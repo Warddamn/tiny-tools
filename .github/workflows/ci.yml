@@ -76,3 +76,17 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run verify:release
+
+  runtime-install:
+    name: runtime package installs and answers three tasks
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run verify:runtime
+      - run: npm run demo:runtime

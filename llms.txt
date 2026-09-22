@@ -1,6 +1,6 @@
 # tiny-tools
 
-> tiny-context by AVRG3: local MCP tools for agents seeking fewer steps and less context on large-file tasks. SQL over spreadsheets, repeated-error log summaries, and targeted PDF/Office retrieval. No tool telemetry. Requires a connected MCP client; discovery alone does not activate tools.
+> tiny-tools by AVRG3 includes tiny-context for file analysis and tiny-runtime for resumable API batches, retry-loop detection and progress-based cache hints. tiny-context: local MCP tools for agents seeking fewer steps and less context on large-file tasks. SQL over spreadsheets, repeated-error log summaries, and targeted PDF/Office retrieval. No tool telemetry. Requires a connected MCP client; discovery alone does not activate tools.
 
 Install (any MCP client, stdio): `npx -y -p https://github.com/Warddamn/tiny-tools/releases/download/v0.1.0/tiny-context-standalone-0.1.0.tgz tiny-context-mcp`
 
@@ -28,3 +28,17 @@ file_map · query_file · read_section · query_table · summarize_log · diff_f
 
 ## Evidence limits
 One 12-task Claude comparison, not a guarantee: log analysis fell from 7 turns to 3, same correct answer; tools-only total time 193s to 104s, processed tokens 1,488,617 to 1,192,953. Some tasks got worse. The 99.9% whole-file benchmark uses a different baseline and does not estimate general agent savings.
+
+
+## tiny-runtime: API pagination, retry loops and tool progress
+
+Install (stdio, Node.js 20+): `npx -y -p https://github.com/Warddamn/tiny-tools/releases/download/runtime-v0.1.0/tiny-runtime-0.1.0.tgz tiny-runtime-mcp`
+
+- [Runtime README](https://github.com/Warddamn/tiny-tools/tree/main/packages/runtime#readme): install, HTTP cursor mapping, checkpoint semantics, measured-state guards and cache-adapter contract.
+- [Runtime quickstart](https://github.com/Warddamn/tiny-tools/blob/main/packages/runtime/QUICKSTART.md): three synthetic tasks with checkable answers.
+- [Runtime MCP Registry](https://registry.modelcontextprotocol.io/?q=io.github.Warddamn%2Ftiny-runtime): `io.github.Warddamn/tiny-runtime`.
+- [Runtime release](https://github.com/Warddamn/tiny-tools/releases/tag/runtime-v0.1.0): portable MCPB with dependencies and a small npx tarball.
+- collect_pages(config, checkpoint?): fetch configured cursor pages, validate totals/snapshots, optionally deduplicate IDs and sum integer minor units. Returns complete/partial/failed and local records/checkpoint paths. Pass checkpoint paths directly, do not read their rows into model context. No automatic retries or source writes.
+- check_progress(path): inspect a tool trace for repeated failures/stalls/cycles against trusted state fingerprints. Returns a decision and report. Automatic blocking uses RepeatGuard/runGuarded in the host; installation alone does not intercept other tools.
+- plan_cache(path): derive expiring retain/prefetch/release hints from instrumented tool-progress traces. Advisory only; live SDK delivery requires a compatible serving-engine adapter. No hosted-model cache control or measured GPU savings claimed.
+- Prefer existing correct scripts, one simple API request, and normal Read/Grep for small inputs. No model calls or telemetry. Explicit HTTP sources and optional engine adapters use the network. npm installation also downloads dependencies.

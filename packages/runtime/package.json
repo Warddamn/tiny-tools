@@ -1,0 +1,67 @@
+{
+  "name": "@tiny_tools_pw/runtime",
+  "version": "0.1.0",
+  "description": "MCP server and SDK for resumable API pagination, batch checkpoints, agent retry-loop detection, and tool-progress cache scheduling hints. Three tools; no model calls or telemetry.",
+  "type": "module",
+  "license": "MIT",
+  "author": "AVRG3",
+  "engines": {
+    "node": ">=20"
+  },
+  "bin": {
+    "tiny-runtime": "./dist/cli.js",
+    "tiny-runtime-mcp": "./dist/mcp.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "docs",
+    "examples",
+    "README.md",
+    "LICENSE",
+    "QUICKSTART.md"
+  ],
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "commander": "^15.0.0",
+    "zod": "^4.0.0"
+  },
+  "keywords": [
+    "mcp",
+    "mcp-server",
+    "model-context-protocol",
+    "ai-agents",
+    "agent-runtime",
+    "pagination",
+    "api-pagination",
+    "batch-processing",
+    "checkpoint",
+    "resume",
+    "retry-loops",
+    "loop-detection",
+    "progress",
+    "cache-scheduling",
+    "kv-cache",
+    "claude-code",
+    "cursor",
+    "developer-tools"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Warddamn/tiny-tools.git",
+    "directory": "packages/runtime"
+  },
+  "scripts": {
+    "prepack": "node ../../scripts/sign.mjs --check"
+  },
+  "mcpName": "io.github.Warddamn/tiny-runtime",
+  "homepage": "https://github.com/Warddamn/tiny-tools/tree/main/packages/runtime#readme",
+  "bugs": {
+    "url": "https://github.com/Warddamn/tiny-tools/issues"
+  }
+}

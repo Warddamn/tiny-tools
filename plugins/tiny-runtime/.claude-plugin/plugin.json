@@ -1,0 +1,33 @@
+{
+  "name": "tiny-runtime",
+  "displayName": "tiny-runtime",
+  "version": "0.1.0",
+  "description": "Resumable API pagination and batch collection, repeated-failure analysis, and tool-progress cache hints for AI agents. Three MCP tools with selection guidance; automatic enforcement and GPU effects need host integration.",
+  "author": {
+    "name": "AVRG3",
+    "url": "https://github.com/Warddamn"
+  },
+  "homepage": "https://github.com/Warddamn/tiny-tools/tree/main/packages/runtime#readme",
+  "repository": "https://github.com/Warddamn/tiny-tools",
+  "license": "MIT",
+  "keywords": [
+    "mcp",
+    "mcp-server",
+    "model-context-protocol",
+    "ai-agents",
+    "agent-runtime",
+    "pagination",
+    "api-pagination",
+    "batch-processing",
+    "checkpoint",
+    "resume",
+    "retry-loops",
+    "loop-detection",
+    "progress",
+    "cache-scheduling",
+    "kv-cache",
+    "claude-code",
+    "cursor",
+    "developer-tools"
+  ]
+}

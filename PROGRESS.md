@@ -41,7 +41,7 @@ Tools: file_map ✅ · query_file ✅ · read_section ✅ · extract ✅ · quer
 - [x] Discoverability (DISCOVERY.md, researched + verified): README fronts with install badges/one-liners/privacy · MCP server `instructions` + `alwaysLoad` gateway · registry `server.json` (≤100-char description) · npm keywords/description · `glama.json` · `llms.txt` · `AGENTS.md` · 18 GitHub topics · Claude Code plugin marketplace (`/plugin marketplace add Warddamn/tiny-tools`, validated) · workflows: `publish-mcp.yml` (on `context-v*` tags) and `traffic.yml` (daily snapshot) · `npm run stats`.
 - [x] Official MCP Registry published via GitHub-hosted MCPB bundles and OIDC; npm is not a prerequisite. Glama public listing verified.
 - [ ] Optional further distribution: npm, directory ownership claims and additional listings; see RELEASE.md for the current verified route.
-- [ ] Next build: Payton to choose — spec order (Phase 2: images, pdf) or PROPOSALS §2 (`run_command`, recommended first). Open question: install ffmpeg/whisper/LibreOffice before Phase 3?
+- [x] Next build chosen 2026-09-21: Payton requested all three runtime efficiency helpers; see the implementation checkpoint below. Media packages and run_command remain separate future work.
 
 ## Phase 2 — images, pdf ⬜
 ## Phase 3 — video, audio, verify, transcribe ⬜
@@ -67,3 +67,26 @@ Validation: `npm test` passes 107 tests; the public release install passes all e
 - [x] Hosted bundle builds and all eight tool checks pass on Linux/macOS/Windows; official registry is active (run 35621683385). Source CI also passes (35621684626).
 
 Registry read-back verified active version 0.1.0 with three packages; every fileSha256 matches GitHub asset digests. Canonical server.json now contains that live metadata. Glama public page returned HTTP 200 with the expected title/description; its API requires authentication, so no API-based listing edits were made. No independent adoption claimed.
+
+## Runtime efficiency helpers (2026-09-21)
+
+User instruction: **“BUILD ALL THREE PLEASE.”** New separate package: `packages/runtime` / `tiny-runtime`; existing tiny-context release remains unchanged.
+
+- [x] Resumable collector with explicit complete/partial/failed status, exact integer aggregation, duplicate/conflict detection, source consistency checks, request/record/byte/time caps, and immutable resume inputs.
+- [x] Measured-state repeat guard with before-call enforcement, bounded hashed history, changed-state retry allowance, cycle checks, scope isolation and explicit polling exemptions.
+- [x] Progress reporter, conservative parallel-call-aware cache planner, expiring leases, live bridge and explicit HTTP engine-adapter contract. Reporter/controller side implemented; a compatible serving engine is still required for GPU effect.
+- [x] Typed SDK, thin CLI and separate three-tool MCP server; bounded summaries with paths/timing and teach errors.
+- [x] 54 new tests plus 107 existing tests pass locally. Actual local HTTP, CLI and MCP integration covered. Synthetic demo and honest correct-script benchmark run.
+- [x] Fresh tarball installation outside the repository passes CLI and all three tools; production install about 17.5 MB.
+- [x] Five live agent selection/correctness tasks pass, including built-in Read for a small note. Resume guidance corrected to avoid loading checkpoint rows into context; targeted repeat passed.
+- [x] Usage snippet, README, validation/eval results, AVRG3 signatures, CI install/demo gate and benchmark/eval commands.
+- [x] Public runtime publication authorized 2026-09-22: portable MCPB + npx tarball builder, three-OS verification and OIDC registry workflow implemented. Local archive and install-link checks pass.
+- [ ] Public runtime release/registry read-back pending the publication workflow; do not claim active until verified. No production GPU or independent adoption claim.
+
+## Runtime public installation and discovery (2026-09-22)
+
+- [x] Task-based descriptions and keywords: resumable API pagination, batch checkpoints, repeated failures and tool-progress cache hints. AVRG3 credit preserved.
+- [x] Public npx/MCPB install instructions, validated Cursor/VS Code payloads, three worked examples, optional Claude Code plugin and llms.txt discovery text.
+- [x] Existing 161 tests pass. Actual local portable MCPB passed three MCP tools + CLI outside the checkout, without npm on the server PATH. Plugin/marketplace strict validation passed.
+- [x] Publish workflow tests one exact portable bundle on Linux/macOS/Windows, preserves immutable release assets, verifies public npx installation with fresh cache, and checks exact active registry version/hash.
+- [ ] Merge, publish runtime-v0.1.0, verify live install/registry, then record release hashes and completed workflow here.

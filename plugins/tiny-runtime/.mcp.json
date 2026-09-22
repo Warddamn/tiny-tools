@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "tiny-runtime": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "-p",
+        "https://github.com/Warddamn/tiny-tools/releases/download/runtime-v0.1.0/tiny-runtime-0.1.0.tgz",
+        "tiny-runtime-mcp"
+      ]
+    }
+  }
+}

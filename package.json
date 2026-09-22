@@ -2,7 +2,7 @@
   "name": "tiny-tools",
   "version": "0.1.0",
   "private": true,
-  "description": "Small, local-first tools that AI agents install with one config line. Core library → CLI → MCP server, from one codebase.",
+  "description": "Small, local-first tools that AI agents install with one config line. Core library \u2192 CLI \u2192 MCP server, from one codebase.",
   "type": "module",
   "license": "MIT",
   "workspaces": [
@@ -23,7 +23,14 @@
     "stats": "node scripts/stats.mjs",
     "verify:release": "node scripts/verify-release.mjs",
     "bundle:mcpb": "npm run build && node scripts/build-mcpb.mjs",
-    "verify:mcpb": "node scripts/verify-mcpb.mjs"
+    "verify:mcpb": "node scripts/verify-mcpb.mjs",
+    "bench:runtime": "npm run build && node scripts/bench-runtime.mjs",
+    "demo:runtime": "npm run build && node packages/runtime/examples/demo.mjs",
+    "verify:runtime": "npm run build && node scripts/verify-runtime-install.mjs",
+    "evals:runtime": "npm run build && node scripts/eval-runtime.mjs",
+    "bundle:runtime": "npm run build && node scripts/build-runtime-release.mjs",
+    "verify:runtime:bundle": "node scripts/verify-runtime-bundle.mjs",
+    "verify:runtime:public": "node scripts/verify-runtime-public.mjs"
   },
   "devDependencies": {
     "@types/node": "^24",
