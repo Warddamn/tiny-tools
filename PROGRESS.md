@@ -76,7 +76,7 @@ User instruction: **“BUILD ALL THREE PLEASE.”** New separate package: `packa
 - [x] Measured-state repeat guard with before-call enforcement, bounded hashed history, changed-state retry allowance, cycle checks, scope isolation and explicit polling exemptions.
 - [x] Progress reporter, conservative parallel-call-aware cache planner, expiring leases, live bridge and explicit HTTP engine-adapter contract. Reporter/controller side implemented; a compatible serving engine is still required for GPU effect.
 - [x] Typed SDK, thin CLI and separate three-tool MCP server; bounded summaries with paths/timing and teach errors.
-- [x] 52 new tests plus 107 existing tests pass locally. Actual local HTTP, CLI and MCP integration covered. Synthetic demo and honest correct-script benchmark run.
+- [x] 54 new tests plus 107 existing tests pass locally. Actual local HTTP, CLI and MCP integration covered. Synthetic demo and honest correct-script benchmark run.
 - [x] Fresh tarball installation outside the repository passes CLI and all three tools; production install about 17.5 MB.
 - [x] Five live agent selection/correctness tasks pass, including built-in Read for a small note. Resume guidance corrected to avoid loading checkpoint rows into context; targeted repeat passed.
 - [x] Usage snippet, README, validation/eval results, AVRG3 signatures, CI install/demo gate and benchmark/eval commands.

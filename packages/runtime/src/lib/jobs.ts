@@ -3,14 +3,15 @@ import path from 'node:path';
 import { z } from 'zod';
 import { CollectConfig, CollectInput, FileInput, GuardConfig, PlanConfig } from '../schemas.js';
 import { httpPageSource } from './adapters.js';
-import { collectPages, PageSchema, seal } from './collector.js';
+import { collectPages, PageSchema, seal, type CollectionOptions } from './collector.js';
 import { canonical, fail, fingerprint } from './common.js';
 import { RepeatGuard } from './guard.js';
 import { absolute, atomicJson, jobDirectory, readJson } from './io.js';
 import { CachePlanner } from './progress.js';
 
 export interface JobResult { ok: boolean; summary: Record<string, unknown>; files: string[] }
-export async function collectJob(raw: unknown): Promise<JobResult> {
+export type JobHooks = Pick<CollectionOptions, 'signal' | 'onProgress'>;
+export async function collectJob(raw: unknown, hooks: JobHooks = {}): Promise<JobResult> {
   const args = CollectInput.parse(raw), configPath = absolute(args.config);
   const config = CollectConfig.parse((await readJson(configPath)).value);
   let sourceId: string;
@@ -28,7 +29,7 @@ export async function collectJob(raw: unknown): Promise<JobResult> {
   }
   const checkpoint = args.checkpoint ? (await readJson(args.checkpoint)).value : undefined;
   const dir = await jobDirectory(configPath, args.output_dir), checkpointPath = path.join(dir, 'checkpoint.json');
-  const result = await collectPages({ ...config, sourceId, fetchPage, checkpoint, onCheckpoint: cp => atomicJson(checkpointPath, cp) });
+  const result = await collectPages({ ...config, sourceId, fetchPage, checkpoint, ...hooks, onCheckpoint: cp => atomicJson(checkpointPath, cp) });
   await atomicJson(checkpointPath, seal(result.checkpoint.state));
   const recordsPath = path.join(dir, 'records.json'); await atomicJson(recordsPath, result.records);
   const report = { status: result.status, reason: result.reason, nextStep: result.nextStep, ...result.summary };

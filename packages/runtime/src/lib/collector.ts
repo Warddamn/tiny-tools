@@ -32,7 +32,7 @@ export interface CollectionOptions {
   signal?: AbortSignal;
   /** Called after each fully validated, committed page; persist atomically before fetching more. */
   onCheckpoint?: (checkpoint: Checkpoint) => Promise<void>;
-  onProgress?: (progress: { pages: number; records: number; total?: number }) => void;
+  onProgress?: (progress: { pages: number; records: number; total?: number }) => void | Promise<void>;
 }
 export interface CollectionResult {
   status: 'complete' | 'partial' | 'failed';
@@ -129,7 +129,7 @@ export async function collectPages(options: CollectionOptions): Promise<Collecti
         bytes: state.bytes + pageBytes, sums, ...(page.snapshot !== undefined ? { snapshot: page.snapshot } : {}), ...(page.total !== undefined ? { total: page.total } : {}) };
       for (const [id, hash] of localSeen) seen.set(id, hash);
       await options.onCheckpoint?.(seal(state));
-      options.onProgress?.({ pages: state.pages, records: state.records.length, total: state.total });
+      await options.onProgress?.({ pages: state.pages, records: state.records.length, total: state.total });
       if (state.exhausted) return finish('end_of_source', 'Complete under this source’s pagination contract; hidden server caps and omitted records cannot be detected without a trusted total/snapshot.', true);
     }
     return finish('page_limit', 'Resume from the checkpoint to continue; maxPages limits each invocation.');

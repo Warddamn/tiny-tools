@@ -2,7 +2,7 @@
 
 Local environment: macOS ARM64, Node 24.16.0. All examples and fixtures are synthetic. No company data was used.
 
-- `npm test`: **159 tests in 19 files passed**. This includes the original 107 tests and 52 new tests for collector recovery/limits, guard behavior, progress planning, real HTTP adapters, CLI and MCP stdio.
+- `npm test`: **161 tests in 19 files passed**. This includes the original 107 tests and 54 new tests for collector recovery/limits, guard behavior, progress planning, real HTTP adapters, CLI and MCP stdio.
 - `npm run demo:runtime`: collected 200 records from four pages with zero model calls inside the workflow; exact 2,000-cent sum. A synthetic loop executed three calls and blocked seven, then allowed a call after a state change. Cache hints reached an in-memory reference adapter; no GPU was involved.
 - `node scripts/verify-runtime-install.mjs`: packed and installed the package outside the checkout, with a blank npm user config; CLI and all three MCP tools passed. No dependency on an unpublished shared package. Verification snapshot: 37,524-byte tarball, 142,840 unpacked package bytes, 17,459,429 production-install file bytes including dependencies (final documentation changes can slightly increase package size).
 - Five live Claude Code selection/answer tasks passed: collection, resumption, guard decision, cache planning, and a small-note negative case using Read only. The initial resumption trial read the checkpoint unnecessarily; guidance was corrected, and the targeted repeat used only ToolSearch → collect_pages. [Recorded results](EVAL_RESULTS.json). Total reported API-equivalent cost for the six calls, including the repeat, was about $0.55. This is a small smoke evaluation, not a model-performance comparison.

@@ -42,6 +42,18 @@ describe('real CLI and MCP interfaces', () => {
     for (const output of data.files) { expect(path.isAbsolute(output)).toBe(true); expect(await fs.stat(output)).toBeTruthy(); }
     expect(text).not.toContain('"id": "A"');
   });
+  it('sends committed-page progress over MCP without streaming source records', async () => {
+    const updates: {progress:number;message?:string}[]=[];
+    const r=await client.callTool({name:'collect_pages',arguments:{config:path.join(examples,'collect.json'),output_dir:dir}},undefined,{onprogress:p=>updates.push(p)});
+    expect(r.isError).toBeFalsy();expect(updates.map(p=>p.progress)).toEqual([1,2]);expect(updates[1].message).toContain('3 records');
+  });
+  it('job cancellation preserves the committed page and skips further work', async () => {
+    const controller=new AbortController();
+    const result=await collectJob({config:path.join(examples,'collect.json'),output_dir:dir},{signal:controller.signal,onProgress:()=>controller.abort()});
+    expect(result.summary).toMatchObject({status:'partial',pages:1,reason:'cancelled_or_timeout'});
+    const cp=JSON.parse(await fs.readFile(result.files.find(p=>p.endsWith('checkpoint.json'))!,'utf8'));
+    expect(cp.state.records).toHaveLength(2);expect(cp.state.nextCursor).toBe('second');
+  });
   it('returns bounded teach errors and does not create reports for malformed inputs', async () => {
     const r = await client.callTool({name:'check_progress',arguments:{path:path.join(dir,'missing.json')}});
     expect(r.isError).toBe(true); expect((r.content as {text:string}[])[0].text).toContain('existing readable JSON');
