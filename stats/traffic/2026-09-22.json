@@ -1,0 +1,167 @@
+{
+  "fetched_at": "2026-09-22T10:05:15.428Z",
+  "repo": "Warddamn/tiny-tools",
+  "note": "Download events include automation and repeats; not unique people or agents. Traffic counts cover overlapping 14-day windows; do not add them across days.",
+  "releases": [
+    {
+      "tag": "runtime-v0.1.1",
+      "assets": [
+        {
+          "id": 580797708,
+          "name": "server.json",
+          "downloads": 1
+        },
+        {
+          "id": 580797706,
+          "name": "SHA256SUMS.txt",
+          "downloads": 0
+        },
+        {
+          "id": 580797709,
+          "name": "tiny-runtime-0.1.1.mcpb",
+          "downloads": 7
+        },
+        {
+          "id": 580797707,
+          "name": "tiny-runtime-0.1.1.tgz",
+          "downloads": 2
+        }
+      ]
+    },
+    {
+      "tag": "runtime-v0.1.0",
+      "assets": [
+        {
+          "id": 580529842,
+          "name": "server.json",
+          "downloads": 1
+        },
+        {
+          "id": 580529845,
+          "name": "SHA256SUMS.txt",
+          "downloads": 1
+        },
+        {
+          "id": 580529844,
+          "name": "tiny-runtime-0.1.0.mcpb",
+          "downloads": 6
+        },
+        {
+          "id": 580529846,
+          "name": "tiny-runtime-0.1.0.tgz",
+          "downloads": 1
+        }
+      ]
+    },
+    {
+      "tag": "context-v0.1.1",
+      "assets": [
+        {
+          "id": 580799056,
+          "name": "server.json",
+          "downloads": 1
+        },
+        {
+          "id": 580799055,
+          "name": "tiny-context-0.1.1-darwin.mcpb",
+          "downloads": 6
+        },
+        {
+          "id": 580799050,
+          "name": "tiny-context-0.1.1-darwin.mcpb.json",
+          "downloads": 0
+        },
+        {
+          "id": 580799053,
+          "name": "tiny-context-0.1.1-linux.mcpb",
+          "downloads": 7
+        },
+        {
+          "id": 580799044,
+          "name": "tiny-context-0.1.1-linux.mcpb.json",
+          "downloads": 0
+        },
+        {
+          "id": 580799071,
+          "name": "tiny-context-0.1.1-win32.mcpb",
+          "downloads": 6
+        },
+        {
+          "id": 580799076,
+          "name": "tiny-context-0.1.1-win32.mcpb.json",
+          "downloads": 0
+        },
+        {
+          "id": 580799084,
+          "name": "tiny-context-standalone-0.1.1.tgz",
+          "downloads": 2
+        }
+      ]
+    },
+    {
+      "tag": "context-v0.1.0",
+      "assets": [
+        {
+          "id": 579352000,
+          "name": "server.json",
+          "downloads": 0
+        },
+        {
+          "id": 579351996,
+          "name": "tiny-context-0.1.0-darwin.mcpb",
+          "downloads": 8
+        },
+        {
+          "id": 579351998,
+          "name": "tiny-context-0.1.0-darwin.mcpb.json",
+          "downloads": 0
+        },
+        {
+          "id": 579351993,
+          "name": "tiny-context-0.1.0-linux.mcpb",
+          "downloads": 7
+        },
+        {
+          "id": 579351995,
+          "name": "tiny-context-0.1.0-linux.mcpb.json",
+          "downloads": 0
+        },
+        {
+          "id": 579352006,
+          "name": "tiny-context-0.1.0-win32.mcpb",
+          "downloads": 6
+        },
+        {
+          "id": 579352008,
+          "name": "tiny-context-0.1.0-win32.mcpb.json",
+          "downloads": 0
+        }
+      ]
+    },
+    {
+      "tag": "v0.1.0",
+      "assets": [
+        {
+          "id": 575656870,
+          "name": "tiny-context-standalone-0.1.0.tgz",
+          "downloads": 12
+        },
+        {
+          "id": 575656871,
+          "name": "tiny_tools_pw-context-0.1.0.tgz",
+          "downloads": 0
+        },
+        {
+          "id": 575656868,
+          "name": "tiny_tools_pw-shared-0.1.0.tgz",
+          "downloads": 0
+        }
+      ]
+    }
+  ],
+  "traffic_status": "not_configured",
+  "views": null,
+  "clones": null,
+  "referrers": null,
+  "paths": null
+}
