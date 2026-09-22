@@ -36,7 +36,7 @@ You should see the tool call in the agent's activity, followed by the answer. If
 
 Use the tools for a question about a large table, a section of a long document, recurring log errors, or a document comparison. For a short note or a known exact string in a text file, the agent's ordinary Read or Grep may be faster. Extra tool calls on those tasks are not a success.
 
-The recorded comparison used 12 tasks and one run per setup. It found about 20% fewer tokens and 50% less elapsed time with tiny-context; that is evidence for those tasks, not a promise for every agent. See [the full comparison](evals/COMPARISON.md).
+The comparisons use 12 tasks and one run per setup. They include correct answers, selection mistakes and tasks where tools add work; results are not a promise for every agent. See [the full comparison](evals/COMPARISON.md).
 
 ## If something goes wrong
 

@@ -16,7 +16,7 @@ Choose [file tools](#install) for documents, tables and logs, or [runtime tools]
 - **Answer a spreadsheet question:** `query_table` runs SQL over CSV/XLSX/Parquet and returns the result instead of the source rows.
 - **Find a PDF or Office passage:** `file_map`, `query_file` and `read_section` return an outline, ranked matches and the requested section.
 
-**Measured example:** one log-analysis task took **7 agent turns without the tools → 3 with them**, with the same correct answer. Across the single 12-task comparison, the tools-only setup processed about **20% fewer tokens** and took about **46% less total time**. Some tasks improved less or got worse; short text and exact-string searches often suit built-ins. [Full comparison and limits](evals/COMPARISON.md) · [Try three tasks](QUICKSTART.md).
+**Measure the whole task:** the tool response can be much smaller than the source file, but startup, validation and extra agent turns still cost time. Results depend on the task and client. [Agent comparison, including regressions](evals/COMPARISON.md) · [Historical first comparison](https://github.com/Warddamn/tiny-tools/blob/main/evals/COMPARISON-2026-09-19.md).
 
 The whole-file-read benchmark below measures a different baseline; its savings are not a prediction for a capable agent.
 
@@ -172,7 +172,7 @@ The benchmark above compares against *reading whole files*. A capable agent with
 | tiny-context + 6-line snippet | 12/12 | 3.5 | 1,186,570 | $1.95 | 97s |
 | tiny-context + Read guard hook | 12/12 | 3.9 | 1,248,524 | $2.04 | 144s |
 
-Same answers either way. With the tools: **~20% fewer tokens, ~50% less wall-clock, fewer turns** — because one call replaces a loop of shell probes, and every turn carries ~24k tokens of fixed context. The 99.9% figure applies to agents that cannot run a shell or open the file at all. Full table and method: [`evals/COMPARISON.md`](evals/COMPARISON.md); what we concluded from it: [`PROPOSALS.md`](PROPOSALS.md).
+Historical 2026-09-19 run, before this patch: same answers either way. In that single run: **~20% fewer tokens, ~50% less wall-clock, fewer turns** — because one call replaces a loop of shell probes, and every turn carries ~24k tokens of fixed context. The 99.9% figure applies to agents that cannot run a shell or open the file at all. Historical table and method: [`evals/COMPARISON-2026-09-19.md`](evals/COMPARISON-2026-09-19.md); what we concluded from it: [`PROPOSALS.md`](PROPOSALS.md).
 
 ## Size
 

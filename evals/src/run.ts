@@ -14,6 +14,7 @@
  *   npm run evals -- --only diff       # one task
  *   EVAL_MODEL=sonnet npm run evals
  */
+import { readsProtectedFile } from "./grade.js";
 import { spawn } from "node:child_process";
 import { promises as fs } from "node:fs";
 import * as path from "node:path";
@@ -242,7 +243,7 @@ function judgeTools(task: Task, mode: Mode, calls: Call[]): string[] {
   const reasons: string[] = [];
   const mcp = calls.filter((c) => c.name.startsWith(PREFIX)).map((c) => ({ ...c, short: c.name.slice(PREFIX.length) }));
   const builtin = calls.filter((c) => !c.name.startsWith(PREFIX));
-  const rawReads = (base: string): Call[] => builtin.filter((c) => (c.name === "Read" || c.name === "Bash" || c.name === "Grep") && mentions(c, base) && !c.denied && !c.blockedByHook && !c.error);
+  const rawReads = (base: string): Call[] => builtin.filter((c) => readsProtectedFile(c, base));
   if (task.negative) {
     if (mcp.length) reasons.push(`used ${mcp.map((c) => c.short).join(", ")} on a small plain-text file — the built-in was the right call`);
     const want = task.expect_builtin ?? "Read";
@@ -380,7 +381,20 @@ async function main(): Promise<void> {
   if (!MODES.includes(modeArg)) throw new Error(`--mode must be one of ${MODES.join(", ")}`);
   const date = new Date().toISOString().slice(0, 10);
   const all = new Map<Mode, Outcome[]>();
-  for (const mode of compare ? MODES : [modeArg]) all.set(mode, await runMode(mode, tasks, model));
+  for (const mode of compare ? MODES : [modeArg]) {
+    if (!argv.includes('--regrade')) { all.set(mode, await runMode(mode, tasks, model)); continue; }
+    const outcomes: Outcome[] = [];
+    for (const task of tasks) {
+      const saved = JSON.parse(await fs.readFile(path.join(RUNS, `${mode}-${task.id}.json`), 'utf8'));
+      if (saved.task.prompt !== task.prompt) throw new Error('Saved task prompt differs; run a fresh evaluation.');
+      const { raw: _raw, task: _task, ...o } = saved;
+      const reasons = judgeTools(task, mode, o.calls), answer = judgeAnswer(task, o.answer);
+      if (answer.why) reasons.push(answer.why);
+      reasons.push(...o.reasons.filter((r:string) => r.startsWith('claude exited')));
+      outcomes.push({ ...o, correct: answer.correct, reasons, pass: reasons.length === 0 });
+    }
+    all.set(mode, outcomes);
+  }
   for (const [mode, outcomes] of all) {
     await fs.writeFile(path.join(EVALS, `RESULTS-${mode}.md`), modeTable(outcomes, mode, model, date));
     if (mode === "snippet") await fs.writeFile(path.join(EVALS, "RESULTS.md"), modeTable(outcomes, mode, model, date));

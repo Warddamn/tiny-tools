@@ -14,7 +14,7 @@
 - **Answer a spreadsheet question:** `query_table` runs SQL over CSV/XLSX/Parquet and returns the result instead of the source rows.
 - **Find a PDF or Office passage:** `file_map`, `query_file` and `read_section` return an outline, ranked matches and the requested section.
 
-**Measured example:** one log-analysis task took **7 agent turns without the tools → 3 with them**, with the same correct answer. Across the single 12-task comparison, the tools-only setup processed about **20% fewer tokens** and took about **46% less total time**. Some tasks improved less or got worse; short text and exact-string searches often suit built-ins. [Full comparison and limits](https://github.com/Warddamn/tiny-tools/blob/main/evals/COMPARISON.md) · [Try three tasks](../../QUICKSTART.md).
+**Measure the whole task:** the tool response can be much smaller than the source file, but startup, validation and extra agent turns still cost time. Results depend on the task and client. [Agent comparison, including regressions](https://github.com/Warddamn/tiny-tools/blob/main/evals/COMPARISON.md) · [Historical first comparison](https://github.com/Warddamn/tiny-tools/blob/main/evals/COMPARISON-2026-09-19.md).
 
 The whole-file-read benchmark below measures a different baseline; its savings are not a prediction for a capable agent.
 
@@ -130,7 +130,7 @@ _Fixtures (generated locally, seeded): sales.csv 5.2 MB · app.log 2.8 MB · con
 
 Measured the way an agent would experience it: **naive** = tokens to read the raw content the task needs (bytes/4); **tool** = tokens of the tool's full response. Fixtures are generated locally by `bench/`.
 
-**Against a shell-capable agent the honest number is smaller:** the same 12 tasks through headless Claude Code with and without tiny-context gave identical answers; the tools cut tokens ~20%, cost ~19%, wall-clock ~50% and turns 4.3 → 3.5, because one call replaces a loop of shell probes. See `evals/COMPARISON.md` and `PROPOSALS.md`.
+**Historical comparison (2026-09-19, before this patch):** the same 12 tasks through headless Claude Code with and without tiny-context gave identical answers; the tools cut tokens ~20%, cost ~19%, wall-clock ~50% and turns 4.3 → 3.5, because one call replaces a loop of shell probes. See the archived `evals/COMPARISON-2026-09-19.md`; current results are in `evals/COMPARISON.md`.
 
 ## Size
 

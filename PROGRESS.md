@@ -97,3 +97,5 @@ User instruction: **“BUILD ALL THREE PLEASE.”** New separate package: `packa
 ## 2026-09-22 — safety and efficiency patch prepared
 
 Payton requested full testing, fixes and a public update. Prepared context/runtime 0.1.1: restricted SQL worker and protected exports; bounded freshness-checked parse reuse and direct routing; incremental journal recovery, correct successful-read guard handling, callback deadlines, and coalesced expiring cache hints. Added installed-artifact regressions and a synthetic disk-I/O gate. AVRG3 attribution retained; no company data, telemetry or new model dependency. Publication/registry verification must complete before marking this shipped.
+
+Validation follow-up: 196 tests passed locally; first cross-platform CI run passed all 10 jobs. Clean context tarball and both local MCPBs pass installed safety tests. All 36 tool-enabled context agent answers and five runtime agent tasks pass expected-answer checks; code-caller builtin choices remain soft selection warnings. Fixed metadata-only shell-command grading and regraded the same transcripts. Historical marketing numbers now explicitly refer to archived results.

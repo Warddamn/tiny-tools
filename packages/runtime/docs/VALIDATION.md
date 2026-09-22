@@ -28,4 +28,4 @@ New tests cover SQL write/external-access rejection, exclusive exports and deadl
 
 The regression gate compares bytes, not wall-clock speed. Journaling makes more small writes; slow filesystems may have different timing. A plain script with no persistence still does less work. These measurements establish neither universal token savings nor GPU savings. Custom callbacks must cooperate with cancellation; synchronous blocking code and filesystem cleanup can exceed a collection deadline.
 
-Local validation: **193 tests passed** in 22 files. All five fresh runtime agent selection/answer tasks passed, including the small-note non-use case; [results](SAFETY-EVAL.json). This is a smoke evaluation, not a savings comparison.
+Local validation: **196 tests passed** in 23 files. All five fresh runtime agent selection/answer tasks passed, including the small-note non-use case; [results](SAFETY-EVAL.json). This is a smoke evaluation, not a savings comparison.

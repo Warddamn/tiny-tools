@@ -70,7 +70,7 @@ try {
     manifest_version: "0.3", name: "tiny-context", display_name: "tiny-context — efficient file tasks",
     version: pkg.version,
     description: "Query tables, find document passages and summarize logs with bounded results for AI agents.",
-    long_description: "Eight local tools by AVRG3 for file tasks with fewer reading steps. Query CSV/XLSX/Parquet with SQL; find PDF/Office passages; cluster recurring log errors; compare, validate and extract. One 12-task Claude comparison found about 20% fewer processed tokens and 50% less total time. Results vary; short text and exact-string searches may be better served by built-ins. This bundle includes production dependencies and DuckDB for x64/arm64 on its declared OS. Requires Node.js 20+ (or a compatible host-provided runtime). No account or telemetry. Returned text is passed to your agent client and may be sent to its model provider.",
+    long_description: "Eight local tools by AVRG3 for file tasks with fewer reading steps. Query CSV/XLSX/Parquet with SQL; find PDF/Office passages; cluster recurring log errors; compare, validate and extract. Task-level comparisons include both improvements and regressions; short text and exact-string searches may be better served by built-ins. This bundle includes production dependencies and DuckDB for x64/arm64 on its declared OS. Requires Node.js 20+ (or a compatible host-provided runtime). No account or telemetry. Returned text is passed to your agent client and may be sent to its model provider.",
     author: { name: "AVRG3", url: "https://github.com/Warddamn" },
     repository: { type: "git", url: "https://github.com/Warddamn/tiny-tools" },
     homepage: "https://github.com/Warddamn/tiny-tools",

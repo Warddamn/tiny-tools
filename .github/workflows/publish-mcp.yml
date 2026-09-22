@@ -84,7 +84,7 @@ jobs:
 
           All eight tools are checked against known answers after extracting the actual bundle. These are unsigned bundles; the registry metadata includes their SHA-256 hashes. Dependencies are included, so bundles are larger than the npm-style download.
 
-          A single 12-task Claude trial measured about 20% fewer processed tokens and 50% less total time. Results vary. Start with the worked examples: https://github.com/Warddamn/tiny-tools/blob/main/QUICKSTART.md
+          Tools have startup and validation costs. Task-level comparisons include both improvements and regressions; no universal savings are promised. Start with the worked examples: https://github.com/Warddamn/tiny-tools/blob/main/QUICKSTART.md
           NOTES
           if gh release view "$TAG" >/dev/null 2>&1; then
             # Re-runs must not silently replace artifacts already referenced by registry hashes.
