@@ -2,12 +2,22 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.Warddamn/tiny-runtime",
   "description": "Resumable API pagination, repeated-failure detection and tool-progress cache hints for AI agents",
-  "title": "tiny-runtime \u2014 agent batch and progress tools by AVRG3",
+  "title": "tiny-runtime — agent batch and progress tools by AVRG3",
   "repository": {
     "url": "https://github.com/Warddamn/tiny-tools",
     "source": "github",
     "subfolder": "packages/runtime"
   },
   "version": "0.1.1",
-  "websiteUrl": "https://github.com/Warddamn/tiny-tools/tree/main/packages/runtime#readme"
+  "websiteUrl": "https://github.com/Warddamn/tiny-tools/tree/main/packages/runtime#readme",
+  "packages": [
+    {
+      "registryType": "mcpb",
+      "identifier": "https://github.com/Warddamn/tiny-tools/releases/download/runtime-v0.1.1/tiny-runtime-0.1.1.mcpb",
+      "fileSha256": "9e79036aabb891d4efb71194b3903b876ac3cacf37d1763fc65d27fe8d06d05a",
+      "transport": {
+        "type": "stdio"
+      }
+    }
+  ]
 }

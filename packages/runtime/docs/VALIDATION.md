@@ -29,3 +29,7 @@ New tests cover SQL write/external-access rejection, exclusive exports and deadl
 The regression gate compares bytes, not wall-clock speed. Journaling makes more small writes; slow filesystems may have different timing. A plain script with no persistence still does less work. These measurements establish neither universal token savings nor GPU savings. Custom callbacks must cooperate with cancellation; synchronous blocking code and filesystem cleanup can exceed a collection deadline.
 
 Local validation: **196 tests passed** in 23 files. All five fresh runtime agent selection/answer tasks passed, including the small-note non-use case; [results](SAFETY-EVAL.json). This is a smoke evaluation, not a savings comparison.
+
+## Public safety release verified — 0.1.1
+
+[Runtime publication 35697960674](https://github.com/Warddamn/tiny-tools/actions/runs/35697960674) succeeded at source `1c8c980dc1fe1326e5828f7e147150fb863a6365`. The exact portable archive passed on macOS, Windows and Linux; fresh public installs passed on Linux and macOS, including successful unchanged-read guard checks. Public assets: **3,937,431-byte MCPB**, **49,413-byte tarball**. Active official registry version/URL/hash, downloaded server.json checksum, and GitHub asset digest all match. These verification downloads are automated events, not adoption evidence.

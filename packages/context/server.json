@@ -2,12 +2,38 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.Warddamn/tiny-context",
   "description": "Save agent steps: query spreadsheets, search PDF/Office files, summarize logs with bounded output",
-  "title": "tiny-context \u2014 efficient file tools by AVRG3",
+  "title": "tiny-context — efficient file tools by AVRG3",
   "repository": {
     "url": "https://github.com/Warddamn/tiny-tools",
     "source": "github",
     "subfolder": "packages/context"
   },
   "version": "0.1.1",
-  "websiteUrl": "https://github.com/Warddamn/tiny-tools/tree/main/packages/context#readme"
+  "websiteUrl": "https://github.com/Warddamn/tiny-tools/tree/main/packages/context#readme",
+  "packages": [
+    {
+      "registryType": "mcpb",
+      "identifier": "https://github.com/Warddamn/tiny-tools/releases/download/context-v0.1.1/tiny-context-0.1.1-darwin.mcpb",
+      "fileSha256": "7374aa59a093d03fa00fc9c5624722092f6eff17ea704cf5b6495ccd1ff0d60a",
+      "transport": {
+        "type": "stdio"
+      }
+    },
+    {
+      "registryType": "mcpb",
+      "identifier": "https://github.com/Warddamn/tiny-tools/releases/download/context-v0.1.1/tiny-context-0.1.1-linux.mcpb",
+      "fileSha256": "3d697f12ed594278291792fee6bfd8c86ec7fb6468b07a55b8a94d21bbb212ba",
+      "transport": {
+        "type": "stdio"
+      }
+    },
+    {
+      "registryType": "mcpb",
+      "identifier": "https://github.com/Warddamn/tiny-tools/releases/download/context-v0.1.1/tiny-context-0.1.1-win32.mcpb",
+      "fileSha256": "d49287b73a71d05cebfc7353a5c2c7c7bee4e3e8f01e971e659649a19d9714f7",
+      "transport": {
+        "type": "stdio"
+      }
+    }
+  ]
 }
