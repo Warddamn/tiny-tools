@@ -2,21 +2,19 @@
 
 Built by **AVRG3**. Context verified 2026-09-21; runtime published and verified 2026-09-22.
 
-## Live distribution
+## Current release targets
 
-- [tiny-runtime public install](https://github.com/Warddamn/tiny-tools/tree/main/packages/runtime#public-install): version 0.1.0, with a portable MCPB and smaller npx tarball in [runtime-v0.1.0](https://github.com/Warddamn/tiny-tools/releases/tag/runtime-v0.1.0). [Official runtime listing](https://registry.modelcontextprotocol.io/?q=io.github.Warddamn%2Ftiny-runtime) is active. The same bundle passed on Linux, macOS and Windows; fresh-cache public installation and exact registry URL/hash verification passed in [run 35686387287](https://github.com/Warddamn/tiny-tools/actions/runs/35686387287).
-
-- [tiny-context official MCP Registry](https://registry.modelcontextprotocol.io/?q=io.github.Warddamn%2Ftiny-context): active `io.github.Warddamn/tiny-context` version 0.1.0.
-- [Glama](https://glama.ai/mcp/servers/Warddamn/tiny-tools): repository already indexed; this session verified its public page, not ownership or refreshed indexing.
-- [Agent bundles](https://github.com/Warddamn/tiny-tools/releases/tag/context-v0.1.0): macOS, Linux and Windows MCPB downloads. Each includes its x64/arm64 dependencies. Node.js 20+ or a compatible host runtime is required.
-- The original `v0.1.0` standalone tarball remains the install source for npx client configs. It bundles internal shared code and downloads third-party dependencies.
-- npm is not published. An npm login is not needed for these install routes or for registry publication.
+- tiny-context **0.1.1**: [downloads](https://github.com/Warddamn/tiny-tools/releases/tag/context-v0.1.1), eight file tools, restricted SQL and protected exports. Includes a standalone tarball plus OS-specific MCPB bundles.
+- tiny-runtime **0.1.1**: [downloads](https://github.com/Warddamn/tiny-tools/releases/tag/runtime-v0.1.1), incremental checkpoints, corrected successful-read handling, callback deadlines and bounded cache-hint delivery.
+- Publication workflows test the actual artifacts, then verify fresh public installs and the exact active MCP Registry version and hashes. A failed run is not a completed release.
+- Older assets remain immutable for traceability. Upgrade through the new install commands; old pinned copies do not automatically change.
+- Both packages are distributed through GitHub and the official MCP Registry. npm publication/login is not required.
 
 ## Verify a bundle locally
 
 Run `npm test`, then `npm run bundle:mcpb`. The builder uses the checked-in lockfile to install production dependencies in a temporary folder, copies only distributable workspace files, adds the other native architectures from integrity-checked packages, and packs the bundle with `@anthropic-ai/mcpb@2.1.2`.
 
-Run `npm run verify:mcpb -- .tmp/mcpb/tiny-context-0.1.0-darwin.mcpb` for the macOS output (substitute the package version and `linux` or `win32` on those systems). This extracts the actual archive outside the repository and checks all eight MCP tools plus XLSX, without npm on the server's PATH. Node itself is supplied by the test host.
+Run `npm run verify:mcpb -- .tmp/mcpb/tiny-context-0.1.1-darwin.mcpb` for the macOS output (substitute the package version and `linux` or `win32` on those systems). This extracts the actual archive outside the repository and checks all eight MCP tools plus XLSX, without npm on the server's PATH. Node itself is supplied by the test host.
 
 The three-platform publication run was [35621683385](https://github.com/Warddamn/tiny-tools/actions/runs/35621683385); source CI was [35621684626](https://github.com/Warddamn/tiny-tools/actions/runs/35621684626). Both passed. Other CPU/OS combinations and individual client installation screens are not covered by these checks.
 
@@ -31,7 +29,7 @@ The registry metadata is generated from actual build outputs. The publisher is p
 
 ## Agent positioning and limits
 
-Lead with SQL spreadsheet questions, recurring error-log diagnosis and targeted PDF/Office retrieval. The example claim is 7 turns → 3 on one log task; see [the complete comparison](evals/COMPARISON.md) for all tasks, including regressions. A listing allows discovery; clients still control which tools are installed and enabled. Downloads include bots and our own verification.
+Lead with SQL spreadsheet questions, recurring error-log diagnosis and targeted PDF/Office retrieval. Historical task results are examples rather than guaranteed savings; see [the complete comparison](evals/COMPARISON.md) for all tasks, including regressions. A listing allows discovery; clients still control which tools are installed and enabled. Downloads include bots and our own verification.
 
 Optional future npm distribution can be added after ownership and publishing access are verified. Do not replace working GitHub install commands with npm names until a clean npm install has been tested. Directory submission or indexing does not guarantee ranking or usage.
 

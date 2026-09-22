@@ -1,6 +1,6 @@
 {
   "name": "@tiny_tools_pw/runtime",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "MCP server and SDK for resumable API pagination, batch checkpoints, agent retry-loop detection, and tool-progress cache scheduling hints. Three tools; no model calls or telemetry.",
   "type": "module",
   "license": "MIT",

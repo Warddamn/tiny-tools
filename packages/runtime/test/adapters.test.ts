@@ -40,10 +40,10 @@ describe('explicit HTTP adapters',()=>{
     expect(()=>httpPageSource({...source(),url:base+'?cursor=a'})).toThrow(/cursor/);
   });
   it('delivers real HTTP cache hints to a compatible bridge and surfaces failures',async()=>{
-    const planner=new CachePlanner();planner.ingest({version:1,session:'s',call:'c',sequence:0,atMs:1000,phase:'finishing'},1000);
-    const bridge=new ProgressBridge(planner,httpCacheAdapter(base+'/hint'));const r=await bridge.tick(1000);
-    expect(r.applied).toEqual(['s']);expect(received.at(-1)).toMatchObject({version:1,session:'s',action:'retain',validUntilMs:3000});
-    const failed=await new ProgressBridge(planner,httpCacheAdapter(base+'/failure')).tick(1000);expect(failed.failed).toHaveLength(1);
+    const now=Date.now();const planner=new CachePlanner();planner.ingest({version:1,session:'s',call:'c',sequence:0,atMs:now,phase:'finishing'},now);
+    const bridge=new ProgressBridge(planner,httpCacheAdapter(base+'/hint'));const r=await bridge.tick(now);
+    expect(r.applied).toEqual(['s']);expect(received.at(-1)).toMatchObject({version:1,session:'s',action:'retain',validUntilMs:now+2000});
+    const failed=await new ProgressBridge(planner,httpCacheAdapter(base+'/failure')).tick(now);expect(failed.failed).toHaveLength(1);
     expect(JSON.stringify(failed.failed)).not.toContain('secret response detail');
   });
 });

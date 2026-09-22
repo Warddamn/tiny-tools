@@ -1,12 +1,12 @@
 ---
 name: tiny-context
-description: Token-saving file tools (file_map, query_file, read_section, query_table, summarize_log, diff_files, validate_file, extract) from the tiny-context MCP server. Use BEFORE reading any large file (over 20 KB), BEFORE opening ANY PDF, DOCX, PPTX or XLSX (the built-in Read cannot open them), for any question about spreadsheet or CSV/TSV/Parquet data (totals, counts, which columns), for logs (what is failing, error spikes), for diffs between two files or versions, and for validating JSON/YAML/CSV/HTML/Markdown you just wrote. Reach for these instead of Read, cat, grep or head loops on big or office-format files.
+description: Targeted file analysis with tiny-context for large documents, SQL table aggregates, recurring log errors, comparisons and validation. Query directly or read a known section; map only when an outline is needed. Small plain-text notes and exact-string searches usually need only the built-in Read or Grep.
 ---
 
 # tiny-context — when to use which tool
 
 ## tiny-context (installed MCP)
-- Before reading any file > 20 KB, or ANY PDF/DOCX/XLSX/PPTX: call `file_map` first, then `query_file` / `read_section` for the part you need. Do not Read whole large files.
+- For large or PDF/Office files, choose the shortest useful path: `query_file` for a question, `read_section` for a known location, `file_map` only when you need an outline. Skip extra calls once the answer is sufficient.
 - Questions about CSV/TSV/XLSX/Parquet data ("total by…", "how many rows…"): `query_table` with SQL (table is `t`). Never load raw rows into context.
 - Logs: `summarize_log` first (add `focus: "errors"`); Grep/`extract` only afterwards, for the exact message it surfaced.
 - Comparing two files, including office formats: `diff_files` (summary mode) instead of reading both.

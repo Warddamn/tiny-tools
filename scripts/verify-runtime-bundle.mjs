@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // @author AVRG3
 /** Verify the exact portable archive, outside the checkout with no npm on the server PATH. */
+import { verifyRuntimeSafety } from './verify-safety.mjs';
 import assert from 'node:assert/strict';
 import { promises as fs } from 'node:fs';
 import { execFileSync } from 'node:child_process';
@@ -36,6 +37,7 @@ with zipfile.ZipFile(sys.argv[1]) as z:
     for(const filename of data.files){assert.ok(path.isAbsolute(filename));await fs.access(filename);}
     console.log(`PASS ${name}`);
   }
+  await verifyRuntimeSafety(client,temp);
   const cli=execFileSync(process.execPath,[path.join(pkgRoot,'dist/cli.js'),'--help'],{cwd:temp,encoding:'utf8'});assert.match(cli,/collect/);
   console.log(`PASS portable bundle on ${process.platform}/${process.arch}: three MCP tools + CLI, npm absent from server PATH`);
 }finally{await client.close();await fs.rm(temp,{recursive:true,force:true});}

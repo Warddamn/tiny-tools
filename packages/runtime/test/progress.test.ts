@@ -61,7 +61,7 @@ describe('tool progress and cache scheduling', () => {
     const apply = vi.fn(async () => {}); const bridge = new ProgressBridge(p, { apply });
     const good = await bridge.tick(1000); expect(good.applied).toEqual(['s1']); expect(apply.mock.calls[0][0].action).toBe('prefetch');
     apply.mockRejectedValueOnce(new Error('unavailable'));
-    const bad = await bridge.tick(1100); expect(bad.applied).toEqual([]); expect(bad.failed).toHaveLength(1);
+    const bad = await bridge.tick(2100); expect(bad.applied).toEqual([]); expect(bad.failed).toHaveLength(1);
     await bridge.tick(7000); expect(apply.mock.calls.at(-1)![0].action).toBe('release');
   });
 });

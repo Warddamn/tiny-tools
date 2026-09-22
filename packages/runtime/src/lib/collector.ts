@@ -11,7 +11,7 @@ export const PageSchema = z.object({
 }).strict();
 export type Page = z.infer<typeof PageSchema>;
 export type RecordValue = Page['items'][number];
-const StateSchema = z.object({
+export const StateSchema = z.object({
   version: z.literal(1), source: z.string(), options: z.string(), nextCursor: Cursor,
   exhausted: z.boolean(), pages: z.number().int().min(0).max(100_000),
   cursors: z.array(Cursor).max(100_000), records: z.array(z.record(z.string(), z.json())).max(100_000),
@@ -32,6 +32,8 @@ export interface CollectionOptions {
   signal?: AbortSignal;
   /** Called after each fully validated, committed page; persist atomically before fetching more. */
   onCheckpoint?: (checkpoint: Checkpoint) => Promise<void>;
+  /** Incremental durable sink: only this page plus constant-size metadata. Must honor signal before publication. */
+  onPage?: (page: { state: Omit<CollectionState, 'records' | 'cursors'>; cursor: string | null; records: RecordValue[] }, signal: AbortSignal) => Promise<void>;
   onProgress?: (progress: { pages: number; records: number; total?: number }) => void | Promise<void>;
 }
 export interface CollectionResult {
@@ -53,6 +55,7 @@ function identity(record: RecordValue, key: string): string {
 }
 /** No hidden retry. A page is validated in full before its records/cursor are committed. */
 export async function collectPages(options: CollectionOptions): Promise<CollectionResult> {
+  const started = performance.now();
   const maxPages = positiveInt(options.maxPages ?? 100, 'maxPages', 10_000);
   const maxRecords = positiveInt(options.maxRecords ?? 10_000, 'maxRecords', 100_000);
   const maxBytes = positiveInt(options.maxBytes ?? 16_000_000, 'maxBytes', 64_000_000);
@@ -79,7 +82,9 @@ export async function collectPages(options: CollectionOptions): Promise<Collecti
   const abort = () => controller.abort();
   if (options.signal?.aborted) controller.abort();
   options.signal?.addEventListener('abort', abort, { once: true });
-  const timer = setTimeout(abort, timeout);
+  const expired = () => controller.signal.aborted || performance.now() - started >= timeout;
+  const timer = setTimeout(abort, Math.max(1, timeout - (performance.now() - started)));
+  const cursors = new Set(state.cursors);
   const finish = (reason: string, nextStep: string, complete = false): CollectionResult => ({
     status: complete ? 'complete' : state.pages ? 'partial' : 'failed', reason, nextStep,
     records: state.records, checkpoint: seal(state),
@@ -89,15 +94,15 @@ export async function collectPages(options: CollectionOptions): Promise<Collecti
     if (state.records.length > maxRecords || state.bytes > maxBytes) return finish('limit', 'Raise the record/byte limit to cover the saved checkpoint.');
     if (state.exhausted) return finish('end_of_source', 'No more requests needed.', true);
     for (let request = 0; request < maxPages; request++) {
-      if (controller.signal.aborted) return finish('cancelled_or_timeout', 'Resume from the checkpoint with more time.');
-      if (state.cursors.includes(state.nextCursor)) return finish('cursor_cycle', 'Fix the source pagination; restarting or repeating this cursor cannot prove completion.');
+      if (expired()) return finish('cancelled_or_timeout', 'Resume from the checkpoint with more time.');
+      if (cursors.has(state.nextCursor)) return finish('cursor_cycle', 'Fix the source pagination; restarting or repeating this cursor cannot prove completion.');
       let page: Page;
       try {
         // Race protects even custom adapters that neglect cancellation; adapters must cancel their own I/O.
         page = PageSchema.parse(await abortable(() => options.fetchPage(state.nextCursor, controller.signal), controller.signal));
-        if (controller.signal.aborted) return finish('cancelled_or_timeout', 'Resume from the checkpoint with more time.');
+        if (expired()) return finish('cancelled_or_timeout', 'Resume from the checkpoint with more time.');
         if (state.pages && (state.snapshot !== page.snapshot || state.total !== page.total)) fail('Source snapshot or declared total changed between pages.', 'Start a fresh collection from a stable snapshot.');
-        if (page.nextCursor !== null && (page.nextCursor === state.nextCursor || state.cursors.includes(page.nextCursor))) return finish('cursor_cycle', 'Fix the source pagination; the offending page was not committed.');
+        if (page.nextCursor !== null && (page.nextCursor === state.nextCursor || cursors.has(page.nextCursor))) return finish('cursor_cycle', 'Fix the source pagination; the offending page was not committed.');
       } catch (e) {
         return finish(controller.signal.aborted ? 'cancelled_or_timeout' : 'page_error', `Page was not committed. Fix the source and resume. ${errorMessage(e).slice(0, 1000)}`);
       }
@@ -124,12 +129,28 @@ export async function collectPages(options: CollectionOptions): Promise<Collecti
       if (state.records.length + added.length > maxRecords || state.bytes + pageBytes > maxBytes) return finish('limit', 'Page was not committed. Raise maxRecords/maxBytes and resume from the checkpoint.');
       const recordCount = state.records.length + added.length;
       if (page.total !== undefined && (recordCount > page.total || (page.nextCursor === null && recordCount !== page.total))) return finish('total_mismatch', 'Page was not committed. Verify total means unique records with key, or all records without key; use a stable snapshot.');
-      state = { ...state, pages: state.pages + 1, nextCursor: page.nextCursor, exhausted: page.nextCursor === null,
-        cursors: [...state.cursors, state.nextCursor], records: [...state.records, ...added], duplicates: state.duplicates + duplicates,
-        bytes: state.bytes + pageBytes, sums, ...(page.snapshot !== undefined ? { snapshot: page.snapshot } : {}), ...(page.total !== undefined ? { total: page.total } : {}) };
+      if (expired()) return finish('cancelled_or_timeout', 'Resume the last committed checkpoint.');
+      const cursor = state.nextCursor;
+      const { records: _records, cursors: _cursors, ...priorMeta } = state;
+      const meta = { ...priorMeta, pages: state.pages + 1, nextCursor: page.nextCursor, exhausted: page.nextCursor === null,
+        duplicates: state.duplicates + duplicates, bytes: state.bytes + pageBytes, sums,
+        ...(page.snapshot !== undefined ? { snapshot: page.snapshot } : {}), ...(page.total !== undefined ? { total: page.total } : {}) };
+      try {
+        // Incremental persistence happens before advancing in-memory state. A cancelled sink must not publish late.
+        if (options.onPage) await abortable(() => options.onPage!({ state: meta, cursor, records: added }, controller.signal), controller.signal);
+        if (options.onCheckpoint) {
+          const candidate = { ...meta, records: [...state.records, ...added], cursors: [...state.cursors, cursor] };
+          await abortable(() => options.onCheckpoint!(seal(candidate)), controller.signal);
+        }
+      } catch (e) { if (expired()) return finish('cancelled_or_timeout', 'Resume the last committed checkpoint.'); throw e; }
+      // Append instead of repeatedly copying all collected data.
+      for (const record of added) state.records.push(record); state.cursors.push(cursor); cursors.add(cursor);
+      state = { ...meta, records: state.records, cursors: state.cursors };
       for (const [id, hash] of localSeen) seen.set(id, hash);
-      await options.onCheckpoint?.(seal(state));
-      await options.onProgress?.({ pages: state.pages, records: state.records.length, total: state.total });
+      if (expired()) return finish('cancelled_or_timeout', 'Resume the last committed checkpoint.');
+      try { if (options.onProgress) await abortable(() => Promise.resolve(options.onProgress!({ pages: state.pages, records: state.records.length, total: state.total })), controller.signal); }
+      catch (e) { if (expired()) return finish('cancelled_or_timeout', 'Resume the last committed checkpoint.'); throw e; }
+      if (expired()) return finish('cancelled_or_timeout', 'Resume the last committed checkpoint.');
       if (state.exhausted) return finish('end_of_source', 'Complete under this source’s pagination contract; hidden server caps and omitted records cannot be detected without a trusted total/snapshot.', true);
     }
     return finish('page_limit', 'Resume from the checkpoint to continue; maxPages limits each invocation.');

@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // @author AVRG3
 /** Download the documented public command into an empty cache and verify actual answers. */
+import { verifyRuntimeSafety } from './verify-safety.mjs';
 import assert from 'node:assert/strict';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
@@ -27,5 +28,6 @@ try{
   for(const[name,file,arg,expected]of [['collect_pages','collect.json','config',/"cents": "1500"/],['check_progress','guard-trace.json','path',/"action": "block"/],['plan_cache','progress-trace.json','path',/"retain": 1/]]){
     const result=await client.callTool({name,arguments:{[arg]:path.join(temp,'examples',file),output_dir:temp}});assert.ok(!result.isError,JSON.stringify(result));assert.match(result.content[0].text,expected);console.log(`PASS public ${name}`);
   }
+  await verifyRuntimeSafety(client,temp);
   console.log('PASS public npx install: fresh cache, blank npm configs, actual answers. This verification creates automated download events.');
 }finally{await client.close();await fs.rm(temp,{recursive:true,force:true});}

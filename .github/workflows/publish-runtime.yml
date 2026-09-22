@@ -80,6 +80,8 @@ jobs:
           VERSION=$(jq -r '.version' artifacts/server.json)
           TAG="runtime-v${VERSION}"
           cat > "$RUNNER_TEMP/runtime-notes.md" <<'NOTES'
+          **Safety and efficiency update:** incremental crash-recoverable checkpoints, bounded collection callbacks, successful repeated reads allowed, duplicate cache hints coalesced, and expired/late cache acknowledgements rejected. Existing version-1 checkpoints can still resume.
+
           Three MCP tools and a JavaScript/TypeScript SDK by **AVRG3** for agent workflows:
 
           - **collect_pages:** resumable API pagination and local batches, duplicate checks, exact integer totals, explicit complete/partial/failed results.
@@ -90,7 +92,7 @@ jobs:
 
           For other clients, use the **tarball** with npx; it downloads dependencies and needs no npm account:
 
-          `npx -y -p https://github.com/Warddamn/tiny-tools/releases/download/runtime-v0.1.0/tiny-runtime-0.1.0.tgz tiny-runtime-mcp`
+          `npx -y -p https://github.com/Warddamn/tiny-tools/releases/download/runtime-v0.1.1/tiny-runtime-0.1.1.tgz tiny-runtime-mcp`
 
           [Install and tool reference](https://github.com/Warddamn/tiny-tools/tree/main/packages/runtime#readme) · [Try three examples](https://github.com/Warddamn/tiny-tools/blob/main/packages/runtime/QUICKSTART.md)
 

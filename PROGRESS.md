@@ -92,3 +92,10 @@ User instruction: **“BUILD ALL THREE PLEASE.”** New separate package: `packa
 - [x] PR #1 merged at `95301ed`; [publication run 35686387287](https://github.com/Warddamn/tiny-tools/actions/runs/35686387287) passed every job. The same portable archive passed on Linux, macOS and Windows; the published npx install passed with a fresh cache.
 - [x] [runtime-v0.1.0](https://github.com/Warddamn/tiny-tools/releases/tag/runtime-v0.1.0) is public. Official MCP Registry read-back confirms active `io.github.Warddamn/tiny-runtime@0.1.0` with the exact download URL/hash. `packages/runtime/server.json` contains the published metadata.
 - [x] Published artifacts: MCPB 3,930,700 bytes, SHA-256 `cf98d46dd9b312b8bdc95407481a2b7184fbab8d2cffc2f30163776e45daa3c1`; tarball 41,830 bytes, SHA-256 `38e69adb78efac2406ee318cab2fa07f3d157057cd9aede15e9c981669e7a9f2`. Registry, release asset digests and release checksums agree. No npm login is required.
+
+
+## 2026-09-22 — safety and efficiency patch prepared
+
+Payton requested full testing, fixes and a public update. Prepared context/runtime 0.1.1: restricted SQL worker and protected exports; bounded freshness-checked parse reuse and direct routing; incremental journal recovery, correct successful-read guard handling, callback deadlines, and coalesced expiring cache hints. Added installed-artifact regressions and a synthetic disk-I/O gate. AVRG3 attribution retained; no company data, telemetry or new model dependency. Publication/registry verification must complete before marking this shipped.
+
+Validation follow-up: 196 tests passed locally; first cross-platform CI run passed all 10 jobs. Clean context tarball and both local MCPBs pass installed safety tests. All 36 tool-enabled context agent answers and five runtime agent tasks pass expected-answer checks; code-caller builtin choices remain soft selection warnings. Fixed metadata-only shell-command grading and regraded the same transcripts. Historical marketing numbers now explicitly refer to archived results.

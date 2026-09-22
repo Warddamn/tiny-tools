@@ -2,34 +2,34 @@
 
 Three deterministic helpers for agent developers, built by **AVRG3**: finish paginated jobs, interrupt repeated work that makes no progress, and report tool progress to a cache scheduler. No model calls, training, accounts, or telemetry.
 
-**Version 0.1.0:** library, CLI and a separate three-tool MCP server. No model calls or telemetry. The cache bridge requires a compatible inference-serving integration; it does not control hosted-model caches or stock vLLM by itself.
+**Version 0.1.1:** library, CLI and a separate three-tool MCP server. No model calls or telemetry. The cache bridge requires a compatible inference-serving integration; it does not control hosted-model caches or stock vLLM by itself.
 
 ## Public install
 
 Requires **Node.js 20+**. No npm account or source checkout is needed.
 
-[![Install in Cursor](https://cursor.com/deeplink/mcp-install-dark.svg)](https://cursor.com/en/install-mcp?name=tiny-runtime&config=eyJjb21tYW5kIjoibnB4IiwiYXJncyI6WyIteSIsIi1wIiwiaHR0cHM6Ly9naXRodWIuY29tL1dhcmRkYW1uL3RpbnktdG9vbHMvcmVsZWFzZXMvZG93bmxvYWQvcnVudGltZS12MC4xLjAvdGlueS1ydW50aW1lLTAuMS4wLnRneiIsInRpbnktcnVudGltZS1tY3AiXX0%3D)
-[![Install in VS Code](https://img.shields.io/badge/VS_Code-Install_Server-0098FF)](https://insiders.vscode.dev/redirect?url=vscode%3Amcp%2Finstall%3F%257B%2522name%2522%253A%2522tiny-runtime%2522%252C%2522command%2522%253A%2522npx%2522%252C%2522args%2522%253A%255B%2522-y%2522%252C%2522-p%2522%252C%2522https%253A%252F%252Fgithub.com%252FWarddamn%252Ftiny-tools%252Freleases%252Fdownload%252Fruntime-v0.1.0%252Ftiny-runtime-0.1.0.tgz%2522%252C%2522tiny-runtime-mcp%2522%255D%257D)
+[![Install in Cursor](https://cursor.com/deeplink/mcp-install-dark.svg)](https://cursor.com/en/install-mcp?name=tiny-runtime&config=eyJjb21tYW5kIjoibnB4IiwiYXJncyI6WyIteSIsIi1wIiwiaHR0cHM6Ly9naXRodWIuY29tL1dhcmRkYW1uL3RpbnktdG9vbHMvcmVsZWFzZXMvZG93bmxvYWQvcnVudGltZS12MC4xLjEvdGlueS1ydW50aW1lLTAuMS4xLnRneiIsInRpbnktcnVudGltZS1tY3AiXX0%3D)
+[![Install in VS Code](https://img.shields.io/badge/VS_Code-Install_Server-0098FF)](https://insiders.vscode.dev/redirect?url=vscode%3Amcp%2Finstall%3F%257B%2522name%2522%253A%2522tiny-runtime%2522%252C%2522command%2522%253A%2522npx%2522%252C%2522args%2522%253A%255B%2522-y%2522%252C%2522-p%2522%252C%2522https%253A%252F%252Fgithub.com%252FWarddamn%252Ftiny-tools%252Freleases%252Fdownload%252Fruntime-v0.1.1%252Ftiny-runtime-0.1.1.tgz%2522%252C%2522tiny-runtime-mcp%2522%255D%257D)
 
 **Claude Code:**
 
 ```bash
-claude mcp add tiny-runtime -- npx -y -p https://github.com/Warddamn/tiny-tools/releases/download/runtime-v0.1.0/tiny-runtime-0.1.0.tgz tiny-runtime-mcp
+claude mcp add tiny-runtime -- npx -y -p https://github.com/Warddamn/tiny-tools/releases/download/runtime-v0.1.1/tiny-runtime-0.1.1.tgz tiny-runtime-mcp
 ```
 
 **Cursor, Claude Desktop and other stdio MCP clients:** add this server configuration. VS Code uses `servers` in place of `mcpServers`.
 
 ```json
-{"mcpServers":{"tiny-runtime":{"command":"npx","args":["-y","-p","https://github.com/Warddamn/tiny-tools/releases/download/runtime-v0.1.0/tiny-runtime-0.1.0.tgz","tiny-runtime-mcp"]}}}
+{"mcpServers":{"tiny-runtime":{"command":"npx","args":["-y","-p","https://github.com/Warddamn/tiny-tools/releases/download/runtime-v0.1.1/tiny-runtime-0.1.1.tgz","tiny-runtime-mcp"]}}}
 ```
 
-**MCPB-compatible clients:** download the [portable bundle](https://github.com/Warddamn/tiny-tools/releases/download/runtime-v0.1.0/tiny-runtime-0.1.0.mcpb) and open it. It includes dependencies for macOS, Windows and Linux; a Node.js runtime is required. Bundles are unsigned; release checksums and registry hashes verify integrity. The smaller npx tarball downloads third-party dependencies at installation.
+**MCPB-compatible clients:** download the [portable bundle](https://github.com/Warddamn/tiny-tools/releases/download/runtime-v0.1.1/tiny-runtime-0.1.1.mcpb) and open it. It includes dependencies for macOS, Windows and Linux; a Node.js runtime is required. Bundles are unsigned; release checksums and registry hashes verify integrity. The smaller npx tarball downloads third-party dependencies at installation.
 
 **Claude Code plugin:** `/plugin marketplace add Warddamn/tiny-tools`, then `/plugin install tiny-runtime@tiny-tools`. This adds the usage guidance as well. Choose either the plugin or manual MCP setup.
 
-[Three worked examples with expected answers](QUICKSTART.md) · [GitHub downloads](https://github.com/Warddamn/tiny-tools/releases/tag/runtime-v0.1.0) · [Official MCP Registry](https://registry.modelcontextprotocol.io/?q=io.github.Warddamn%2Ftiny-runtime)
+[Three worked examples with expected answers](QUICKSTART.md) · [GitHub downloads](https://github.com/Warddamn/tiny-tools/releases/tag/runtime-v0.1.1) · [Official MCP Registry](https://registry.modelcontextprotocol.io/?q=io.github.Warddamn%2Ftiny-runtime)
 
-**JavaScript/TypeScript library:** install the same public tarball with `npm install https://github.com/Warddamn/tiny-tools/releases/download/runtime-v0.1.0/tiny-runtime-0.1.0.tgz`, then import `collectPages`, `RepeatGuard` or `ProgressBridge` from `@tiny_tools_pw/runtime`. This is a GitHub-hosted package, not an npm registry listing.
+**JavaScript/TypeScript library:** install the same public tarball with `npm install https://github.com/Warddamn/tiny-tools/releases/download/runtime-v0.1.1/tiny-runtime-0.1.1.tgz`, then import `collectPages`, `RepeatGuard` or `ProgressBridge` from `@tiny_tools_pw/runtime`. This is a GitHub-hosted package, not an npm registry listing.
 
 ## What each part does
 
@@ -115,11 +115,11 @@ Resume a CLI collection:
 node packages/runtime/dist/cli.js collect /absolute/path/job.json --checkpoint /absolute/path/tiny-runtime-abc/checkpoint.json
 ```
 
-Every accepted page is checkpointed before requesting another. MCP clients that request progress receive committed-page notifications; cancellation stops further requests and preserves committed work. Resumption creates a fresh directory, preserving the original checkpoint. `maxPages` is per invocation; record and byte budgets include previously committed pages. Increase limits to accept an oversized page; the collector never saves half a page. Default maximum response page size for HTTP is 1 MB (hard cap 8 MB), records 10,000 (hard cap 100,000), collection bytes 16 MB (hard cap 64 MB), and timeout 30 seconds (hard cap 5 minutes). No automatic retries, backoff, parallel fetching, or writes to the source.
+Every accepted page is checkpointed before requesting another. `timeoutMs` covers collection, fetches and awaited callbacks; job setup, validation and safe filesystem finalization add overhead. Arbitrary synchronous callbacks cannot be interrupted, and timed-out custom adapters must stop their own work. MCP clients that request progress receive committed-page notifications; cancellation stops further requests and preserves committed work. Resumption creates a fresh directory, preserving the original checkpoint. `maxPages` is per invocation; record and byte budgets include previously committed pages. Increase limits to accept an oversized page; the collector never saves half a page. Default maximum response page size for HTTP is 1 MB (hard cap 8 MB), records 10,000 (hard cap 100,000), collection bytes 16 MB (hard cap 64 MB), and timeout 30 seconds (hard cap 5 minutes). No automatic retries, backoff, parallel fetching, or writes to the source.
 
 With `key`, identical duplicates are counted once, and conflicting versions of an ID fail the entire new page. Without `key`, all rows are preserved. Declared `total` must refer to unique records when a key is used, all rows otherwise, and remain constant. Sums use BigInt internally and return strings; use integer minor units such as cents or integer strings, not rounded decimal numbers. Use tiny-context's query_table for decimal/statistical work.
 
-**Completeness has a precise limit:** `complete` means the configured source explicitly ended and all configured metadata checks passed. It cannot expose hidden provider limits, a lying total, or missing records in the source. A stable snapshot/total improves evidence. Resume requires the same source/mapping/scope and aggregation; update scope when accounts or filters change. Checkpoint SHA-256 detects accidental corruption, not malicious tampering. Checkpoints contain records and cursors and should be protected like the source data. Persistence rewrites a bounded checkpoint per page; this favors simple recovery over high-volume streaming throughput.
+**Completeness has a precise limit:** `complete` means the configured source explicitly ended and all configured metadata checks passed. It cannot expose hidden provider limits, a lying total, or missing records in the source. A stable snapshot/total improves evidence. Resume requires the same source/mapping/scope and aggregation; update scope when accounts or filters change. Checkpoint SHA-256 detects accidental corruption, not malicious tampering. Checkpoints contain records and cursors and should be protected like the source data. The CLI/MCP jobs write one immutable page delta and a small atomic commit pointer per page, then one compatible version-1 snapshot on return. Interrupted jobs retain a version-2 journal; keep its entire job directory together and resume via the CLI/MCP or `readCheckpoint(path)`. Old version-1 snapshots still work. Journal recovery caps total JSON bytes read at 128 MB (64 MB per file), independently of untrusted metadata counters; the SDK can request a smaller read budget. SDK users can pass `new CheckpointStore(freshDirectory).save` as `onPage` after `initialize(checkpoint)`; call `drain()` before finalizing. The older `onCheckpoint` callback remains snapshot-based and can be expensive on long jobs.
 
 ## Repeated-work guard
 
@@ -133,7 +133,7 @@ const result = await runGuarded(guard, attempt, () => runTests(), async () => fi
 if (!result.executed) reportBlocked(result.decision);
 ```
 
-`runGuarded` never retries or swallows execution exceptions. Use it serially per workflow; it is not a concurrent-call deduplicator. Without a trusted state fingerprint, repeated failures yield advice, never a block. Host-approved polling can use `repeatableTools`; configure this in trusted host code. A state change naturally permits a new attempt. `guard.clear(scope)` explicitly resets history. Snapshots contain bounded hashes, not arguments or raw outputs, but hashing predictable inputs is not anonymization. Restore a snapshot by passing it as the constructor's second argument. Detection is a bounded heuristic, not proof that every repeat is unnecessary.
+`runGuarded` never retries or swallows execution exceptions. Use it serially per workflow; it is not a concurrent-call deduplicator. Without a trusted state fingerprint, repeated failures yield advice, never a block. Host-approved polling can use `repeatableTools`; configure this in trusted host code. Successful reads of unchanged state remain allowed and reset preceding failed attempts. A state change naturally permits a new attempt. `guard.clear(scope)` explicitly resets history. Snapshots contain bounded hashes, not arguments or raw outputs, but hashing predictable inputs is not anonymization. Restore a snapshot by passing it as the constructor's second argument. Detection is a bounded heuristic, not proof that every repeat is unnecessary.
 
 ## Live progress and cache bridge
 
@@ -151,6 +151,8 @@ await bridge.tick(Date.now(), 4); // capacity is session slots, not GPU bytes
 reporter.report('done', 100, 100);
 await bridge.tick(Date.now(), 4);
 ```
+
+The bridge coalesces simultaneous ticks and unchanged hints, renewing acknowledged leases halfway through their lifetime. Delivery has bounded concurrency (default 4), a 2-second deadline capped by lease expiry, and checks expiry before dispatch and after acknowledgement. Failed/late acknowledgements are not reported as applied. Adapters must enforce lease expiry and honor cancellation; an uncooperative adapter can continue its own work. HTTP adapters require Unix-millisecond timestamps.
 
 The host calls `tick` periodically while work runs and once at completion; own the lifecycle in your runtime. Always report a terminal `done`, `failed`, or `cancelled` event. Session/call IDs should be opaque; no prompts, file paths, results, or document contents are sent. Timestamps share the controller's millisecond clock domain; normalize remote clocks at the trusted boundary. Events have monotone per-call sequence numbers. Duplicates, out-of-order events, future timestamps and stale reports are rejected. IDs must be unique per call.
 

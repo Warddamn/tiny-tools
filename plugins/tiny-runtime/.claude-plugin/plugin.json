@@ -1,7 +1,7 @@
 {
   "name": "tiny-runtime",
   "displayName": "tiny-runtime",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Resumable API pagination and batch collection, repeated-failure analysis, and tool-progress cache hints for AI agents. Three MCP tools with selection guidance; automatic enforcement and GPU effects need host integration.",
   "author": {
     "name": "AVRG3",

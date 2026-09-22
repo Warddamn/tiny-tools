@@ -1,18 +1,18 @@
 # Tool-selection eval results — tiny-context (mode: hook)
 
-_2026-09-19 · headless `claude -p` · 11/12 pass · pass = correct answer AND tool rules hold_
+_2026-09-22 · headless `claude -p` · model sonnet · 11/12 pass · pass = correct answer AND tool rules hold_
 
 | Task | Result | Correct | Tools called (⛔ blocked by hook · ✗ denied · ! error) | Turns | Tokens | Time | Cost |
 |---|---|---|---|---:|---:|---:|---:|
-| sales-by-region | ✅ | ✓ | ToolSearch → query_table | 3 | 88,172 | 9s | $0.176 |
-| negative-total | ✅ | ✓ | ToolSearch → Bash → query_table | 4 | 89,156 | 30s | $0.146 |
-| 5xx-spike | ✅ | ✓ | ToolSearch → Bash → summarize_log | 4 | 89,761 | 10s | $0.155 |
-| contract-termination | ✅ | ✓ | ToolSearch → Bash → file_map → query_file | 5 | 132,190 | 12s | $0.233 |
-| deck-pricing | ✅ | ✓ | ToolSearch → file_map → query_file | 4 | 120,419 | 9s | $0.168 |
-| handbook-outline | ✅ | ✓ | ToolSearch → file_map | 3 | 88,865 | 10s | $0.154 |
-| handbook-remote | ✅ | ✓ | ToolSearch → Bash → file_map → query_file | 5 | 124,269 | 15s | $0.189 |
-| callers | ⚠️ soft<br>expected one of [query_file, file_map], saw Grep, Grep, Bash, Grep, Read | ✓ | Grep → Grep → Bash → Grep → Read | 6 | 189,885 | 23s | $0.266 |
-| validate-json | ✅ | ✓ | ToolSearch → Bash → validate_file | 4 | 89,444 | 9s | $0.150 |
-| emails | ✅ | ✓ | ToolSearch → extract | 3 | 89,460 | 6s | $0.145 |
-| diff | ✅ | ✓ | ToolSearch → Bash → diff_files | 4 | 89,616 | 8s | $0.153 |
-| negative-small-file | ✅ | ✓ | Read | 2 | 57,287 | 4s | $0.108 |
+| sales-by-region | ✅ | ✓ | ToolSearch → Bash → query_table | 4 | 167,259 | 10s | $0.098 |
+| negative-total | ✅ | ✓ | ToolSearch → query_table | 3 | 124,539 | 4s | $0.064 |
+| 5xx-spike | ✅ | ✓ | ToolSearch → summarize_log | 3 | 124,687 | 6s | $0.066 |
+| contract-termination | ✅ | ✓ | ToolSearch → query_file | 3 | 128,144 | 6s | $0.076 |
+| deck-pricing | ✅ | ✓ | ToolSearch → query_file | 3 | 125,998 | 5s | $0.068 |
+| handbook-outline | ✅ | ✓ | file_map | 2 | 82,677 | 5s | $0.056 |
+| handbook-remote | ✅ | ✓ | ToolSearch → query_file | 3 | 127,020 | 5s | $0.091 |
+| callers | ⚠️ soft<br>expected one of [query_file, file_map], saw Grep, Grep, Grep, Grep, Grep, Grep, Grep, Grep, Grep, Grep, Grep, Grep, Grep, Grep, Grep | ✓ | Grep → Grep → Grep → Grep → Grep → Grep → Grep → Grep → Grep → Grep → Grep → Grep → Grep → Grep → Grep | 16 | 174,787 | 24s | $0.116 |
+| validate-json | ✅ | ✓ | ToolSearch → validate_file | 3 | 124,303 | 7s | $0.063 |
+| emails | ✅ | ✓ | Glob → ToolSearch → extract | 4 | 125,943 | 7s | $0.069 |
+| diff | ✅ | ✓ | ToolSearch → diff_files | 3 | 124,845 | 8s | $0.065 |
+| negative-small-file | ✅ | ✓ | Read | 2 | 81,787 | 2s | $0.050 |

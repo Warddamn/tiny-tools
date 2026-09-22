@@ -14,6 +14,7 @@ permissions:
 
 jobs:
   bundle:
+    if: github.ref == 'refs/heads/main'
     name: bundle (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     timeout-minutes: 20
@@ -36,6 +37,11 @@ jobs:
           for file in .tmp/mcpb/*.mcpb; do
             npm run verify:mcpb -- "$file"
           done
+      - name: Build and check the portable tarball
+        if: runner.os == 'Linux'
+        run: |
+          npm run bundle:context -- .tmp/mcpb
+          npm run verify:release -- --package .tmp/mcpb/tiny-context-standalone-0.1.1.tgz
       - uses: actions/upload-artifact@v4
         with:
           name: bundle-${{ matrix.os }}
@@ -59,6 +65,7 @@ jobs:
           pattern: bundle-*
           path: artifacts
           merge-multiple: true
+      - run: npm ci
       - run: node scripts/prepare-registry.mjs artifacts
       - name: Publish bundles to GitHub
         env:
@@ -69,13 +76,15 @@ jobs:
           VERSION=$(jq -r '.version' artifacts/server.json)
           TAG="context-v${VERSION}"
           cat > "$RUNNER_TEMP/release-notes.md" <<'NOTES'
+          **Safety update:** upgrade from 0.1.0. SQL now accepts one read-only query against the supplied table, blocks external file/network access, enforces resource/deadline limits, and protects existing files during CSV export. Document queries can skip mapping and reuse a bounded, freshness-checked parse cache.
+
           Eight local MCP tools by **AVRG3** for spreadsheet queries, targeted PDF/Office searches, log summaries, diffs, validation and extraction.
 
           Choose the bundle for your OS: **darwin = macOS**, **win32 = Windows**, **linux = Linux**. Each contains x64/arm64 dependencies and requires Node.js 20+ or a compatible host-provided runtime. Open it in an MCPB-compatible client. The existing no-login npx installation remains in the README for other clients.
 
           All eight tools are checked against known answers after extracting the actual bundle. These are unsigned bundles; the registry metadata includes their SHA-256 hashes. Dependencies are included, so bundles are larger than the npm-style download.
 
-          A single 12-task Claude trial measured about 20% fewer processed tokens and 50% less total time. Results vary. Start with the worked examples: https://github.com/Warddamn/tiny-tools/blob/main/QUICKSTART.md
+          Tools have startup and validation costs. Task-level comparisons include both improvements and regressions; no universal savings are promised. Start with the worked examples: https://github.com/Warddamn/tiny-tools/blob/main/QUICKSTART.md
           NOTES
           if gh release view "$TAG" >/dev/null 2>&1; then
             # Re-runs must not silently replace artifacts already referenced by registry hashes.
@@ -87,6 +96,8 @@ jobs:
           else
             gh release create "$TAG" artifacts/* --target "$GITHUB_SHA" --title "tiny-context ${VERSION} — agent bundles" --notes-file "$RUNNER_TEMP/release-notes.md"
           fi
+      - name: Verify public tarball with an empty cache
+        run: npm run verify:release
       - name: Install the pinned official publisher
         shell: bash
         run: |
@@ -99,11 +110,5 @@ jobs:
         run: |
           "$RUNNER_TEMP/mcp-publisher" login github-oidc
           "$RUNNER_TEMP/mcp-publisher" publish
-      - name: Verify the searchable registry entry
-        shell: bash
-        run: |
-          set -euo pipefail
-          NAME=$(jq -r '.name' artifacts/server.json)
-          curl --fail --get --data-urlencode "search=$NAME" https://registry.modelcontextprotocol.io/v0.1/servers -o "$RUNNER_TEMP/listing.json"
-          jq --exit-status --arg name "$NAME" '.servers[] | select(.server.name == $name)' "$RUNNER_TEMP/listing.json"
-          echo "Published **$NAME** with three GitHub-hosted bundles. No npm account was required." >> "$GITHUB_STEP_SUMMARY"
+      - name: Verify exact registry version and download hashes
+        run: node scripts/verify-runtime-registry.mjs artifacts/server.json

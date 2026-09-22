@@ -1,0 +1,89 @@
+{
+  "results": [
+    {
+      "id": "collect",
+      "status": "pass",
+      "correct": true,
+      "selected": true,
+      "actual": {
+        "status": "complete",
+        "records": 1000,
+        "sumCents": 10000
+      },
+      "calls": [
+        "Read",
+        "ToolSearch",
+        "mcp__tiny-runtime__collect_pages"
+      ],
+      "durationMs": 6678,
+      "costUsd": 0.08100879999999999
+    },
+    {
+      "id": "resume",
+      "status": "pass",
+      "correct": true,
+      "selected": true,
+      "actual": {
+        "status": "complete",
+        "records": 1000,
+        "sumCents": 10000
+      },
+      "calls": [
+        "ToolSearch",
+        "mcp__tiny-runtime__collect_pages"
+      ],
+      "durationMs": 13524,
+      "costUsd": 0.0632436
+    },
+    {
+      "id": "guard",
+      "status": "pass",
+      "correct": true,
+      "selected": true,
+      "actual": {
+        "action": "block",
+        "repeats": 3
+      },
+      "calls": [
+        "Read",
+        "ToolSearch",
+        "mcp__tiny-runtime__check_progress"
+      ],
+      "durationMs": 10760,
+      "costUsd": 0.07314300000000001
+    },
+    {
+      "id": "cache",
+      "status": "pass",
+      "correct": true,
+      "selected": true,
+      "actual": {
+        "retain": 1,
+        "release": 1,
+        "gpuChanged": false
+      },
+      "calls": [
+        "ToolSearch",
+        "Bash",
+        "mcp__tiny-runtime__plan_cache"
+      ],
+      "durationMs": 7272,
+      "costUsd": 0.060251000000000006
+    },
+    {
+      "id": "small-note",
+      "status": "pass",
+      "correct": true,
+      "selected": true,
+      "actual": {
+        "color": "blue"
+      },
+      "calls": [
+        "Read"
+      ],
+      "durationMs": 4420,
+      "costUsd": 0.044116600000000006
+    }
+  ],
+  "note": "Five single-run selection/correctness checks, not an efficiency comparison or adoption evidence."
+}

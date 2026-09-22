@@ -55,8 +55,9 @@ export function httpCacheAdapter(url: string, options: { bearerToken?: string; t
   const target = endpoint(url);
   if (options.bearerToken && target.protocol !== 'https:' && !['localhost','127.0.0.1','[::1]'].includes(target.hostname)) fail('Authentication over remote plain HTTP is disabled.', 'Use HTTPS.');
   const timeout = positiveInt(options.timeoutMs ?? 2000, 'timeoutMs', 60_000);
-  return { async apply(hint: CacheHint) {
-    const response = await fetch(target, { method: 'POST', redirect: 'error', signal: AbortSignal.timeout(timeout), headers: { 'content-type': 'application/json', ...(options.bearerToken ? { authorization: `Bearer ${options.bearerToken}` } : {}) }, body: JSON.stringify({ version: 1, ...hint }) });
+  return { async apply(hint: CacheHint, signal?: AbortSignal) {
+    if (hint.validUntilMs <= Date.now()) fail('Cache hint has expired.', 'Recompute live hints before delivery.');
+    const response = await fetch(target, { method: 'POST', redirect: 'error', signal: AbortSignal.any([AbortSignal.timeout(Math.max(1, Math.min(timeout, hint.validUntilMs-Date.now()))), ...(signal ? [signal] : [])]), headers: { 'content-type': 'application/json', ...(options.bearerToken ? { authorization: `Bearer ${options.bearerToken}` } : {}) }, body: JSON.stringify({ version: 1, ...hint }) });
     await response.body?.cancel();
     if (!response.ok) fail(`Cache adapter returned HTTP ${response.status}.`, 'Check the serving-engine bridge and its lease contract.');
   } };

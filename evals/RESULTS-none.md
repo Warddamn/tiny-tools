@@ -1,18 +1,18 @@
 # Tool-selection eval results — tiny-context (mode: none)
 
-_2026-09-19 · headless `claude -p` · 12/12 pass · pass = correct answer AND tool rules hold_
+_2026-09-22 · headless `claude -p` · model sonnet · 11/12 pass · pass = correct answer AND tool rules hold_
 
 | Task | Result | Correct | Tools called (⛔ blocked by hook · ✗ denied · ! error) | Turns | Tokens | Time | Cost |
 |---|---|---|---|---:|---:|---:|---:|
-| sales-by-region | ✅ | ✓ | Bash → Bash → Bash | 4 | 115,944 | 10s | $0.188 |
-| negative-total | ✅ | ✓ | Bash → Bash | 3 | 86,623 | 7s | $0.133 |
-| 5xx-spike | ✅ | ✓ | Bash → Bash → Bash → Bash → Bash → Bash | 7 | 215,371 | 34s | $0.319 |
-| contract-termination | ✅ | ✓ | Bash → Bash → Bash → Bash | 5 | 150,009 | 27s | $0.211 |
-| deck-pricing | ✅ | ✓ | Bash → Skill → Bash → Bash | 6 | 174,166 | 21s | $0.331 |
-| handbook-outline | ✅ | ✓ | Bash → Bash | 3 | 88,745 | 14s | $0.163 |
-| handbook-remote | ✅ | ✓ | Bash → Bash | 3 | 87,928 | 11s | $0.146 |
-| callers | ✅ | ✓ | Grep → Grep → Grep | 4 | 122,303 | 16s | $0.209 |
-| validate-json | ✅ | ✓ | Bash → Read → Read → Bash | 5 | 118,283 | 13s | $0.202 |
-| emails | ✅ | ✓ | Bash → Bash → Bash | 4 | 117,295 | 13s | $0.164 |
-| diff | ✅ | ✓ | Bash → Bash → Bash → Bash | 5 | 154,932 | 24s | $0.234 |
-| negative-small-file | ✅ | ✓ | Read | 2 | 57,018 | 4s | $0.106 |
+| sales-by-region | ✅ | ✓ | ToolSearch → ToolSearch → Bash → Bash | 5 | 205,289 | 10s | $0.208 |
+| negative-total | ✅ | ✓ | ToolSearch → ToolSearch → ToolSearch → Bash → Bash → Bash → Bash | 8 | 335,551 | 17s | $0.120 |
+| 5xx-spike | ❌<br>answer missing one of: timeout · pool | ✗ | ToolSearch → ToolSearch → ToolSearch → Bash → ToolSearch → ToolSearch → ToolSearch → Bash → Bash → Bash → Bash → Bash → Bash | 13 | 579,729 | 34s | $0.224 |
+| contract-termination | ✅ | ✓ | ToolSearch → ToolSearch → Glob → ToolSearch → ToolSearch → Read! → Bash → Bash → Bash → Bash | 11 | 385,610 | 24s | $0.147 |
+| deck-pricing | ✅ | ✓ | ToolSearch → ToolSearch → ToolSearch → Bash → Skill → Bash! → Bash → Bash | 10 | 368,398 | 19s | $0.161 |
+| handbook-outline | ✅ | ✓ | ToolSearch → ToolSearch → Glob → Skill → Bash → Bash → Bash | 9 | 341,888 | 18s | $0.132 |
+| handbook-remote | ✅ | ✓ | ToolSearch → ToolSearch → Glob → ToolSearch → Bash → ToolSearch → Skill → Bash → Bash | 11 | 437,305 | 21s | $0.207 |
+| callers | ✅ | ✓ | Grep → Grep → Grep → Grep → Grep → Grep → Grep → Grep → Grep → Grep → Grep → Grep → Grep → Grep → Grep | 16 | 171,635 | 24s | $0.128 |
+| validate-json | ✅ | ✓ | ToolSearch → ToolSearch → ToolSearch → ToolSearch → Bash → Read → Read | 8 | 369,821 | 19s | $0.199 |
+| emails | ✅ | ✓ | ToolSearch → ToolSearch → ToolSearch → ToolSearch → Bash → ToolSearch → Bash → Bash → Bash → Bash | 11 | 709,158 | 27s | $0.354 |
+| diff | ✅ | ✓ | ToolSearch → ToolSearch → ToolSearch → ToolSearch → ToolSearch → Bash → Skill → Bash! → Bash! → Bash | 12 | 561,410 | 30s | $0.278 |
+| negative-small-file | ✅ | ✓ | Read | 2 | 79,094 | 2s | $0.069 |

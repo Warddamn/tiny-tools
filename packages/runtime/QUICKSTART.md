@@ -7,10 +7,10 @@ Built by **AVRG3**. These examples use synthetic data only. Requires Node.js 20+
 For Claude Code, run:
 
 ```bash
-claude mcp add tiny-runtime -- npx -y -p https://github.com/Warddamn/tiny-tools/releases/download/runtime-v0.1.0/tiny-runtime-0.1.0.tgz tiny-runtime-mcp
+claude mcp add tiny-runtime -- npx -y -p https://github.com/Warddamn/tiny-tools/releases/download/runtime-v0.1.1/tiny-runtime-0.1.1.tgz tiny-runtime-mcp
 ```
 
-Alternatively, download [tiny-runtime-0.1.0.mcpb](https://github.com/Warddamn/tiny-tools/releases/download/runtime-v0.1.0/tiny-runtime-0.1.0.mcpb) and open it in an MCPB-compatible client. The bundle includes dependencies for macOS, Windows and Linux; Node.js 20+ is still required. Restart/reconnect the client and confirm three tools: collect_pages, check_progress, plan_cache.
+Alternatively, download [tiny-runtime-0.1.1.mcpb](https://github.com/Warddamn/tiny-tools/releases/download/runtime-v0.1.1/tiny-runtime-0.1.1.mcpb) and open it in an MCPB-compatible client. The bundle includes dependencies for macOS, Windows and Linux; Node.js 20+ is still required. Restart/reconnect the client and confirm three tools: collect_pages, check_progress, plan_cache.
 
 Claude Code plugin users can use `/plugin marketplace add Warddamn/tiny-tools` followed by `/plugin install tiny-runtime@tiny-tools`. This also supplies task-selection instructions. Choose either the plugin or manual MCP setup to avoid duplicate servers.
 
