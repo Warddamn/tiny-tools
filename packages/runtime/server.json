@@ -3,7 +3,21 @@
   "name": "io.github.Warddamn/tiny-runtime",
   "description": "Resumable API pagination, repeated-failure detection and tool-progress cache hints for AI agents",
   "title": "tiny-runtime — agent batch and progress tools by AVRG3",
-  "repository": {"url":"https://github.com/Warddamn/tiny-tools","source":"github","subfolder":"packages/runtime"},
+  "repository": {
+    "url": "https://github.com/Warddamn/tiny-tools",
+    "source": "github",
+    "subfolder": "packages/runtime"
+  },
   "version": "0.1.0",
-  "websiteUrl": "https://github.com/Warddamn/tiny-tools/tree/main/packages/runtime#readme"
+  "websiteUrl": "https://github.com/Warddamn/tiny-tools/tree/main/packages/runtime#readme",
+  "packages": [
+    {
+      "registryType": "mcpb",
+      "identifier": "https://github.com/Warddamn/tiny-tools/releases/download/runtime-v0.1.0/tiny-runtime-0.1.0.mcpb",
+      "fileSha256": "cf98d46dd9b312b8bdc95407481a2b7184fbab8d2cffc2f30163776e45daa3c1",
+      "transport": {
+        "type": "stdio"
+      }
+    }
+  ]
 }

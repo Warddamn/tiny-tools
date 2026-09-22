@@ -1,14 +1,16 @@
 # Release and discovery
 
-Built by **AVRG3**. Context verified 2026-09-21; runtime publication procedure added 2026-09-22.
+Built by **AVRG3**. Context verified 2026-09-21; runtime published and verified 2026-09-22.
 
 ## Live distribution
 
-- [Official MCP Registry](https://registry.modelcontextprotocol.io/?q=io.github.Warddamn%2Ftiny-context): active `io.github.Warddamn/tiny-context` version 0.1.0.
+- [tiny-runtime public install](https://github.com/Warddamn/tiny-tools/tree/main/packages/runtime#public-install): version 0.1.0, with a portable MCPB and smaller npx tarball in [runtime-v0.1.0](https://github.com/Warddamn/tiny-tools/releases/tag/runtime-v0.1.0). [Official runtime listing](https://registry.modelcontextprotocol.io/?q=io.github.Warddamn%2Ftiny-runtime) is active. The same bundle passed on Linux, macOS and Windows; fresh-cache public installation and exact registry URL/hash verification passed in [run 35686387287](https://github.com/Warddamn/tiny-tools/actions/runs/35686387287).
+
+- [tiny-context official MCP Registry](https://registry.modelcontextprotocol.io/?q=io.github.Warddamn%2Ftiny-context): active `io.github.Warddamn/tiny-context` version 0.1.0.
 - [Glama](https://glama.ai/mcp/servers/Warddamn/tiny-tools): repository already indexed; this session verified its public page, not ownership or refreshed indexing.
 - [Agent bundles](https://github.com/Warddamn/tiny-tools/releases/tag/context-v0.1.0): macOS, Linux and Windows MCPB downloads. Each includes its x64/arm64 dependencies. Node.js 20+ or a compatible host runtime is required.
 - The original `v0.1.0` standalone tarball remains the install source for npx client configs. It bundles internal shared code and downloads third-party dependencies.
-- npm is not published. An npm login is not needed for either current install route or for registry publication.
+- npm is not published. An npm login is not needed for these install routes or for registry publication.
 
 ## Verify a bundle locally
 

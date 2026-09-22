@@ -36,7 +36,7 @@ Install (stdio, Node.js 20+): `npx -y -p https://github.com/Warddamn/tiny-tools/
 
 - [Runtime README](https://github.com/Warddamn/tiny-tools/tree/main/packages/runtime#readme): install, HTTP cursor mapping, checkpoint semantics, measured-state guards and cache-adapter contract.
 - [Runtime quickstart](https://github.com/Warddamn/tiny-tools/blob/main/packages/runtime/QUICKSTART.md): three synthetic tasks with checkable answers.
-- [Runtime MCP Registry](https://registry.modelcontextprotocol.io/?q=io.github.Warddamn%2Ftiny-runtime): `io.github.Warddamn/tiny-runtime`.
+- [Runtime MCP Registry](https://registry.modelcontextprotocol.io/?q=io.github.Warddamn%2Ftiny-runtime): active `io.github.Warddamn/tiny-runtime` version 0.1.0; archive hash verified against the public release.
 - [Runtime release](https://github.com/Warddamn/tiny-tools/releases/tag/runtime-v0.1.0): portable MCPB with dependencies and a small npx tarball.
 - collect_pages(config, checkpoint?): fetch configured cursor pages, validate totals/snapshots, optionally deduplicate IDs and sum integer minor units. Returns complete/partial/failed and local records/checkpoint paths. Pass checkpoint paths directly, do not read their rows into model context. No automatic retries or source writes.
 - check_progress(path): inspect a tool trace for repeated failures/stalls/cycles against trusted state fingerprints. Returns a decision and report. Automatic blocking uses RepeatGuard/runGuarded in the host; installation alone does not intercept other tools.

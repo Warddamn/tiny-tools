@@ -11,4 +11,11 @@ Local environment: macOS ARM64, Node 24.16.0. All examples and fixtures are synt
 
 Run `npm test`, `npm run demo:runtime`, `npm run bench:runtime`, and `npm run verify:runtime` to reproduce deterministic checks. `npm run evals:runtime` is optional and invokes an authenticated Claude CLI with a $0.50 per-task cap; it is never run automatically in CI.
 
-Remaining integration limits: no production inference-engine patch or GPU deployment; hosted-model KV cache is not controlled; repeat guards rely on trusted and sufficiently complete state fingerprints; collection completeness depends on the configured source's contract. No independent adoption, token savings, real-world compute savings, or universal loop prevention is established. GitHub CI results are available on the pull request; no cross-platform pass is inferred from these local checks.
+Remaining integration limits: no production inference-engine patch or GPU deployment; hosted-model KV cache is not controlled; repeat guards rely on trusted and sufficiently complete state fingerprints; collection completeness depends on the configured source's contract. No independent adoption, token savings, real-world compute savings, or universal loop prevention is established. Cross-platform release verification is recorded separately below.
+
+
+## Public release verification — 2026-09-22
+
+[Publication run 35686387287](https://github.com/Warddamn/tiny-tools/actions/runs/35686387287) passed at source commit `95301ed2402c0a07230adde13b5b55531b22e62a`. The build ran all 161 tests. Linux, macOS and Windows then extracted the same portable MCPB outside the checkout and verified CLI help plus all three MCP tools with npm absent from the server PATH. The published npx command was checked with a new cache, blank npm configs and synthetic tasks for all three tools. Individual client installation screens were not exercised.
+
+[Public version 0.1.0](https://github.com/Warddamn/tiny-tools/releases/tag/runtime-v0.1.0) contains a 3,930,700-byte MCPB and a 41,830-byte tarball. Official registry read-back returned active `io.github.Warddamn/tiny-runtime@0.1.0`; its archive URL and SHA-256 match the release digest and checksum file. The MCPB includes production dependencies; Node.js 20+ is supplied by the host. The smaller tarball downloads dependencies. No npm account is required. This verifies distribution and tool behavior, not adoption or general performance savings.

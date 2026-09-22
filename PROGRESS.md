@@ -50,7 +50,7 @@ Tools: file_map ✅ · query_file ✅ · read_section ✅ · extract ✅ · quer
 
 ## Adoption follow-through (2026-09-20)
 
-- GitHub v0.1.0 is public; npm and official MCP Registry are still unpublished.
+- As of this 2026-09-20 checkpoint, GitHub v0.1.0 was public; official MCP Registry publication followed on 2026-09-21 (below). npm remains optional and unpublished.
 - Client commands, install badges and Claude Code plugin now use the published GitHub tarball. Plugin metadata is 0.1.1; the tool binary remains 0.1.0.
 - QUICKSTART.md provides three tasks with checkable answers and selection/failure guidance.
 - `verify:release` checks the public install using a fresh temporary npm cache and all eight MCP tools; CI runs this separately from source tests.
@@ -81,7 +81,7 @@ User instruction: **“BUILD ALL THREE PLEASE.”** New separate package: `packa
 - [x] Five live agent selection/correctness tasks pass, including built-in Read for a small note. Resume guidance corrected to avoid loading checkpoint rows into context; targeted repeat passed.
 - [x] Usage snippet, README, validation/eval results, AVRG3 signatures, CI install/demo gate and benchmark/eval commands.
 - [x] Public runtime publication authorized 2026-09-22: portable MCPB + npx tarball builder, three-OS verification and OIDC registry workflow implemented. Local archive and install-link checks pass.
-- [ ] Public runtime release/registry read-back pending the publication workflow; do not claim active until verified. No production GPU or independent adoption claim.
+- [x] Public runtime release and active registry version 0.1.0 verified on 2026-09-22. No production GPU or independent adoption claim.
 
 ## Runtime public installation and discovery (2026-09-22)
 
@@ -89,4 +89,6 @@ User instruction: **“BUILD ALL THREE PLEASE.”** New separate package: `packa
 - [x] Public npx/MCPB install instructions, validated Cursor/VS Code payloads, three worked examples, optional Claude Code plugin and llms.txt discovery text.
 - [x] Existing 161 tests pass. Actual local portable MCPB passed three MCP tools + CLI outside the checkout, without npm on the server PATH. Plugin/marketplace strict validation passed.
 - [x] Publish workflow tests one exact portable bundle on Linux/macOS/Windows, preserves immutable release assets, verifies public npx installation with fresh cache, and checks exact active registry version/hash.
-- [ ] Merge, publish runtime-v0.1.0, verify live install/registry, then record release hashes and completed workflow here.
+- [x] PR #1 merged at `95301ed`; [publication run 35686387287](https://github.com/Warddamn/tiny-tools/actions/runs/35686387287) passed every job. The same portable archive passed on Linux, macOS and Windows; the published npx install passed with a fresh cache.
+- [x] [runtime-v0.1.0](https://github.com/Warddamn/tiny-tools/releases/tag/runtime-v0.1.0) is public. Official MCP Registry read-back confirms active `io.github.Warddamn/tiny-runtime@0.1.0` with the exact download URL/hash. `packages/runtime/server.json` contains the published metadata.
+- [x] Published artifacts: MCPB 3,930,700 bytes, SHA-256 `cf98d46dd9b312b8bdc95407481a2b7184fbab8d2cffc2f30163776e45daa3c1`; tarball 41,830 bytes, SHA-256 `38e69adb78efac2406ee318cab2fa07f3d157057cd9aede15e9c981669e7a9f2`. Registry, release asset digests and release checksums agree. No npm login is required.
