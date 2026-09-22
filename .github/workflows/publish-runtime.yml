@@ -1,0 +1,123 @@
+# @author AVRG3
+name: Publish tiny-runtime
+on:
+  workflow_dispatch:
+concurrency:
+  group: publish-runtime-registry
+  cancel-in-progress: false
+permissions:
+  contents: read
+jobs:
+  build:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run bundle:runtime
+      - uses: actions/upload-artifact@v4
+        with:
+          name: runtime-release
+          path: .tmp/runtime-release/*
+          include-hidden-files: true
+  verify:
+    needs: build
+    name: verify portable runtime (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - uses: actions/download-artifact@v4
+        with:
+          name: runtime-release
+          path: artifacts
+      - name: Test the same archive on each OS
+        shell: bash
+        run: |
+          for file in artifacts/*.mcpb; do
+            npm run verify:runtime:bundle -- "$file"
+          done
+  publish:
+    needs: [build, verify]
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - uses: actions/download-artifact@v4
+        with:
+          name: runtime-release
+          path: artifacts
+      - name: Publish immutable GitHub downloads
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          (cd artifacts && sha256sum --check SHA256SUMS.txt)
+          VERSION=$(jq -r '.version' artifacts/server.json)
+          TAG="runtime-v${VERSION}"
+          cat > "$RUNNER_TEMP/runtime-notes.md" <<'NOTES'
+          Three MCP tools and a JavaScript/TypeScript SDK by **AVRG3** for agent workflows:
+
+          - **collect_pages:** resumable API pagination and local batches, duplicate checks, exact integer totals, explicit complete/partial/failed results.
+          - **check_progress:** inspect repeated failures against measured state; SDK wrappers enforce the guard in an agent host.
+          - **plan_cache:** tool-progress cache scheduling hints; live GPU effects require a compatible serving-engine integration.
+
+          Download the **MCPB** for an MCPB-compatible client (same file on macOS, Windows and Linux, dependencies included). Requires Node.js 20+ or a compatible host runtime. This exact bundle was tested through MCP on all three operating systems.
+
+          For other clients, use the **tarball** with npx; it downloads dependencies and needs no npm account:
+
+          `npx -y -p https://github.com/Warddamn/tiny-tools/releases/download/runtime-v0.1.0/tiny-runtime-0.1.0.tgz tiny-runtime-mcp`
+
+          [Install and tool reference](https://github.com/Warddamn/tiny-tools/tree/main/packages/runtime#readme) · [Try three examples](https://github.com/Warddamn/tiny-tools/blob/main/packages/runtime/QUICKSTART.md)
+
+          No model calls or telemetry in the tools. HTTP sources are explicit read-only requests. The MCP trace tools do not automatically intercept other clients or control hosted-model caches. No real-world token, compute or GPU savings are claimed. Bundle is unsigned; SHA256SUMS.txt and registry metadata verify artifact integrity.
+          NOTES
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            mkdir -p "$RUNNER_TEMP/published"
+            gh release download "$TAG" --dir "$RUNNER_TEMP/published"
+            for file in artifacts/*; do
+              cmp "$file" "$RUNNER_TEMP/published/$(basename "$file")"
+            done
+          else
+            gh release create "$TAG" artifacts/* --target "$GITHUB_SHA" --latest=false --title "tiny-runtime ${VERSION} — API pagination, retry loops and tool progress" --notes-file "$RUNNER_TEMP/runtime-notes.md"
+          fi
+      - name: Verify the public npx install with an empty cache
+        run: npm run verify:runtime:public
+      - name: Install pinned official registry publisher
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 3 https://github.com/modelcontextprotocol/registry/releases/download/v1.8.1/mcp-publisher_linux_amd64.tar.gz -o "$RUNNER_TEMP/publisher.tgz"
+          echo "a06c9096dcb9727c13555b6be26c7effa707b01f06a4c561ba7a3635443cf2cc  $RUNNER_TEMP/publisher.tgz" | sha256sum --check
+          tar -xzf "$RUNNER_TEMP/publisher.tgz" -C "$RUNNER_TEMP" mcp-publisher
+      - name: Publish official MCP Registry entry
+        working-directory: artifacts
+        run: |
+          "$RUNNER_TEMP/mcp-publisher" login github-oidc
+          "$RUNNER_TEMP/mcp-publisher" publish
+      - name: Verify the exact registry version and download hash
+        run: node scripts/verify-runtime-registry.mjs artifacts/server.json

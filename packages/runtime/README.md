@@ -1,8 +1,35 @@
-# tiny-runtime
+# tiny-runtime — MCP tools for API pagination, retry loops and tool progress
 
 Three deterministic helpers for agent developers, built by **AVRG3**: finish paginated jobs, interrupt repeated work that makes no progress, and report tool progress to a cache scheduler. No model calls, training, accounts, or telemetry.
 
-**Status:** first implementation; library, CLI and a separate three-tool MCP server. The existing tiny-context release does not contain these tools. See the repository PR/branch for this source; this package is not yet on npm or in the MCP Registry. The cache bridge requires a compatible inference-serving integration; it does not control ChatGPT, Claude, or a stock vLLM installation.
+**Version 0.1.0:** library, CLI and a separate three-tool MCP server. No model calls or telemetry. The cache bridge requires a compatible inference-serving integration; it does not control hosted-model caches or stock vLLM by itself.
+
+## Public install
+
+Requires **Node.js 20+**. No npm account or source checkout is needed.
+
+[![Install in Cursor](https://cursor.com/deeplink/mcp-install-dark.svg)](https://cursor.com/en/install-mcp?name=tiny-runtime&config=eyJjb21tYW5kIjoibnB4IiwiYXJncyI6WyIteSIsIi1wIiwiaHR0cHM6Ly9naXRodWIuY29tL1dhcmRkYW1uL3RpbnktdG9vbHMvcmVsZWFzZXMvZG93bmxvYWQvcnVudGltZS12MC4xLjAvdGlueS1ydW50aW1lLTAuMS4wLnRneiIsInRpbnktcnVudGltZS1tY3AiXX0%3D)
+[![Install in VS Code](https://img.shields.io/badge/VS_Code-Install_Server-0098FF)](https://insiders.vscode.dev/redirect?url=vscode%3Amcp%2Finstall%3F%257B%2522name%2522%253A%2522tiny-runtime%2522%252C%2522command%2522%253A%2522npx%2522%252C%2522args%2522%253A%255B%2522-y%2522%252C%2522-p%2522%252C%2522https%253A%252F%252Fgithub.com%252FWarddamn%252Ftiny-tools%252Freleases%252Fdownload%252Fruntime-v0.1.0%252Ftiny-runtime-0.1.0.tgz%2522%252C%2522tiny-runtime-mcp%2522%255D%257D)
+
+**Claude Code:**
+
+```bash
+claude mcp add tiny-runtime -- npx -y -p https://github.com/Warddamn/tiny-tools/releases/download/runtime-v0.1.0/tiny-runtime-0.1.0.tgz tiny-runtime-mcp
+```
+
+**Cursor, Claude Desktop and other stdio MCP clients:** add this server configuration. VS Code uses `servers` in place of `mcpServers`.
+
+```json
+{"mcpServers":{"tiny-runtime":{"command":"npx","args":["-y","-p","https://github.com/Warddamn/tiny-tools/releases/download/runtime-v0.1.0/tiny-runtime-0.1.0.tgz","tiny-runtime-mcp"]}}}
+```
+
+**MCPB-compatible clients:** download the [portable bundle](https://github.com/Warddamn/tiny-tools/releases/download/runtime-v0.1.0/tiny-runtime-0.1.0.mcpb) and open it. It includes dependencies for macOS, Windows and Linux; a Node.js runtime is required. Bundles are unsigned; release checksums and registry hashes verify integrity. The smaller npx tarball downloads third-party dependencies at installation.
+
+**Claude Code plugin:** `/plugin marketplace add Warddamn/tiny-tools`, then `/plugin install tiny-runtime@tiny-tools`. This adds the usage guidance as well. Choose either the plugin or manual MCP setup.
+
+[Three worked examples with expected answers](QUICKSTART.md) · [GitHub downloads](https://github.com/Warddamn/tiny-tools/releases/tag/runtime-v0.1.0) · [Official MCP Registry](https://registry.modelcontextprotocol.io/?q=io.github.Warddamn%2Ftiny-runtime)
+
+**JavaScript/TypeScript library:** install the same public tarball with `npm install https://github.com/Warddamn/tiny-tools/releases/download/runtime-v0.1.0/tiny-runtime-0.1.0.tgz`, then import `collectPages`, `RepeatGuard` or `ProgressBridge` from `@tiny_tools_pw/runtime`. This is a GitHub-hosted package, not an npm registry listing.
 
 ## What each part does
 
@@ -68,7 +95,7 @@ A configured HTTP source uses GET only, on exactly the supplied origin/path. Exa
 Prefer provider-side aggregation/filtering to fetching unnecessary records. APIs using Link headers, offsets, GraphQL POST, or tool-specific protocols need a small SDK adapter:
 
 ```js
-import { collectPages } from './packages/runtime/dist/index.js';
+import { collectPages } from '@tiny_tools_pw/runtime';
 const result = await collectPages({
   sourceId: 'account/dataset/filter/version',
   key: 'id',
@@ -99,7 +126,7 @@ With `key`, identical duplicates are counted once, and conflicting versions of a
 A trace is `{ "observations": [...], "nextAttempt": {...}, "options": {...} }`; see `examples/guard-trace.json`. Each observation includes `attempt` (`scope`, `tool`, JSON `args`, optional `state`), `outcome`, and optional `stateAfter`. Use `fingerprint()` over measured file/repository state, an etag, or a source version. Include every dependency that can change whether the operation succeeds. An incomplete fingerprint can cause false positives. Never accept a model's self-reported “I made progress” as evidence.
 
 ```js
-import { RepeatGuard, runGuarded, fingerprint } from './packages/runtime/dist/index.js';
+import { RepeatGuard, runGuarded, fingerprint } from '@tiny_tools_pw/runtime';
 const guard = new RepeatGuard({ threshold: 3, window: 100 });
 const attempt = { scope: workflowId, tool: 'run_tests', args: { suite: 'unit' }, state: fingerprint(await measuredInputs()) };
 const result = await runGuarded(guard, attempt, () => runTests(), async () => fingerprint(await measuredInputs()), result => result.exitCode === 0);
@@ -113,7 +140,7 @@ if (!result.executed) reportBlocked(result.decision);
 See `examples/demo.mjs` for an executable combined integration. The live SDK path is:
 
 ```js
-import { CachePlanner, ProgressReporter, ProgressBridge, httpCacheAdapter } from './packages/runtime/dist/index.js';
+import { CachePlanner, ProgressReporter, ProgressBridge, httpCacheAdapter } from '@tiny_tools_pw/runtime';
 const planner = new CachePlanner();
 const reporter = new ProgressReporter(sessionId, uniqueCallId, event => planner.ingest(event));
 const bridge = new ProgressBridge(planner, httpCacheAdapter('http://127.0.0.1:8089/cache-hints'));

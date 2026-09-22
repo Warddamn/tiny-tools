@@ -27,7 +27,10 @@
     "bench:runtime": "npm run build && node scripts/bench-runtime.mjs",
     "demo:runtime": "npm run build && node packages/runtime/examples/demo.mjs",
     "verify:runtime": "npm run build && node scripts/verify-runtime-install.mjs",
-    "evals:runtime": "npm run build && node scripts/eval-runtime.mjs"
+    "evals:runtime": "npm run build && node scripts/eval-runtime.mjs",
+    "bundle:runtime": "npm run build && node scripts/build-runtime-release.mjs",
+    "verify:runtime:bundle": "node scripts/verify-runtime-bundle.mjs",
+    "verify:runtime:public": "node scripts/verify-runtime-public.mjs"
   },
   "devDependencies": {
     "@types/node": "^24",

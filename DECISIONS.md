@@ -45,3 +45,6 @@
 - **2026-09-21 — no unnecessary dependency chain:** runtime uses the already-present Zod/MCP SDK/Commander, without shared's document parsers or DuckDB. New package's production install is about 17.5 MB including transitive dependencies.
 
 - **2026-09-22 — progress notification integration test:** SDK 1.30 queues notification callbacks but removes onprogress handlers synchronously when a result shares the stdio chunk, dropping a final callback. Verify both actual protocol notifications with ProgressNotificationSchema; do not loosen the required page updates or add arbitrary timing sleeps. Final collection results remain authoritative.
+
+- **2026-09-22 — public runtime install authorized:** publish a separate runtime-v0.1.0 GitHub release with a small npx tarball, one portable locked-dependency MCPB tested on three OSes, and an official registry listing using existing GitHub OIDC. No npm token/login flow.
+- **2026-09-22 — runtime discovery:** use task phrases (resumable API pagination, batch checkpoints, repeated failures, progress/cache hints), verified installation payloads, worked examples and a Claude Code plugin. Keep SDK integration limits visible; no ranking, adoption or savings guarantees.

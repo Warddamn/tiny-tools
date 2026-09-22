@@ -80,4 +80,13 @@ User instruction: **“BUILD ALL THREE PLEASE.”** New separate package: `packa
 - [x] Fresh tarball installation outside the repository passes CLI and all three tools; production install about 17.5 MB.
 - [x] Five live agent selection/correctness tasks pass, including built-in Read for a small note. Resume guidance corrected to avoid loading checkpoint rows into context; targeted repeat passed.
 - [x] Usage snippet, README, validation/eval results, AVRG3 signatures, CI install/demo gate and benchmark/eval commands.
-- [ ] New runtime package distribution beyond source checkout/packed install (npm/MCP Registry/bundles) is not part of the existing context release. No production GPU or independent adoption claim.
+- [x] Public runtime publication authorized 2026-09-22: portable MCPB + npx tarball builder, three-OS verification and OIDC registry workflow implemented. Local archive and install-link checks pass.
+- [ ] Public runtime release/registry read-back pending the publication workflow; do not claim active until verified. No production GPU or independent adoption claim.
+
+## Runtime public installation and discovery (2026-09-22)
+
+- [x] Task-based descriptions and keywords: resumable API pagination, batch checkpoints, repeated failures and tool-progress cache hints. AVRG3 credit preserved.
+- [x] Public npx/MCPB install instructions, validated Cursor/VS Code payloads, three worked examples, optional Claude Code plugin and llms.txt discovery text.
+- [x] Existing 161 tests pass. Actual local portable MCPB passed three MCP tools + CLI outside the checkout, without npm on the server PATH. Plugin/marketplace strict validation passed.
+- [x] Publish workflow tests one exact portable bundle on Linux/macOS/Windows, preserves immutable release assets, verifies public npx installation with fresh cache, and checks exact active registry version/hash.
+- [ ] Merge, publish runtime-v0.1.0, verify live install/registry, then record release hashes and completed workflow here.

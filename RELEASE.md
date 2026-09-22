@@ -1,6 +1,6 @@
 # Release and discovery
 
-Built by **AVRG3**. Verified 2026-09-21.
+Built by **AVRG3**. Context verified 2026-09-21; runtime publication procedure added 2026-09-22.
 
 ## Live distribution
 
@@ -32,3 +32,18 @@ The registry metadata is generated from actual build outputs. The publisher is p
 Lead with SQL spreadsheet questions, recurring error-log diagnosis and targeted PDF/Office retrieval. The example claim is 7 turns → 3 on one log task; see [the complete comparison](evals/COMPARISON.md) for all tasks, including regressions. A listing allows discovery; clients still control which tools are installed and enabled. Downloads include bots and our own verification.
 
 Optional future npm distribution can be added after ownership and publishing access are verified. Do not replace working GitHub install commands with npm names until a clean npm install has been tested. Directory submission or indexing does not guarantee ranking or usage.
+
+
+## Publish tiny-runtime (separate release)
+
+The runtime package uses its own version, tag `runtime-v<version>`, and registry name `io.github.Warddamn/tiny-runtime`. Do not replace or relabel context assets.
+
+1. Update the runtime version and its pinned download URLs together. Run `npm test`, `npm run bundle:runtime`, and `npm run verify:runtime:bundle -- .tmp/runtime-release/tiny-runtime-<version>.mcpb`.
+2. Merge tested changes to main. On GitHub choose **Actions → Publish tiny-runtime → Run workflow → main**.
+3. The workflow builds a locked, portable MCPB and an npm-style tarball; tests the exact MCPB on macOS, Linux and Windows; publishes a GitHub release; then verifies the public npx command using an empty cache and blank npm configs.
+4. GitHub OIDC publishes to the official MCP Registry. The final step verifies active status, the exact version and the artifact URL/hash.
+5. Download `server.json` from the new release and store it in `packages/runtime/server.json`. Verify public README links and update this log/PROGRESS.md with the actual completed run.
+
+A failed publication is not a completed release. If artifacts already exist, the workflow compares them byte-for-byte instead of overwriting them. Retry unchanged artifacts with **Re-run failed jobs**; changing a released bundle requires a new version. The MCPB includes dependencies and still requires Node.js 20+. The npx tarball downloads dependencies. Neither route requires the maintainer or user to log in to npm.
+
+Runtime positioning: **resumable API pagination**, **batch checkpoints**, **repeated-failure detection**, and **tool-progress cache scheduling hints**. MCP tools support collection and trace analysis; automatic guard enforcement and live GPU effects require SDK/host integration. Five initial agent checks passed, but there is no measured general token or GPU saving to advertise. Registry/search indexing does not automatically install the server or guarantee use.

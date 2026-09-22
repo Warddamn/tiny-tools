@@ -1,6 +1,8 @@
 # tiny-tools
 
-**Fewer file-reading steps for AI agents.** `tiny-context` provides eight local MCP tools for searching PDF and Office documents, querying CSV and spreadsheets, summarizing logs, and comparing or validating files. Built by **AVRG3**.
+**MCP tools for file analysis and reliable agent workflows.** `tiny-context` searches documents, queries spreadsheets and summarizes logs. `tiny-runtime` collects API pages with checkpoints, detects repeated failures and turns tool progress into cache-scheduling hints. Built by **AVRG3**.
+
+Choose [file tools](#install) for documents, tables and logs, or [runtime tools](#install-tiny-runtime) for pagination, retry loops and progress integration.
 
 [![GitHub release](https://img.shields.io/github/v/release/Warddamn/tiny-tools)](https://github.com/Warddamn/tiny-tools/releases/latest)
 [![CI](https://github.com/Warddamn/tiny-tools/actions/workflows/ci.yml/badge.svg)](https://github.com/Warddamn/tiny-tools/actions/workflows/ci.yml)
@@ -81,9 +83,20 @@ Restart or reconnect your client after setup. Confirm that `tiny-context` is con
 - tiny-runtime also supports explicitly configured HTTP GET sources and an optional SDK cache adapter; requests go only to the configured endpoints. It has no telemetry or model calls.
 - First launch downloads the release and third-party dependencies using npm, including optional DuckDB for `query_table`. This is not an offline installer. GitHub and npm maintain their own download counters; those are not counts of agents or people.
 
-## New: runtime helpers
+## Install tiny-runtime
 
-[`tiny-runtime`](packages/runtime/README.md) adds resumable batch collection, progress-aware repeat guards, and tool-progress/cache scheduling integration. It has a library, CLI and separate three-tool MCP server. This is new source on the runtime feature branch; it is not included in the published tiny-context bundle. The cache component needs a compatible serving-engine adapter. See its [validation and limits](packages/runtime/docs/VALIDATION.md).
+**Three tools for agent developers:** resumable API pagination (`collect_pages`), repeated-failure trace analysis (`check_progress`), and tool-progress cache hints (`plan_cache`). The SDK supports automatic guards and live progress delivery; cache effects require a compatible serving engine.
+
+[![Install in Cursor](https://cursor.com/deeplink/mcp-install-dark.svg)](https://cursor.com/en/install-mcp?name=tiny-runtime&config=eyJjb21tYW5kIjoibnB4IiwiYXJncyI6WyIteSIsIi1wIiwiaHR0cHM6Ly9naXRodWIuY29tL1dhcmRkYW1uL3RpbnktdG9vbHMvcmVsZWFzZXMvZG93bmxvYWQvcnVudGltZS12MC4xLjAvdGlueS1ydW50aW1lLTAuMS4wLnRneiIsInRpbnktcnVudGltZS1tY3AiXX0%3D)
+[![Install in VS Code](https://img.shields.io/badge/VS_Code-Install_Server-0098FF)](https://insiders.vscode.dev/redirect?url=vscode%3Amcp%2Finstall%3F%257B%2522name%2522%253A%2522tiny-runtime%2522%252C%2522command%2522%253A%2522npx%2522%252C%2522args%2522%253A%255B%2522-y%2522%252C%2522-p%2522%252C%2522https%253A%252F%252Fgithub.com%252FWarddamn%252Ftiny-tools%252Freleases%252Fdownload%252Fruntime-v0.1.0%252Ftiny-runtime-0.1.0.tgz%2522%252C%2522tiny-runtime-mcp%2522%255D%257D)
+
+```bash
+claude mcp add tiny-runtime -- npx -y -p https://github.com/Warddamn/tiny-tools/releases/download/runtime-v0.1.0/tiny-runtime-0.1.0.tgz tiny-runtime-mcp
+```
+
+Or download the [portable MCPB bundle](https://github.com/Warddamn/tiny-tools/releases/download/runtime-v0.1.0/tiny-runtime-0.1.0.mcpb). Requires Node.js 20+. No npm account is needed. [All client options](packages/runtime/README.md#public-install) · [Three worked examples](packages/runtime/QUICKSTART.md) · [Registry listing](https://registry.modelcontextprotocol.io/?q=io.github.Warddamn%2Ftiny-runtime).
+
+**When to choose it:** collect a configured multi-page dataset with a clear completion status; investigate repeated failures against measured state; or integrate tool progress into an inference server. A small note, one API request or an existing correct script often needs no extra tool. The first five agent selection/answer checks passed; [validation and limits](packages/runtime/docs/VALIDATION.md) do not establish real-world token or GPU savings.
 
 ## Packages
 

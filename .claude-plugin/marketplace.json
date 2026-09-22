@@ -4,14 +4,14 @@
     "name": "AVRG3",
     "url": "https://github.com/Warddamn"
   },
-  "description": "Small, local-first tools that AI agents install with one config line. Core library → CLI → MCP server, from one codebase.",
-  "version": "0.1.1",
+  "description": "MCP tools by AVRG3 for file analysis, resumable API batches, retry-loop detection and tool-progress integration.",
+  "version": "0.2.0",
   "plugins": [
     {
       "name": "tiny-context",
       "source": "./plugins/tiny-context",
       "displayName": "tiny-context",
-      "description": "Know things about files without reading them: outline, ranked search, surgical reads, SQL over CSV/XLSX/Parquet, log clustering, diffs, validation and extraction — including PDF/DOCX/PPTX/XLSX. Eight MCP tools plus a skill that tells Claude when to reach for them. Local, deterministic, bounded responses with a token-savings line on every call.",
+      "description": "Know things about files without reading them: outline, ranked search, surgical reads, SQL over CSV/XLSX/Parquet, log clustering, diffs, validation and extraction \u2014 including PDF/DOCX/PPTX/XLSX. Eight MCP tools plus a skill that tells Claude when to reach for them. Local, deterministic, bounded responses with a token-savings line on every call.",
       "version": "0.1.1",
       "author": {
         "name": "AVRG3",
@@ -34,6 +34,41 @@
         "validate",
         "duckdb"
       ],
+      "category": "productivity"
+    },
+    {
+      "name": "tiny-runtime",
+      "displayName": "tiny-runtime",
+      "version": "0.1.0",
+      "description": "Resumable API pagination and batch collection, repeated-failure analysis, and tool-progress cache hints for AI agents. Three MCP tools with selection guidance; automatic enforcement and GPU effects need host integration.",
+      "author": {
+        "name": "AVRG3",
+        "url": "https://github.com/Warddamn"
+      },
+      "homepage": "https://github.com/Warddamn/tiny-tools/tree/main/packages/runtime#readme",
+      "repository": "https://github.com/Warddamn/tiny-tools",
+      "license": "MIT",
+      "keywords": [
+        "mcp",
+        "mcp-server",
+        "model-context-protocol",
+        "ai-agents",
+        "agent-runtime",
+        "pagination",
+        "api-pagination",
+        "batch-processing",
+        "checkpoint",
+        "resume",
+        "retry-loops",
+        "loop-detection",
+        "progress",
+        "cache-scheduling",
+        "kv-cache",
+        "claude-code",
+        "cursor",
+        "developer-tools"
+      ],
+      "source": "./plugins/tiny-runtime",
       "category": "productivity"
     }
   ]
