@@ -1,5 +1,5 @@
 ## tiny-context (installed MCP)
-- Before reading any file > 20 KB, or ANY PDF/DOCX/XLSX/PPTX: call `file_map` first, then `query_file` / `read_section` for the part you need. Do not Read whole large files.
+- For large or PDF/Office files, choose the shortest useful path: `query_file` for a question, `read_section` for a known location, `file_map` only when you need an outline. Skip extra calls once the answer is sufficient.
 - Questions about CSV/TSV/XLSX/Parquet data ("total by…", "how many rows…"): `query_table` with SQL (table is `t`). Never load raw rows into context.
 - Logs: `summarize_log` first (add `focus: "errors"`); Grep/`extract` only afterwards, for the exact message it surfaced.
 - Comparing two files, including office formats: `diff_files` (summary mode) instead of reading both.

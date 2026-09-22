@@ -29,8 +29,8 @@ export async function jobDirectory(input: string, outputDir?: string): Promise<s
   return fs.mkdtemp(path.join(root, 'tiny-runtime-'));
 }
 /** Only call on files owned by the fresh job directory. Checkpoint replacement is atomic. */
-export async function atomicJson(filename: string, data: unknown): Promise<void> {
+export async function atomicJson(filename: string, data: unknown, signal?: AbortSignal): Promise<void> {
   const temporary = `${filename}.${randomUUID()}.tmp`;
-  try { await fs.writeFile(temporary, JSON.stringify(data) + '\n', { flag: 'wx', mode: 0o600 }); await fs.rename(temporary, filename); }
+  try { signal?.throwIfAborted(); await fs.writeFile(temporary, JSON.stringify(data) + '\n', { flag: 'wx', mode: 0o600, signal }); signal?.throwIfAborted(); await fs.rename(temporary, filename); }
   finally { await fs.rm(temporary, { force: true }).catch(() => {}); }
 }

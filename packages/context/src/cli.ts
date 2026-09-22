@@ -80,8 +80,9 @@ program
   .option("-n, --max-rows <n>", "rows returned (default 50, cap 200)", int)
   .option("-o, --out <path>", "write the full result to this CSV")
   .option("-s, --sheet <name>", "xlsx sheet (default: first)")
-  .description("Run SQL over a table file (query_table)")
-  .action((path: string, sql: string, o: { maxRows?: number; out?: string; sheet?: string }) => run("query_table", { path, sql, max_rows: o.maxRows, out: o.out, sheet: o.sheet }));
+  .option("--timeout-ms <n>", "SQL worker deadline (default 15000, max 60000)", int)
+  .description("Run one read-only SQL query over a table file (query_table)")
+  .action((path: string, sql: string, o: { maxRows?: number; out?: string; sheet?: string; timeoutMs?: number }) => run("query_table", { path, sql, max_rows: o.maxRows, out: o.out, sheet: o.sheet, timeout_ms: o.timeoutMs }));
 
 program
   .command("log")

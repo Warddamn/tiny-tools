@@ -5,7 +5,7 @@
       "args": [
         "-y",
         "-p",
-        "https://github.com/Warddamn/tiny-tools/releases/download/runtime-v0.1.0/tiny-runtime-0.1.0.tgz",
+        "https://github.com/Warddamn/tiny-tools/releases/download/runtime-v0.1.1/tiny-runtime-0.1.1.tgz",
         "tiny-runtime-mcp"
       ]
     }

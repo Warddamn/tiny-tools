@@ -1,0 +1,100 @@
+{
+  "fixture": "Synthetic records only. Includes page persistence, final checkpoint and records export; excludes network/model calls.",
+  "node": "v24.16.0",
+  "platform": "darwin/arm64",
+  "results": [
+    {
+      "pages": 100,
+      "records": 10000,
+      "mode": "snapshot-every-page",
+      "trials": [
+        {
+          "bytes": 58755941,
+          "writes": 102,
+          "ms": 646.59
+        },
+        {
+          "bytes": 58755941,
+          "writes": 102,
+          "ms": 630.82
+        },
+        {
+          "bytes": 58755941,
+          "writes": 102,
+          "ms": 620.98
+        }
+      ]
+    },
+    {
+      "pages": 100,
+      "records": 10000,
+      "mode": "incremental-journal",
+      "trials": [
+        {
+          "bytes": 3416157,
+          "writes": 202,
+          "ms": 97.04
+        },
+        {
+          "bytes": 3416157,
+          "writes": 202,
+          "ms": 96.3
+        },
+        {
+          "bytes": 3416157,
+          "writes": 202,
+          "ms": 94.76
+        }
+      ]
+    },
+    {
+      "pages": 200,
+      "records": 20000,
+      "mode": "snapshot-every-page",
+      "trials": [
+        {
+          "bytes": 230089741,
+          "writes": 202,
+          "ms": 2429.02
+        },
+        {
+          "bytes": 230089741,
+          "writes": 202,
+          "ms": 2453.61
+        },
+        {
+          "bytes": 230089741,
+          "writes": 202,
+          "ms": 2496.54
+        }
+      ]
+    },
+    {
+      "pages": 200,
+      "records": 20000,
+      "mode": "incremental-journal",
+      "trials": [
+        {
+          "bytes": 6866057,
+          "writes": 402,
+          "ms": 221.82
+        },
+        {
+          "bytes": 6866057,
+          "writes": 402,
+          "ms": 206.39
+        },
+        {
+          "bytes": 6866057,
+          "writes": 402,
+          "ms": 208.87
+        }
+      ]
+    }
+  ],
+  "duplicateHints": {
+    "ticks": 50,
+    "adapterCalls": 1
+  },
+  "limits": "Elapsed times are one machine, three runs; compare bytes, not a universal speedup. A correct plain script without checkpoints still does less work. Legacy onCheckpoint deliberately remains snapshot-based for compatibility; use CheckpointStore/onPage for incremental persistence."
+}

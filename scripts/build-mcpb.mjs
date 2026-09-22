@@ -31,7 +31,7 @@ try {
   await fs.mkdir(stage);
   await fs.writeFile(path.join(temp, "user.npmrc"), "");
   await fs.writeFile(path.join(temp, "global.npmrc"), "");
-  for (const rel of ["package.json", "package-lock.json", "packages/context/package.json", "packages/shared/package.json", "bench/package.json", "evals/package.json"]) {
+  for (const rel of ["package.json", "package-lock.json", "packages/context/package.json", "packages/shared/package.json", "packages/runtime/package.json", "bench/package.json", "evals/package.json"]) {
     await fs.mkdir(path.dirname(path.join(mirror, rel)), { recursive: true });
     await fs.copyFile(path.join(root, rel), path.join(mirror, rel));
   }

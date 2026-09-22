@@ -1,8 +1,8 @@
 {
   "name": "tiny-context",
   "displayName": "tiny-context",
-  "version": "0.1.1",
-  "description": "Know things about files without reading them. Eight local MCP tools — file_map, query_file, read_section, query_table, summarize_log, diff_files, validate_file, extract — that outline, search, slice, query, cluster, diff, validate and extract from files including PDF/DOCX/PPTX/XLSX, returning only what the agent needs with a token-savings line on every response. Ships a skill that tells Claude when to use them instead of whole-file reads.",
+  "version": "0.1.2",
+  "description": "Know things about files without reading them. Eight local MCP tools \u2014 file_map, query_file, read_section, query_table, summarize_log, diff_files, validate_file, extract \u2014 that outline, search, slice, query, cluster, diff, validate and extract from files including PDF/DOCX/PPTX/XLSX, returning only what the agent needs with a token-savings line on every response. Ships a skill that tells Claude when to use them instead of whole-file reads.",
   "author": {
     "name": "AVRG3",
     "url": "https://github.com/Warddamn"

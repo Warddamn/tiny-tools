@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // @author AVRG3
 /** Extract the exact archive away from the repo, then check all tools through its manifest command. */
+import { verifyContextSafety } from "./verify-safety.mjs";
 import assert from "node:assert/strict";
 import { promises as fs } from "node:fs";
 import { execFileSync } from "node:child_process";
@@ -59,6 +60,7 @@ with zipfile.ZipFile(sys.argv[1]) as z:
     assert.match(text, /Returned ~[\d,]+ tokens/);
     console.log(`PASS ${name}`);
   }
+  await verifyContextSafety(client,fixtures);
   // Exercise the spreadsheet conversion path too, since it must not download a DuckDB extension.
   const spreadsheet = await client.callTool({ name: "query_table", arguments: { path: path.join(fixtures, "sample.xlsx"), sql: "SELECT COUNT(*) AS n FROM t" } });
   assert.ok(!spreadsheet.isError, "Bundled XLSX query failed");

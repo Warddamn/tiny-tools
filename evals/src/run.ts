@@ -132,7 +132,7 @@ async function setupWorkspace(mode: Mode): Promise<string> {
 function runClaude(ws: string, mode: Mode, prompt: string, model: string | undefined, timeoutMs: number): Promise<{ lines: string[]; code: number | null; stderr: string }> {
   return new Promise((resolve) => {
     const allowed = [...BUILTINS, ...(mode === "none" ? [] : [`${PREFIX}*`])];
-    const args = ["-p", prompt, "--output-format", "stream-json", "--verbose", "--max-turns", "12", "--strict-mcp-config", "--allowedTools", ...allowed];
+    const args = ["-p", prompt, "--output-format", "stream-json", "--verbose", "--max-turns", "12", "--max-budget-usd", "0.75", "--no-session-persistence", "--strict-mcp-config", "--allowedTools", ...allowed];
     if (mode !== "none") args.push("--mcp-config", "mcp.json");
     if (mode === "hook") args.push("--settings", "settings.json");
     if (model) args.push("--model", model);

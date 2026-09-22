@@ -5,14 +5,14 @@
     "url": "https://github.com/Warddamn"
   },
   "description": "MCP tools by AVRG3 for file analysis, resumable API batches, retry-loop detection and tool-progress integration.",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "plugins": [
     {
       "name": "tiny-context",
       "source": "./plugins/tiny-context",
       "displayName": "tiny-context",
       "description": "Know things about files without reading them: outline, ranked search, surgical reads, SQL over CSV/XLSX/Parquet, log clustering, diffs, validation and extraction \u2014 including PDF/DOCX/PPTX/XLSX. Eight MCP tools plus a skill that tells Claude when to reach for them. Local, deterministic, bounded responses with a token-savings line on every call.",
-      "version": "0.1.1",
+      "version": "0.1.2",
       "author": {
         "name": "AVRG3",
         "url": "https://github.com/Warddamn"
@@ -39,7 +39,7 @@
     {
       "name": "tiny-runtime",
       "displayName": "tiny-runtime",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "description": "Resumable API pagination and batch collection, repeated-failure analysis, and tool-progress cache hints for AI agents. Three MCP tools with selection guidance; automatic enforcement and GPU effects need host integration.",
       "author": {
         "name": "AVRG3",

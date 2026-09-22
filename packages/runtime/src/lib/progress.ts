@@ -1,5 +1,6 @@
 // @author AVRG3
 import { z } from 'zod';
+import { abortable } from './collector.js';
 import { fail, nonnegative, positiveInt } from './common.js';
 
 export const ProgressEventSchema = z.object({
@@ -90,7 +91,7 @@ export class CachePlanner {
       session: c.session, action: selected.has(c.session) ? (c.finished ? 'prefetch' : 'retain') : 'release',
       reason: !selected.has(c.session) && ready.includes(c) ? 'capacity_limit' : c.reason,
       estimatedRemainingMs: c.eta === null ? null : Math.ceil(c.eta),
-      validUntilMs: Math.max(now, Math.min(now + this.leaseMs, c.updated + this.staleMs)),
+      validUntilMs: selected.has(c.session) ? Math.max(now, Math.min(now + this.leaseMs, c.updated + this.staleMs)) : now + this.leaseMs,
     }));
   }
   prune(now = Date.now()): number {
@@ -104,23 +105,56 @@ export class CachePlanner {
     return removed;
   }
 }
-export interface CacheAdapter { apply(hint: CacheHint): Promise<void> }
-/** Deliver to an explicit engine adapter; failures are visible and never masquerade as applied hints. */
-export async function deliverHints(hints: CacheHint[], adapter: CacheAdapter): Promise<{ applied: string[]; failed: { session: string; reason: string }[] }> {
-  const applied: string[] = [], failed: { session: string; reason: string }[] = [];
-  for (const hint of hints) {
-    try { await adapter.apply(hint); applied.push(hint.session); }
-    catch { failed.push({ session: hint.session, reason: 'Engine adapter rejected the hint; verify endpoint, authentication and lease support.' }); }
-  }
-  return { applied, failed };
+export interface CacheAdapter { apply(hint: CacheHint, signal?: AbortSignal): Promise<void> }
+export interface DeliveryOptions { now?: () => number; concurrency?: number; timeoutMs?: number }
+/** Deadline checked before and after delivery; adapters must also enforce expiry and cancellation. */
+export async function deliverHints(hints: CacheHint[], adapter: CacheAdapter, options: DeliveryOptions = {}): Promise<{ applied: string[]; failed: { session: string; reason: string }[] }> {
+  const now = options.now ?? Date.now, concurrency = positiveInt(options.concurrency ?? 4, 'concurrency', 16);
+  const timeout = positiveInt(options.timeoutMs ?? 2000, 'timeoutMs', 60_000);
+  const outcomes: { session: string; reason?: string }[] = new Array(hints.length);
+  let next = 0;
+  await Promise.all(Array.from({length:Math.min(concurrency,hints.length)}, async () => {
+    while(next < hints.length) {
+      const i = next++, hint = hints[i];
+      const remaining = hint.validUntilMs - now();
+      if(remaining <= 0) { outcomes[i] = {session:hint.session,reason:'Hint expired before delivery.'}; continue; }
+      const controller = new AbortController();
+      const timer = setTimeout(()=>controller.abort(), Math.min(timeout,remaining));
+      try {
+        await abortable(()=>adapter.apply(hint,controller.signal),controller.signal);
+        outcomes[i] = now() < hint.validUntilMs ? {session:hint.session} : {session:hint.session,reason:'Hint expired during delivery; application is not confirmed.'};
+      } catch { outcomes[i] = {session:hint.session,reason:'Adapter failed, timed out or ignored cancellation; application is not confirmed.'}; }
+      finally { clearTimeout(timer); }
+    }
+  }));
+  return { applied: outcomes.filter(x=>!x.reason).map(x=>x.session), failed: outcomes.filter(x=>x.reason).map(x=>({session:x.session,reason:x.reason!})) };
 }
-/** Small live bridge: host forwards progress here and calls tick while tools run. */
+/** Coalesces concurrent ticks and refreshes unchanged leases only when half their lifetime remains. */
 export class ProgressBridge {
+  private sent = new Map<string,{hint:CacheHint;refreshAt:number}>();
+  private active?: Promise<{hints:CacheHint[];applied:string[];failed:{session:string;reason:string}[]}>;
   constructor(readonly planner: CachePlanner, readonly adapter: CacheAdapter) {}
-  async tick(now = Date.now(), retainedSessions = 1) {
-    const hints = this.planner.plan(now, retainedSessions);
-    const delivery = await deliverHints(hints, this.adapter);
-    this.planner.prune(now); // Send release before forgetting expired state.
-    return { hints, ...delivery };
+  tick(now = Date.now(), retainedSessions = 1) {
+    if(this.active) return this.active;
+    this.active = this.deliver(now,retainedSessions).finally(()=>{this.active=undefined;});
+    return this.active;
+  }
+  private async deliver(now:number, retainedSessions:number) {
+    const started = performance.now(), clock = () => now + (performance.now()-started);
+    const hints = this.planner.plan(now,retainedSessions), present = new Set(hints.map(h=>h.session));
+    for(const session of this.sent.keys()) if(!present.has(session))this.sent.delete(session);
+    const changed = hints.filter(h=>{
+      const prior=this.sent.get(h.session);
+      return !prior || prior.hint.action!==h.action || prior.hint.reason!==h.reason || now>=prior.refreshAt;
+    });
+    const delivery = await deliverHints(changed,this.adapter,{now:clock});
+    for(const session of delivery.applied) {
+      const hint=changed.find(h=>h.session===session)!;
+      this.sent.set(session,{hint,refreshAt:now+(hint.validUntilMs-now)/2});
+    }
+    // Retry rejected delivery only on a later explicit host tick; never spin/retry internally.
+    for(const {session} of delivery.failed)this.sent.delete(session);
+    this.planner.prune(clock());
+    return {hints,...delivery};
   }
 }

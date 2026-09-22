@@ -30,7 +30,9 @@
     "evals:runtime": "npm run build && node scripts/eval-runtime.mjs",
     "bundle:runtime": "npm run build && node scripts/build-runtime-release.mjs",
     "verify:runtime:bundle": "node scripts/verify-runtime-bundle.mjs",
-    "verify:runtime:public": "node scripts/verify-runtime-public.mjs"
+    "verify:runtime:public": "node scripts/verify-runtime-public.mjs",
+    "bundle:context": "npm run build && node scripts/build-context-release.mjs",
+    "bench:safety": "npm run build && node scripts/bench-safety.mjs"
   },
   "devDependencies": {
     "@types/node": "^24",

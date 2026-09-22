@@ -7,6 +7,7 @@ import { collectPages, PageSchema, seal, type CollectionOptions } from './collec
 import { canonical, fail, fingerprint } from './common.js';
 import { RepeatGuard } from './guard.js';
 import { absolute, atomicJson, jobDirectory, readJson } from './io.js';
+import { CheckpointStore, readCheckpoint } from './checkpoint-store.js';
 import { CachePlanner } from './progress.js';
 
 export interface JobResult { ok: boolean; summary: Record<string, unknown>; files: string[] }
@@ -27,9 +28,16 @@ export async function collectJob(raw: unknown, hooks: JobHooks = {}): Promise<Jo
     sourceId = canonical({ path: filename, content: fingerprint(manifest) });
     fetchPage = async cursor => { const page = cursors.get(cursor); if (!page) fail('Manifest lacks the requested cursor.', 'Provide the missing page before starting a new collection.'); return page; };
   }
-  const checkpoint = args.checkpoint ? (await readJson(args.checkpoint)).value : undefined;
+  const checkpoint = args.checkpoint ? await readCheckpoint(args.checkpoint) : undefined;
   const dir = await jobDirectory(configPath, args.output_dir), checkpointPath = path.join(dir, 'checkpoint.json');
-  const result = await collectPages({ ...config, sourceId, fetchPage, checkpoint, ...hooks, onCheckpoint: cp => atomicJson(checkpointPath, cp) });
+  const store = new CheckpointStore(dir); await store.initialize(checkpoint);
+  let result = await collectPages({ ...config, sourceId, fetchPage, checkpoint, ...hooks, onPage: store.save }).finally(() => store.drain());
+  // A filesystem commit may win a cancellation race before its acknowledgement arrives.
+  // Preserve that durable page instead of overwriting it with older in-memory state.
+  if (store.committedPages > result.summary.pages) {
+    const durable = await readCheckpoint(checkpointPath), s = durable.state;
+    result = { ...result, records: s.records, checkpoint: durable, summary: { pages: s.pages, records: s.records.length, duplicates: s.duplicates, sums: s.sums, exhausted: s.exhausted, ...(s.total === undefined ? {} : { total: s.total }) } };
+  }
   await atomicJson(checkpointPath, seal(result.checkpoint.state));
   const recordsPath = path.join(dir, 'records.json'); await atomicJson(recordsPath, result.records);
   const report = { status: result.status, reason: result.reason, nextStep: result.nextStep, ...result.summary };

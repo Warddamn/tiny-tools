@@ -19,7 +19,7 @@ const log = (msg: string): void => {
 
 /** Loaded at session start by clients with tool search (Claude Code loads only tool names + this string; 2 KB cap). */
 const INSTRUCTIONS =
-  "tiny-context: know things about files without reading them. Use these tools BEFORE reading any file over ~20 KB and for EVERY PDF, DOCX, PPTX, XLSX (built-in Read cannot open them): " +
+  "tiny-context: know things about files without reading them. Use targeted tools for large files and PDF, DOCX, PPTX, XLSX formats. Query directly for a question, read_section for a known location; map only when an outline is needed. Stop once the answer is sufficient: " +
   "file_map (outline: headings, code signatures, sheets/columns, slide titles, pages, folder tree) · query_file (ranked passages with locations) · " +
   "read_section (only a heading/page/line/paragraph/sheet-range/slide) · query_table (DuckDB SQL over CSV/TSV/XLSX/Parquet/JSON, table t) · " +
   "summarize_log (clusters + timeline of a log) · diff_files (what changed, incl. office files and tables) · validate_file (JSON/YAML/XML/CSV/schema/links/encoding) · " +

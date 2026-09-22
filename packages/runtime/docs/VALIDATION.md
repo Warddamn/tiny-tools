@@ -19,3 +19,13 @@ Remaining integration limits: no production inference-engine patch or GPU deploy
 [Publication run 35686387287](https://github.com/Warddamn/tiny-tools/actions/runs/35686387287) passed at source commit `95301ed2402c0a07230adde13b5b55531b22e62a`. The build ran all 161 tests. Linux, macOS and Windows then extracted the same portable MCPB outside the checkout and verified CLI help plus all three MCP tools with npm absent from the server PATH. The published npx command was checked with a new cache, blank npm configs and synthetic tasks for all three tools. Individual client installation screens were not exercised.
 
 [Public version 0.1.0](https://github.com/Warddamn/tiny-tools/releases/tag/runtime-v0.1.0) contains a 3,930,700-byte MCPB and a 41,830-byte tarball. Official registry read-back returned active `io.github.Warddamn/tiny-runtime@0.1.0`; its archive URL and SHA-256 match the release digest and checksum file. The MCPB includes production dependencies; Node.js 20+ is supplied by the host. The smaller tarball downloads dependencies. No npm account is required. This verifies distribution and tool behavior, not adoption or general performance savings.
+
+## Safety/efficiency regression run — 2026-09-22, version 0.1.1
+
+New tests cover SQL write/external-access rejection, exclusive exports and deadlines, repeated successful reads, callback hangs, a cancellation/commit race, journal recovery/tampering, duplicate/expired/late cache hints, and parse-cache freshness, mutation isolation and eviction. Exact downloaded artifacts also run SQL/guard regression checks.
+
+`npm run bench:safety` compares the compatible legacy snapshot callback with the new default incremental journal, including final checkpoint and records export. Three runs on macOS ARM64 / Node 24.16.0: 100 pages / 10,000 records wrote **58,755,941 → 3,416,157 bytes** (94.2% less); median **630.82 → 96.30 ms**. At 200 pages / 20,000 records: **230,089,741 → 6,866,057 bytes** (97.0% less); median **2453.61 → 208.87 ms**. Fifty identical cache ticks produced one adapter call. [Raw measurements](SAFETY-BENCH.json).
+
+The regression gate compares bytes, not wall-clock speed. Journaling makes more small writes; slow filesystems may have different timing. A plain script with no persistence still does less work. These measurements establish neither universal token savings nor GPU savings. Custom callbacks must cooperate with cancellation; synchronous blocking code and filesystem cleanup can exceed a collection deadline.
+
+Local validation: **193 tests passed** in 22 files. All five fresh runtime agent selection/answer tasks passed, including the small-note non-use case; [results](SAFETY-EVAL.json). This is a smoke evaluation, not a savings comparison.

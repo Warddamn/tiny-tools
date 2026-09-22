@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // @author AVRG3
 /** Check the documented public install, without local workspace packages or npm credentials. */
+import { verifyContextSafety } from "./verify-safety.mjs";
 import assert from "node:assert/strict";
 import { promises as fs } from "node:fs";
 import os from "node:os";
@@ -25,6 +26,9 @@ for (const rel of ["README.md", "packages/context/README.md"]) {
   }
 }
 console.log("PASS install commands, client configs and button payloads agree");
+if(process.argv.includes('--check-docs')) process.exit(0);
+const override=process.argv.indexOf('--package');
+if(override>=0) { assert.ok(process.argv[override+1]); config.args[2]=path.resolve(process.argv[override+1]); }
 const scratch = await fs.mkdtemp(path.join(os.tmpdir(), "tiny-release-"));
 const fixtures = path.join(scratch, "fixtures");
 const client = new Client({ name: "tiny-release-check", version: "0.1.0" });
@@ -67,6 +71,7 @@ try {
     assert.match(text, /Returned ~[\d,]+ tokens/, `${name}: missing response ledger`);
     console.log(`PASS ${name}`);
   }
+  await verifyContextSafety(client,fixtures);
   console.log("Public release verified: eight tools, eight expected results. This is an automated download, not evidence of a new user.");
 } finally {
   await client.close();

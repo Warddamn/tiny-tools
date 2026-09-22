@@ -4,7 +4,7 @@ Built by **AVRG3**. tiny-context helps most with large tables, long logs and PDF
 
 ## 1. Connect it
 
-If your client supports MCPB bundles, open the [bundle release](https://github.com/Warddamn/tiny-tools/releases/tag/context-v0.1.0), choose your OS under **Assets**, download the `.mcpb` file and open it in that client. The client will show its installation and permission prompts. Otherwise use the commands below.
+If your client supports MCPB bundles, open the [bundle release](https://github.com/Warddamn/tiny-tools/releases/tag/context-v0.1.1), choose your OS under **Assets**, download the `.mcpb` file and open it in that client. The client will show its installation and permission prompts. Otherwise use the commands below.
 
 Use the [install instructions](README.md#install) for your app. Node.js 20+ is required; no npm account or token is needed. After setup, restart or reconnect your client and check that **tiny-context** is connected with **eight tools**. In Claude Code, the plugin also supplies guidance on when to use each tool. With manual setup, add the [agent usage snippet](packages/context/docs/AGENT_USAGE.md) to your project's instructions.
 

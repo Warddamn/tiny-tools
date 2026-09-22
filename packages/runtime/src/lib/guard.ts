@@ -43,7 +43,9 @@ export class RepeatGuard {
     const related = this.entries.filter(e => e.scope === scope && e.signature === signature);
     const same = related.filter(e => e.state === state);
     // A->B->A cycles repeat the same transition; distinct outcomes after the same state are not proof of a loop.
-    const stalls = same.filter(e => (e.outcome === 'failure' && (e.after === undefined || e.after === state)) || (state !== undefined && e.after === state));
+    let recovered = -1;
+    for (let i = 0; i < same.length; i++) { const e = same[i]; if (e.outcome === 'success' && (e.after === undefined || e.after === state)) recovered = i; }
+    const stalls = same.slice(recovered + 1).filter(e => e.outcome === 'failure' && (e.after === undefined || e.after === state));
     const cycles = state === undefined ? [] : same.filter(e => e.after !== undefined && e.after !== state);
     const grouped = new Map<string, number>();
     for (const e of cycles) grouped.set(e.after!, (grouped.get(e.after!) ?? 0) + 1);

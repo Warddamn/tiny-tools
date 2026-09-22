@@ -15,7 +15,7 @@ export const FileMapInput = z.object({
 });
 export const FILE_MAP_DESCRIPTION = `Structural outline of a file or directory WITHOUT its contents: headings (md/docx), function/class signatures (code), sheets + column headers + row counts (xlsx), slide titles (pptx), page count + outline + first line per page (pdf), size-annotated tree (directory).
 USE WHEN: "what's in this file/folder", "outline this document", "which functions are in here", "what sheets and columns does this spreadsheet have", or before deciding what to read.
-PREFER OVER: Read/cat for any file over ~20 KB and for every PDF/DOCX/XLSX/PPTX (built-ins can't open them); over ls+grep+head loops for directories. Read is fine — and sufficient — for a small plain-text file (< ~20 KB): just Read it; do not call file_map on a file you have already read.
+PREFER OVER: reading an entire large document just to learn its structure, or ls+grep+head loops for directories. If the question or section is already known, query_file/read_section directly; mapping is optional. Read is fine — and sufficient — for a small plain-text file (< ~20 KB): just Read it; do not call file_map on a file you have already read.
 DOES NOT: return contents (use read_section), search inside files (use query_file), or parse code with a real parser (signatures are regex-based, so unusual syntax may be missed).
 EXAMPLE: file_map({ path: "/abs/project/src", depth: 2 })  ·  file_map({ path: "/abs/contract.pdf" })
 RETURNS: an outline with locations (line / page / sheet / slide / ¶) that read_section accepts, counts and sizes, then a savings line.`;
@@ -49,12 +49,12 @@ export const LocatorSchema = z.object({
 export const ReadSectionInput = z.object({
   path: z.string().describe(pathDesc("File to read from", "/abs/contract.pdf")),
   locator: LocatorSchema.describe(
-    "Exactly what to read: {heading} | {pages} | {lines} | {paras} | {sheet, range} | {slide}. Get locations from file_map or query_file. Example: { pages: '3-5' }. Required.",
+    "Exactly what to read: {heading} | {pages} | {lines} | {paras} | {sheet, range} | {slide}. Use a known location directly, or find it with file_map/query_file. Example: { pages: '3-5' }. Required.",
   ),
   max_tokens: z.number().int().min(100).max(8000).optional().describe("Cap on returned text (≈ bytes/4). Default 2000, max 8000. When hit, the response says how to continue."),
 });
 export const READ_SECTION_DESCRIPTION = `The surgical read: returns ONLY the located section of a file — a heading's section, a page range, a line range, DOCX paragraphs, an XLSX sheet range, or PPTX slides — capped at max_tokens.
-USE WHEN: you know where the content is (from file_map or query_file) and need the actual text of just that part; reading pages of a PDF, a sheet of a workbook, a section of a long doc.
+USE WHEN: you know where the content is (from the task, file_map or query_file) and need the actual text of just that part; reading pages of a PDF, a sheet of a workbook, a section of a long doc.
 PREFER OVER: Read/cat of the whole file when you need a slice, and always for PDF/DOCX/XLSX/PPTX (Read can't slice them). Read is fine for small plain-text files you need in full.
 DOES NOT: search (use query_file), read whole large files (cap 8000 tokens — narrow the locator instead), or render images.
 EXAMPLE: read_section({ path: "/abs/contract.pdf", locator: { pages: "3-5" } })  ·  read_section({ path: "/abs/spec.md", locator: { heading: "Installation" } })
@@ -63,14 +63,16 @@ RETURNS: the section text with line/page/¶ markers, word count, a "truncated at
 // ───────────────────────── query_table ─────────────────────────
 export const QueryTableInput = z.object({
   path: z.string().describe(pathDesc("CSV, TSV, Parquet or XLSX file", "/abs/sales.csv")),
-  sql: z.string().min(1).describe("DuckDB SQL against the file, which is registered as table `t`. Example: 'SELECT region, SUM(total) AS total FROM t GROUP BY 1 ORDER BY 2 DESC'. Required."),
+  sql: z.string().min(1).describe("One read-only DuckDB SELECT (WITH allowed) or DESCRIBE against table `t`; no external files or commands. Example: 'SELECT region, SUM(total) AS total FROM t GROUP BY 1 ORDER BY 2 DESC'. Required."),
+  timeout_ms: z.number().int().min(10).max(60_000).optional().describe("Query worker deadline in milliseconds. Default 15000, maximum 60000. Example: 5000."),
   max_rows: z.number().int().min(1).max(200).optional().describe("Rows returned. Default 50, hard cap 200. The total row count is always reported."),
-  out: z.string().optional().describe("Write the FULL result to this CSV path (nothing is capped in the file). Example: '/abs/out/by-region.csv'."),
+  out: z.string().optional().describe("Write the full result to a new CSV (64 MB export cap; existing files are never overwritten). Example: '/abs/out/by-region.csv'."),
   sheet: z.string().optional().describe("XLSX only: sheet name to query. Default: first sheet."),
 });
 export const QUERY_TABLE_DESCRIPTION = `Run SQL (DuckDB) over a CSV/TSV/Parquet/XLSX file without the data ever entering your context. The file is table \`t\`.
 USE WHEN: "total sales by region", "how many rows have a negative total", "top 10 customers", "which columns exist and what types", any aggregate/filter/join-free question about a table.
 PREFER OVER: Read/cat/head of the table, writing a pandas/awk script, or loading rows to count them. Read is fine for a tiny table (< ~50 rows) you need verbatim.
+LIMITS: one read-only SELECT or DESCRIBE; no SQL file/network access, COPY, extensions, or multiple statements. Input/export cap 64 MB, DuckDB memory 256 MB, worker deadline 15s (timeout_ms up to 60s). Explicit out creates a new CSV without overwriting.
 DOES NOT: modify the file, join several files (one file = one table), or return more than 200 rows in-context (use \`out\` to write the full result to CSV).
 EXAMPLE: query_table({ path: "/abs/sales.csv", sql: "SELECT region, SUM(total) FROM t GROUP BY 1" })  ·  query_table({ path: "/abs/sales.csv", sql: "DESCRIBE t" })
 RETURNS: a markdown table of up to max_rows rows, column names/types, total result rows, the written file path when \`out\` is set, then a savings line. SQL errors include the table's columns and types so the next attempt succeeds.`;

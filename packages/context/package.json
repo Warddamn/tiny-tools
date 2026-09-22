@@ -1,6 +1,6 @@
 {
   "name": "@tiny_tools_pw/context",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "MCP server (Model Context Protocol) for AI coding agents: outline, search, slice and SQL-query PDF, DOCX, PPTX, XLSX, CSV, Parquet and log files without reading whole files. 8 tools, CLI included. Local-first, no telemetry.",
   "type": "module",
   "license": "MIT",
@@ -60,7 +60,7 @@
     "fast-xml-parser": "^5.0.0",
     "yaml": "^2.9.0",
     "zod": "^4.0.0",
-    "@tiny_tools_pw/shared": "^0.1.0"
+    "@tiny_tools_pw/shared": "^0.1.1"
   },
   "optionalDependencies": {
     "@duckdb/node-api": "1.5.5-r.5"

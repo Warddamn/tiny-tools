@@ -1,6 +1,6 @@
 {
   "name": "@tiny_tools_pw/shared",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Shared helpers for tiny-tools: path/glob resolution, safe output naming, teach-errors, savings ledger, system-binary detection, and text extraction from pdf/docx/pptx/xlsx/md/txt/code.",
   "type": "module",
   "license": "MIT",

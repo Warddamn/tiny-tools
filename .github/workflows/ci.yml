@@ -25,9 +25,8 @@ jobs:
       - run: npm test
 
   test-windows:
-    name: test (windows, node 22) — advisory
+    name: test (windows, node 22)
     runs-on: windows-latest
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -65,7 +64,7 @@ jobs:
           path: bench/RESULTS.md
 
   public-install:
-    name: published release installs and answers eight tasks
+    name: new context package installs and passes safety checks
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
@@ -75,7 +74,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npm run verify:release
+      - run: npm run bundle:context
+      - run: npm run verify:release -- --package .tmp/context-release/tiny-context-standalone-0.1.1.tgz
 
   runtime-install:
     name: runtime package installs and answers three tasks
@@ -90,3 +90,4 @@ jobs:
       - run: npm ci
       - run: npm run verify:runtime
       - run: npm run demo:runtime
+      - run: npm run bench:safety
