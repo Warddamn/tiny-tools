@@ -1,0 +1,1 @@
+{"pages":[{"cursor":null,"page":{"items":[{"id":"A","cents":1250},{"id":"B","cents":-50}],"nextCursor":"second","snapshot":"demo-v1","total":3}},{"cursor":"second","page":{"items":[{"id":"B","cents":-50},{"id":"C","cents":300}],"nextCursor":null,"snapshot":"demo-v1","total":3}}]}

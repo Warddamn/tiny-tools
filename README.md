@@ -77,8 +77,13 @@ Restart or reconnect your client after setup. Confirm that `tiny-context` is con
 ## Privacy
 
 - **No telemetry from the tools.** No usage reports or analytics are sent by the server.
-- The tools process local files and return selected text to your MCP client. They do not call a model or upload files themselves; your client may send that text to its model provider according to its settings.
+- The published tiny-context tools process local files and return selected text to your MCP client. They do not call a model or upload files themselves; your client may send that text to its model provider according to its settings.
+- tiny-runtime also supports explicitly configured HTTP GET sources and an optional SDK cache adapter; requests go only to the configured endpoints. It has no telemetry or model calls.
 - First launch downloads the release and third-party dependencies using npm, including optional DuckDB for `query_table`. This is not an offline installer. GitHub and npm maintain their own download counters; those are not counts of agents or people.
+
+## New: runtime helpers
+
+[`tiny-runtime`](packages/runtime/README.md) adds resumable batch collection, progress-aware repeat guards, and tool-progress/cache scheduling integration. It has a library, CLI and separate three-tool MCP server. This is new source on the runtime feature branch; it is not included in the published tiny-context bundle. The cache component needs a compatible serving-engine adapter. See its [validation and limits](packages/runtime/docs/VALIDATION.md).
 
 ## Packages
 
@@ -156,14 +161,16 @@ Install size: **134.7 MB** (108 packages) — **21.9 MB without DuckDB**, which 
 
 ## Design rules every tool follows
 
-Whole jobs, not endpoints · files in, summaries out · safe output defaults (never overwrite an input; `-1`, `-2` on collision) · errors that teach (what went wrong **and** what to do next) · deterministic and stateless · descriptions written as prompts (USE WHEN / PREFER OVER / DOES NOT / EXAMPLE / RETURNS) · validate before working · batches report per file · every response bounded (≤ ~4,000 tokens) · a savings line on every response · ≤ 8 tools per server · absolute paths in responses.
+Whole jobs, not endpoints · files in, summaries out · safe output defaults (never overwrite an input; `-1`, `-2` on collision) · errors that teach (what went wrong **and** what to do next) · deterministic processing with explicit checkpoint/trace state · descriptions written as prompts (USE WHEN / PREFER OVER / DOES NOT / EXAMPLE / RETURNS) · validate before working · batches report per file · every response bounded (≤ ~4,000 tokens) · a savings or timing line on every response · ≤ 8 tools per server · absolute paths in responses.
 
 ## Develop
 
 ```bash
 npm install
-npm test          # builds, then vitest (shared + context unit, MCP stdio integration, CLI)
+npm test          # builds, then tests all packages, MCP stdio integration, CLI
 npm run bench     # fixtures + benchmark table → bench/RESULTS.md, embedded in READMEs
+npm run demo:runtime  # synthetic demo of all three runtime helpers
+npm run bench:runtime # compare against an ordinary correct script
 npm run evals     # headless Claude Code tool-selection evals → evals/RESULTS.md
 ```
 

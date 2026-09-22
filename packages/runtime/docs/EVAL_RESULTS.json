@@ -1,0 +1,91 @@
+{
+  "date": "2026-09-21 America/New_York",
+  "modelAlias": "sonnet",
+  "tasks": [
+    {
+      "id": "collect",
+      "status": "pass",
+      "correct": true,
+      "selected": true,
+      "actual": {
+        "status": "complete",
+        "records": 1000,
+        "sumCents": 10000
+      },
+      "calls": [
+        "Read",
+        "ToolSearch",
+        "mcp__tiny-runtime__collect_pages"
+      ],
+      "durationMs": 6693,
+      "costUsd": 0.1793118
+    },
+    {
+      "id": "resume",
+      "status": "pass",
+      "correct": true,
+      "selected": true,
+      "actual": {
+        "status": "complete",
+        "records": 1000,
+        "sumCents": 10000
+      },
+      "calls": [
+        "ToolSearch",
+        "mcp__tiny-runtime__collect_pages"
+      ],
+      "durationMs": 10987,
+      "costUsd": 0.084706
+    },
+    {
+      "id": "guard",
+      "status": "pass",
+      "correct": true,
+      "selected": true,
+      "actual": {
+        "action": "block",
+        "repeats": 3
+      },
+      "calls": [
+        "Read",
+        "ToolSearch",
+        "mcp__tiny-runtime__check_progress"
+      ],
+      "durationMs": 12520,
+      "costUsd": 0.0752324
+    },
+    {
+      "id": "cache",
+      "status": "pass",
+      "correct": true,
+      "selected": true,
+      "actual": {
+        "retain": 1,
+        "release": 1,
+        "gpuChanged": false
+      },
+      "calls": [
+        "Read",
+        "ToolSearch",
+        "mcp__tiny-runtime__plan_cache"
+      ],
+      "durationMs": 17749,
+      "costUsd": 0.0709824
+    },
+    {
+      "id": "small-note",
+      "status": "pass",
+      "correct": true,
+      "selected": true,
+      "actual": {
+        "color": "blue"
+      },
+      "calls": [
+        "Read"
+      ],
+      "durationMs": 3199,
+      "costUsd": 0.0431322
+    }
+  ],
+  "note": "Single runs, with resume rechecked after correcting checkpoint guidance. These demonstrate tool selection/correctness, not efficiency or adoption."
+}

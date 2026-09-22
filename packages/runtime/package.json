@@ -1,0 +1,16 @@
+{
+  "name": "@tiny_tools_pw/runtime",
+  "version": "0.1.0",
+  "description": "Deterministic agent runtime helpers: resumable batch collection, progress-aware repeat guards, and cache scheduling hints. CLI and three-tool MCP server.",
+  "type": "module",
+  "license": "MIT",
+  "author": "AVRG3",
+  "engines": { "node": ">=20" },
+  "bin": { "tiny-runtime": "./dist/cli.js", "tiny-runtime-mcp": "./dist/mcp.js" },
+  "exports": { ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" } },
+  "files": ["dist", "docs", "examples", "README.md", "LICENSE"],
+  "dependencies": { "@modelcontextprotocol/sdk": "^1.30.0", "commander": "^15.0.0", "zod": "^4.0.0" },
+  "keywords": ["mcp", "mcp-server", "agent", "pagination", "batch", "resumable", "loop-detection", "progress", "cache"],
+  "repository": { "type": "git", "url": "git+https://github.com/Warddamn/tiny-tools.git", "directory": "packages/runtime" },
+  "scripts": { "prepack": "node ../../scripts/sign.mjs --check" }
+}
