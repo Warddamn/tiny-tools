@@ -2,29 +2,35 @@
 import path from 'node:path';
 import { z } from 'zod';
 import { CheckpointSchema, StateSchema, seal, type Checkpoint, type CollectionOptions } from './collector.js';
-import { fail, fingerprint } from './common.js';
+import { fail, fingerprint, positiveInt } from './common.js';
 import { absolute, atomicJson, readJson } from './io.js';
 const Meta = StateSchema.omit({ records: true, cursors: true });
 const Manifest = z.object({ version: z.literal(2), basePages: z.number().int().min(0).max(100_000), pages: z.number().int().min(1).max(100_000), head: z.string().regex(/^[a-f0-9]{64}$/) }).strict();
 const Chunk = z.object({ state: Meta, cursor: z.string().min(1).nullable(), records: StateSchema.shape.records, previous: z.string().nullable(), checksum: z.string() }).strict();
 const chunkName = (n: number) => `page-${n}.json`;
 /** Both completed v1 snapshots and interrupted v2 page journals resume through the same API. */
-export async function readCheckpoint(filename: string): Promise<Checkpoint> {
-  const value = (await readJson(filename)).value;
+export async function readCheckpoint(filename: string, maxJournalBytes = 128_000_000): Promise<Checkpoint> {
+  let remaining = positiveInt(maxJournalBytes, 'maxJournalBytes', 128_000_000);
+  const readPart = async (file: string) => {
+    if (remaining <= 0) return fail('Checkpoint journal exceeds its read budget.');
+    const input = await readJson(file, Math.min(64_000_000, remaining));
+    remaining -= input.bytes; return input.value;
+  };
+  const value = await readPart(filename);
   if ((value as {version?:number})?.version !== 2) return CheckpointSchema.parse(value);
   const manifest = Manifest.parse(value), dir = path.dirname(absolute(filename));
   if (manifest.basePages >= manifest.pages) fail('Checkpoint page range is invalid.');
   let cp: Checkpoint | undefined;
   if (manifest.basePages) {
-    cp = CheckpointSchema.parse((await readJson(path.join(dir,'base.json'))).value);
+    cp = CheckpointSchema.parse(await readPart(path.join(dir,'base.json')));
     if (fingerprint(cp.state) !== cp.checksum || cp.state.pages !== manifest.basePages) fail('Checkpoint base checksum/history is invalid.');
   }
   let previous: string | null = cp?.checksum ?? null;
   const records = cp?.state.records ?? [], cursors = cp?.state.cursors ?? [];
   let bytes = cp?.state.bytes ?? 0, last = cp?.state;
   for(let n=manifest.basePages+1;n<=manifest.pages;n++) {
-    const input = await readJson(path.join(dir,chunkName(n)), 64_000_000 - bytes + 1_000_000);
-    const {checksum,...chunk} = Chunk.parse(input.value);
+    const input = await readPart(path.join(dir,chunkName(n)));
+    const {checksum,...chunk} = Chunk.parse(input);
     if (chunk.previous !== previous || fingerprint(chunk) !== checksum || chunk.state.pages !== n) fail('Checkpoint page checksum/sequence is invalid.');
     if (last && (chunk.cursor !== last.nextCursor || chunk.state.source !== last.source || chunk.state.options !== last.options)) fail('Checkpoint page belongs to a different source/history.');
     for(const row of chunk.records) records.push(row);

@@ -40,6 +40,7 @@ describe('runtime safety and cost regressions',()=>{
   const dir=await temporary(),store=new CheckpointStore(dir);await store.initialize();
   await expect(collectPages({sourceId:'fixture',key:'id',sumFields:['cents'],fetchPage:source,onPage:store.save,onProgress:({pages})=>{if(pages===60)throw new Error('simulated process interruption');}})).rejects.toThrow(/interruption/);
   const saved=await readCheckpoint(path.join(dir,'checkpoint.json'));expect(saved.state.records).toHaveLength(60);
+  await expect(readCheckpoint(path.join(dir,'checkpoint.json'),1024)).rejects.toThrow(/exceeds/);
   const resumed=await collectPages({sourceId:'fixture',key:'id',sumFields:['cents'],fetchPage:source,checkpoint:saved});expect(resumed.status).toBe('complete');expect(resumed.summary).toMatchObject({records:100,sums:{cents:'100'}});
   const chunks=(await fs.readdir(dir)).filter(f=>f.startsWith('page-'));expect(chunks).toHaveLength(60);let stored=0;for(const f of chunks)stored+=JSON.parse(await fs.readFile(path.join(dir,f),'utf8')).records.length;
   expect(stored).toBe(60);expect((await fs.stat(path.join(dir,'checkpoint.json'))).size).toBeLessThan(256);
