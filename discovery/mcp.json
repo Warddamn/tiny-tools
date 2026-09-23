@@ -1,0 +1,22 @@
+{
+  "mcpServers": {
+    "tiny-context": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "-p",
+        "https://github.com/Warddamn/tiny-tools/releases/download/context-v0.1.1/tiny-context-standalone-0.1.1.tgz",
+        "tiny-context-mcp"
+      ]
+    },
+    "tiny-runtime": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "-p",
+        "https://github.com/Warddamn/tiny-tools/releases/download/runtime-v0.1.1/tiny-runtime-0.1.1.tgz",
+        "tiny-runtime-mcp"
+      ]
+    }
+  }
+}

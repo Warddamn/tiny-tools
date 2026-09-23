@@ -4,6 +4,8 @@ Three deterministic helpers for agent developers, built by **AVRG3**: finish pag
 
 **Version 0.1.1:** library, CLI and a separate three-tool MCP server. No model calls or telemetry. The cache bridge requires a compatible inference-serving integration; it does not control hosted-model caches or stock vLLM by itself.
 
+[Find a tool by task, with example inputs](../../discovery/README.md) · [Actual tool schemas](https://raw.githubusercontent.com/Warddamn/tiny-tools/main/discovery/catalog.json) · [Public install](#public-install).
+
 ## Public install
 
 Requires **Node.js 20+**. No npm account or source checkout is needed.

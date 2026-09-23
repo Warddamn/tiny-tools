@@ -104,3 +104,11 @@ Validation follow-up: 196 tests passed locally; first cross-platform CI run pass
 ## 2026-09-22 — context/runtime 0.1.1 SHIPPED
 
 Safety PR #2 merged at `1c8c980dc1fe1326e5828f7e147150fb863a6365`; 196 tests and all ten CI jobs passed. Public GitHub releases `context-v0.1.1` and `runtime-v0.1.1` are live. Publication runs 35697958286 and 35697960674 passed exact-artifact checks on macOS/Windows/Linux, fresh public installs, and official MCP Registry read-back. Both registry entries are active at 0.1.1 with matching public artifact hashes. Mac fresh-cache npx checks independently passed all eleven tools and installed SQL/guard regressions. New configs/buttons/plugins use fixed releases; old release notes point to upgrades, with immutable old assets preserved. Published server.json metadata recorded. No npm login, new account, company data, telemetry or user action was needed to publish. Existing pinned installations must upgrade explicitly. No universal time/token/GPU saving claimed; benchmark/evaluation limits remain documented.
+
+## 2026-09-23 — task-based discovery and directory inspection
+
+Payton requested that agents looking for these capabilities can find them. Added a task guide, a machine-readable catalog generated from the actual 8+3 MCP tools, and copyable pinned release config. READMEs and llms.txt link directly to them; current discovery status replaces obsolete npm prerequisites. Only the two available products are listed as available.
+
+Glama's profile existed but had no inspected capabilities and could not deploy. Added an explicit non-root Docker build for tiny-context (default) and tiny-runtime (separate target), with CI that checks catalog drift and calls all eleven tools without container network access. This addresses build ambiguity without claiming to know Glama's failure cause. Directory reinspection/search placement remains external; no independent adoption claim. Runtime code and immutable 0.1.1 releases unchanged. Local dashboard work stays outside this public update.
+
+Local validation: 196 tests across 23 files passed; actual MCP catalog/config checks, local documentation links and 102 source signatures passed. Docker is not installed on the maintainer's Mac; Linux CI verifies the container builds and all eleven tool calls before merge.

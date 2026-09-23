@@ -1,0 +1,17 @@
+# @author AVRG3
+.git
+node_modules
+**/node_modules
+**/dist
+**/*.tsbuildinfo
+.local
+.tmp
+.env
+.env.*
+**/.env
+**/.env.*
+evals/runs
+evals/workspace
+bench/fixtures/large
+stats
+.DS_Store
