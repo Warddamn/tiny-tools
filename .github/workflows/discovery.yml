@@ -1,0 +1,25 @@
+# @author AVRG3
+name: discovery
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  inspect:
+    name: directory images and published tool catalog
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: node scripts/discovery-catalog.mjs --check
+      - run: docker build --target tiny-context -t tiny-context-inspection .
+      - run: docker build --target tiny-runtime -t tiny-runtime-inspection .
+      - run: node scripts/verify-discovery-containers.mjs

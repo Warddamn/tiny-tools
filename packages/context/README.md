@@ -1,6 +1,8 @@
-# @tiny_tools_pw/context — `tiny-context`
+# tiny-context — MCP tools for PDF/Office search, spreadsheet SQL and log analysis
 
 **Know things about files without reading them.** Eight local, deterministic MCP tools that let an AI agent outline, search, slice, query, cluster, diff, validate and extract from files — including PDF, DOCX, PPTX and XLSX — and get back only what it needs, with a savings line on every response.
+
+[Find a tool by task, with example inputs](../../discovery/README.md) · [Actual tool schemas](https://raw.githubusercontent.com/Warddamn/tiny-tools/main/discovery/catalog.json) · [Installation](#install). Built by **AVRG3**.
 
 [![GitHub release](https://img.shields.io/github/v/release/Warddamn/tiny-tools)](https://github.com/Warddamn/tiny-tools/releases/latest)
 [![CI](https://github.com/Warddamn/tiny-tools/actions/workflows/ci.yml/badge.svg)](https://github.com/Warddamn/tiny-tools/actions/workflows/ci.yml)
@@ -12,7 +14,7 @@
 
 - **Explain a large error log:** `summarize_log` returns repeated errors, counts and time ranges without sending every log line into context.
 - **Answer a spreadsheet question:** `query_table` runs SQL over CSV/XLSX/Parquet and returns the result instead of the source rows.
-- **Find a PDF or Office passage:** `file_map`, `query_file` and `read_section` return an outline, ranked matches and the requested section.
+- **Find a PDF or Office passage:** `query_file` returns ranked matches; `read_section` reads a known location. Use `file_map` only when an outline is useful.
 
 **Measure the whole task:** the tool response can be much smaller than the source file, but startup, validation and extra agent turns still cost time. Results depend on the task and client. [Agent comparison, including regressions](https://github.com/Warddamn/tiny-tools/blob/main/evals/COMPARISON.md) · [Historical first comparison](https://github.com/Warddamn/tiny-tools/blob/main/evals/COMPARISON-2026-09-19.md).
 

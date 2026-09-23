@@ -32,7 +32,9 @@
     "verify:runtime:bundle": "node scripts/verify-runtime-bundle.mjs",
     "verify:runtime:public": "node scripts/verify-runtime-public.mjs",
     "bundle:context": "npm run build && node scripts/build-context-release.mjs",
-    "bench:safety": "npm run build && node scripts/bench-safety.mjs"
+    "bench:safety": "npm run build && node scripts/bench-safety.mjs",
+    "discovery:catalog": "npm run build && node scripts/discovery-catalog.mjs",
+    "discovery:check": "npm run build && node scripts/discovery-catalog.mjs --check"
   },
   "devDependencies": {
     "@types/node": "^24",

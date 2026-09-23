@@ -1,0 +1,569 @@
+{
+  "schemaVersion": 1,
+  "format": "tiny-tools project catalog; not an automatic-install protocol",
+  "author": "AVRG3",
+  "repository": "https://github.com/Warddamn/tiny-tools",
+  "documentation": "https://github.com/Warddamn/tiny-tools/blob/main/discovery/README.md",
+  "servers": [
+    {
+      "name": "tiny-context",
+      "version": "0.1.1",
+      "registryName": "io.github.Warddamn/tiny-context",
+      "description": "MCP server (Model Context Protocol) for AI coding agents: outline, search, slice and SQL-query PDF, DOCX, PPTX, XLSX, CSV, Parquet and log files without reading whole files. 8 tools, CLI included. Local-first, no telemetry.",
+      "tasks": [
+        "search PDF Word PowerPoint documents",
+        "SQL query CSV Excel Parquet",
+        "summarize repeated log errors",
+        "compare document versions",
+        "validate structured files",
+        "extract emails URLs IDs"
+      ],
+      "requirements": "Node.js 20+; client must explicitly connect this local stdio server; first install downloads dependencies",
+      "install": {
+        "command": "npx",
+        "args": [
+          "-y",
+          "-p",
+          "https://github.com/Warddamn/tiny-tools/releases/download/context-v0.1.1/tiny-context-standalone-0.1.1.tgz",
+          "tiny-context-mcp"
+        ]
+      },
+      "documentation": "https://github.com/Warddamn/tiny-tools/tree/main/packages/context#readme",
+      "instructions": "tiny-context: know things about files without reading them. Use targeted tools for large files and PDF, DOCX, PPTX, XLSX formats. Query directly for a question, read_section for a known location; map only when an outline is needed. Stop once the answer is sufficient: file_map (outline: headings, code signatures, sheets/columns, slide titles, pages, folder tree) · query_file (ranked passages with locations) · read_section (only a heading/page/line/paragraph/sheet-range/slide) · query_table (DuckDB SQL over CSV/TSV/XLSX/Parquet/JSON, table t) · summarize_log (clusters + timeline of a log) · diff_files (what changed, incl. office files and tables) · validate_file (JSON/YAML/XML/CSV/schema/links/encoding) · extract (regex, emails/urls/dates/numbers, jq). Search for these tools when the task mentions: PDF, Word, Excel, PowerPoint, spreadsheet, CSV, Parquet, logs, errors/5xx, diff/compare, validate, large file, token budget. Every response is bounded and ends with a savings line. Small plain-text files: just Read them.",
+      "tools": [
+        {
+          "name": "diff_files",
+          "title": "Compare two files (incl. office formats)",
+          "description": "Compare two files and report what changed — works outside git and on PDF/DOCX/PPTX/XLSX/CSV (tables get added/removed/changed row counts + samples; documents diff on extracted text).\nUSE WHEN: \"what changed between v1 and v2\", \"did the new export differ from the old one\", \"compare these two spreadsheets\", verifying a rewrite kept the rest intact.\nPREFER OVER: reading both files and comparing in your head; git diff when the files aren't in git or aren't plain text. git diff is fine for tracked plain-text files.\nDOES NOT: diff directories, merge, or diff images/binaries other than the formats listed.\nEXAMPLE: diff_files({ a: \"/abs/v1/report.docx\", b: \"/abs/v2/report.docx\" })  ·  diff_files({ a: \"/abs/a.csv\", b: \"/abs/b.csv\", mode: \"summary\" })\nRETURNS: summary mode: per-section \"+5 −1 at page 3 / lines 120–128 / ¶88 (Heading)\" plus a one-line sample; tables: added/removed/changed rows with samples. unified mode: a capped unified diff. Then a savings line.",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "a": {
+                "type": "string",
+                "description": "First file (the 'before'). Accepts absolute paths, '~' paths and paths relative to the current directory. Example: '/abs/v1/contract.docx'. Required."
+              },
+              "b": {
+                "type": "string",
+                "description": "Second file (the 'after'). Accepts absolute paths, '~' paths and paths relative to the current directory. Example: '/abs/v2/contract.docx'. Required."
+              },
+              "mode": {
+                "description": "'summary' (default): changed sections with locations and ± counts, ~100 tokens. 'unified': a capped unified diff.",
+                "type": "string",
+                "enum": [
+                  "summary",
+                  "unified"
+                ]
+              },
+              "max_hunks": {
+                "description": "Hunks/sections reported. Default 20, max 100.",
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100
+              }
+            },
+            "required": [
+              "a",
+              "b"
+            ],
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          },
+          "annotations": {
+            "readOnlyHint": true,
+            "destructiveHint": false,
+            "idempotentHint": true,
+            "openWorldHint": false
+          },
+          "execution": {
+            "taskSupport": "forbidden"
+          }
+        },
+        {
+          "name": "extract",
+          "title": "Pull matches/values out of files",
+          "description": "Pull needles out of a haystack — regex matches, jq results, or built-in kinds (emails/urls/dates/numbers) — with locations and counts, never the surrounding bulk. Works on txt/md/code/pdf/docx/pptx/xlsx/csv/json.\nUSE WHEN: \"list every email in these PDFs\", \"all invoice numbers in this folder\", \"what URLs does this deck reference\", \"get .items[].name from this JSON\".\nPREFER OVER: Read + scanning by eye; Grep for PDF/DOCX/PPTX/XLSX (Grep can't open them) and when you want deduped values with counts. Grep is fine for one plain-text file when you also want the surrounding lines.\nDOES NOT: return context lines (use query_file), edit files, or run full jq programs without system jq (fallback supports paths, [], keys, length, | chains).\nEXAMPLE: extract({ paths: [\"/abs/docs/*.pdf\"], kind: \"emails\" })  ·  extract({ path: \"/abs/data.json\", jq: \".items[].name\" })  ·  extract({ path: \"/abs/log.txt\", pattern: \"order-(\\\\d+)\" })\nRETURNS: \"value ×count — file:location, …\" lines (deduped by default), totals per file, skipped files with reasons, then a savings line.",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "description": "One file (or glob). Example: '/abs/contacts.pdf'. Use `paths` for several.",
+                "type": "string"
+              },
+              "paths": {
+                "description": "Several files or globs. Example: ['/abs/docs/*.docx'].",
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "pattern": {
+                "description": "JavaScript regex to extract; the first capture group is returned when present. Example: 'Invoice #(\\\\d+)'. One of pattern | jq | kind is required.",
+                "type": "string"
+              },
+              "ignore_case": {
+                "description": "Case-insensitive `pattern`. Default false.",
+                "type": "boolean"
+              },
+              "jq": {
+                "description": "jq filter for JSON files (system jq when installed; otherwise paths like '.items[].name', '.a.b', 'keys', 'length' and '|' chains). Example: '.items[] | .name'.",
+                "type": "string"
+              },
+              "kind": {
+                "description": "Built-in extractor instead of a pattern. Example: 'emails'.",
+                "type": "string",
+                "enum": [
+                  "emails",
+                  "urls",
+                  "dates",
+                  "numbers"
+                ]
+              },
+              "max_matches": {
+                "description": "Matches returned. Default 100, hard cap 500.",
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 500
+              },
+              "dedupe": {
+                "description": "Collapse identical values and count them. Default true.",
+                "type": "boolean"
+              }
+            },
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          },
+          "annotations": {
+            "readOnlyHint": true,
+            "destructiveHint": false,
+            "idempotentHint": true,
+            "openWorldHint": false
+          },
+          "execution": {
+            "taskSupport": "forbidden"
+          }
+        },
+        {
+          "name": "file_map",
+          "title": "Outline a file or directory without reading it",
+          "description": "Structural outline of a file or directory WITHOUT its contents: headings (md/docx), function/class signatures (code), sheets + column headers + row counts (xlsx), slide titles (pptx), page count + outline + first line per page (pdf), size-annotated tree (directory).\nUSE WHEN: \"what's in this file/folder\", \"outline this document\", \"which functions are in here\", \"what sheets and columns does this spreadsheet have\", or before deciding what to read.\nPREFER OVER: reading an entire large document just to learn its structure, or ls+grep+head loops for directories. If the question or section is already known, query_file/read_section directly; mapping is optional. Read is fine — and sufficient — for a small plain-text file (< ~20 KB): just Read it; do not call file_map on a file you have already read.\nDOES NOT: return contents (use read_section), search inside files (use query_file), or parse code with a real parser (signatures are regex-based, so unusual syntax may be missed).\nEXAMPLE: file_map({ path: \"/abs/project/src\", depth: 2 })  ·  file_map({ path: \"/abs/contract.pdf\" })\nRETURNS: an outline with locations (line / page / sheet / slide / ¶) that read_section accepts, counts and sizes, then a savings line.",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "description": "File or directory to outline. Accepts absolute paths, '~' paths and paths relative to the current directory. Example: '/abs/project/src'. Required."
+              },
+              "depth": {
+                "description": "Directory depth to show. Default 2, max 8. Ignored for files.",
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 8
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          },
+          "annotations": {
+            "readOnlyHint": true,
+            "destructiveHint": false,
+            "idempotentHint": true,
+            "openWorldHint": false
+          },
+          "execution": {
+            "taskSupport": "forbidden"
+          },
+          "_meta": {
+            "anthropic/alwaysLoad": true
+          }
+        },
+        {
+          "name": "query_file",
+          "title": "Find ranked passages in documents",
+          "description": "Ranked passages matching a query inside one or many files (txt/md/code/pdf/docx/pptx/xlsx/csv), each with its exact location, so the follow-up read is surgical.\nUSE WHEN: \"where does the contract discuss termination\", \"does this deck mention pricing\", \"find every place the spec talks about retries\", \"which of these docs cover X\".\nPREFER OVER: Read/cat of a LARGE file (> ~20 KB) just to find one passage; Grep for PDFs/DOCX/PPTX/XLSX (Grep can't open them) and for ranking across many files. Read is fine — and sufficient — for a small plain-text file: if you have already Read a file, you have everything this tool would return; do not call it on that file. Grep is fine for an exact string in one plain-text file.\nDOES NOT: add anything to a file you have already read, use embeddings/semantic search (BM25 keyword ranking + exact-phrase boost), return whole files, or search binary formats other than the ones listed.\nEXAMPLE: query_file({ path: \"/abs/contract.pdf\", query: \"termination notice\", max_results: 5 })\nRETURNS: ranked hits \"#1 file · page 12, line 3 (Heading > Sub)\" with a short excerpt each, files/passages scanned, skipped files with reasons, then a savings line.",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "description": "One file (or glob) to search. Example: '/abs/docs/contract.pdf'. Use `paths` for several.",
+                "type": "string"
+              },
+              "paths": {
+                "description": "Several files or globs to search and rank together. Example: ['/abs/docs/*.pdf', '/abs/notes.md'].",
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "query": {
+                "type": "string",
+                "minLength": 1,
+                "description": "What to look for, in plain words or a phrase. Example: 'termination notice period'. Required."
+              },
+              "regex": {
+                "description": "Treat `query` as a JavaScript regular expression instead of ranked keyword search. Default false.",
+                "type": "boolean"
+              },
+              "max_results": {
+                "description": "Passages returned. Default 8, hard cap 30.",
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 30
+              },
+              "context_lines": {
+                "description": "Lines of context around each hit. Default 2, max 10.",
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 10
+              }
+            },
+            "required": [
+              "query"
+            ],
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          },
+          "annotations": {
+            "readOnlyHint": true,
+            "destructiveHint": false,
+            "idempotentHint": true,
+            "openWorldHint": false
+          },
+          "execution": {
+            "taskSupport": "forbidden"
+          }
+        },
+        {
+          "name": "query_table",
+          "title": "Query a CSV/XLSX/Parquet with SQL",
+          "description": "Run SQL (DuckDB) over a CSV/TSV/Parquet/XLSX file without the data ever entering your context. The file is table `t`.\nUSE WHEN: \"total sales by region\", \"how many rows have a negative total\", \"top 10 customers\", \"which columns exist and what types\", any aggregate/filter/join-free question about a table.\nPREFER OVER: Read/cat/head of the table, writing a pandas/awk script, or loading rows to count them. Read is fine for a tiny table (< ~50 rows) you need verbatim.\nLIMITS: one read-only SELECT or DESCRIBE; no SQL file/network access, COPY, extensions, or multiple statements. Input/export cap 64 MB, DuckDB memory 256 MB, worker deadline 15s (timeout_ms up to 60s). Explicit out creates a new CSV without overwriting.\nDOES NOT: modify the file, join several files (one file = one table), or return more than 200 rows in-context (use `out` to write the full result to CSV).\nEXAMPLE: query_table({ path: \"/abs/sales.csv\", sql: \"SELECT region, SUM(total) FROM t GROUP BY 1\" })  ·  query_table({ path: \"/abs/sales.csv\", sql: \"DESCRIBE t\" })\nRETURNS: a markdown table of up to max_rows rows, column names/types, total result rows, the written file path when `out` is set, then a savings line. SQL errors include the table's columns and types so the next attempt succeeds.",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "description": "CSV, TSV, Parquet or XLSX file. Accepts absolute paths, '~' paths and paths relative to the current directory. Example: '/abs/sales.csv'. Required."
+              },
+              "sql": {
+                "type": "string",
+                "minLength": 1,
+                "description": "One read-only DuckDB SELECT (WITH allowed) or DESCRIBE against table `t`; no external files or commands. Example: 'SELECT region, SUM(total) AS total FROM t GROUP BY 1 ORDER BY 2 DESC'. Required."
+              },
+              "timeout_ms": {
+                "description": "Query worker deadline in milliseconds. Default 15000, maximum 60000. Example: 5000.",
+                "type": "integer",
+                "minimum": 10,
+                "maximum": 60000
+              },
+              "max_rows": {
+                "description": "Rows returned. Default 50, hard cap 200. The total row count is always reported.",
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 200
+              },
+              "out": {
+                "description": "Write the full result to a new CSV (64 MB export cap; existing files are never overwritten). Example: '/abs/out/by-region.csv'.",
+                "type": "string"
+              },
+              "sheet": {
+                "description": "XLSX only: sheet name to query. Default: first sheet.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "path",
+              "sql"
+            ],
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          },
+          "annotations": {
+            "readOnlyHint": false,
+            "destructiveHint": false,
+            "idempotentHint": true,
+            "openWorldHint": false
+          },
+          "execution": {
+            "taskSupport": "forbidden"
+          }
+        },
+        {
+          "name": "read_section",
+          "title": "Read one located section of a file",
+          "description": "The surgical read: returns ONLY the located section of a file — a heading's section, a page range, a line range, DOCX paragraphs, an XLSX sheet range, or PPTX slides — capped at max_tokens.\nUSE WHEN: you know where the content is (from the task, file_map or query_file) and need the actual text of just that part; reading pages of a PDF, a sheet of a workbook, a section of a long doc.\nPREFER OVER: Read/cat of the whole file when you need a slice, and always for PDF/DOCX/XLSX/PPTX (Read can't slice them). Read is fine for small plain-text files you need in full.\nDOES NOT: search (use query_file), read whole large files (cap 8000 tokens — narrow the locator instead), or render images.\nEXAMPLE: read_section({ path: \"/abs/contract.pdf\", locator: { pages: \"3-5\" } })  ·  read_section({ path: \"/abs/spec.md\", locator: { heading: \"Installation\" } })\nRETURNS: the section text with line/page/¶ markers, word count, a \"truncated at N — continue with …\" note when capped, then a savings line.",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "description": "File to read from. Accepts absolute paths, '~' paths and paths relative to the current directory. Example: '/abs/contract.pdf'. Required."
+              },
+              "locator": {
+                "type": "object",
+                "properties": {
+                  "heading": {
+                    "description": "Heading text to read (case-insensitive substring; md/docx). Example: 'Termination'.",
+                    "type": "string"
+                  },
+                  "pages": {
+                    "description": "Page range for PDFs. Example: '3-5' or '7' or '1,4,9'.",
+                    "type": "string"
+                  },
+                  "lines": {
+                    "description": "Line range for text/code/markdown. Example: '120-180'.",
+                    "type": "string"
+                  },
+                  "paras": {
+                    "description": "Paragraph range for DOCX (¶ numbers from file_map/query_file). Example: '88-95'.",
+                    "type": "string"
+                  },
+                  "sheet": {
+                    "description": "Sheet name for XLSX. Example: 'Sales'. Combine with `range`.",
+                    "type": "string"
+                  },
+                  "range": {
+                    "description": "Cell range or row range within `sheet`. Example: 'A1:F20' or '10-40'. Default: whole sheet (capped).",
+                    "type": "string"
+                  },
+                  "slide": {
+                    "description": "Slide number or range for PPTX. Example: 4 or '2-5'.",
+                    "anyOf": [
+                      {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9007199254740991
+                      },
+                      {
+                        "type": "string"
+                      }
+                    ]
+                  }
+                },
+                "description": "Exactly what to read: {heading} | {pages} | {lines} | {paras} | {sheet, range} | {slide}. Use a known location directly, or find it with file_map/query_file. Example: { pages: '3-5' }. Required."
+              },
+              "max_tokens": {
+                "description": "Cap on returned text (≈ bytes/4). Default 2000, max 8000. When hit, the response says how to continue.",
+                "type": "integer",
+                "minimum": 100,
+                "maximum": 8000
+              }
+            },
+            "required": [
+              "path",
+              "locator"
+            ],
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          },
+          "annotations": {
+            "readOnlyHint": true,
+            "destructiveHint": false,
+            "idempotentHint": true,
+            "openWorldHint": false
+          },
+          "execution": {
+            "taskSupport": "forbidden"
+          }
+        },
+        {
+          "name": "summarize_log",
+          "title": "Cluster and time-bucket a log file",
+          "description": "Structure of a log file in ~300 tokens: repeated-message clusters (numbers/ids/paths masked) with counts, first/last time and one sample each, level counts, and a rate timeline — from 80k lines without reading them.\nUSE WHEN: \"what's causing the 5xx spike\", \"summarize this log\", \"what errors are in here\", \"when did the failures start\", before grepping.\nPREFER OVER: tail/head/grep loops and Read on any log over a few hundred lines; run this first, then Grep/extract for the specific message. Read is fine for a log under ~100 lines.\nDOES NOT: follow files live, parse binary logs, correlate across files, or explain root cause (it shows structure and timing so you can).\nEXAMPLE: summarize_log({ path: \"/abs/logs/app.log\", focus: \"errors\", since: \"2h\" })\nRETURNS: totals + time span + level counts, a bucketed timeline (all vs. focused lines), top clusters \"#1 ×812 ERROR 10:41→10:52 <template>\" with a sample line, then a savings line.",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "description": "Log file (any text log). Accepts absolute paths, '~' paths and paths relative to the current directory. Example: '/abs/logs/app.log'. Required."
+              },
+              "focus": {
+                "description": "'errors', 'warnings', or a keyword/regex to cluster only matching lines. Example: 'timeout'. Default: all lines.",
+                "type": "string"
+              },
+              "since": {
+                "description": "Only lines at/after this time: ISO timestamp or relative like '2h', '30m', '3d' (from now). Example: '2026-09-18T10:00:00'.",
+                "type": "string"
+              },
+              "max_clusters": {
+                "description": "Clusters returned. Default 15, max 50.",
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 50
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          },
+          "annotations": {
+            "readOnlyHint": true,
+            "destructiveHint": false,
+            "idempotentHint": true,
+            "openWorldHint": false
+          },
+          "execution": {
+            "taskSupport": "forbidden"
+          }
+        },
+        {
+          "name": "validate_file",
+          "title": "Deterministic checks on a generated file",
+          "description": "Deterministic checks on a file you (or someone) just wrote: JSON/YAML/XML parse, CSV column-count consistency, JSON Schema conformance, broken relative links/anchors/images in Markdown/HTML, encoding/BOM/NUL/mixed line endings.\nUSE WHEN: after generating or editing JSON/CSV/YAML/HTML/Markdown, \"is this file valid\", \"check the links in this README\", before handing a file to another tool or person.\nPREFER OVER: re-reading your own output to eyeball it, or setting up a linter for one check. A language toolchain (tsc, eslint, pytest) is the right tool for source code — this does not run it.\nDOES NOT: validate code syntax, check external URLs (use verify.check_links), or fix anything.\nEXAMPLE: validate_file({ path: \"/abs/out/data.json\", schema: \"/abs/schema.json\" })  ·  validate_file({ path: \"/abs/README.md\" })\nRETURNS: \"PASS\" with the checks run, or \"FAIL\" with line-numbered problems and what to do, then a savings line.",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "description": "File to validate: JSON, YAML, XML, CSV/TSV, Markdown, HTML (others get encoding checks only). Accepts absolute paths, '~' paths and paths relative to the current directory. Example: '/abs/out/config.json'. Required."
+              },
+              "schema": {
+                "description": "JSON Schema file to validate a JSON/YAML file against. Example: '/abs/schema.json'.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          },
+          "annotations": {
+            "readOnlyHint": true,
+            "destructiveHint": false,
+            "idempotentHint": true,
+            "openWorldHint": false
+          },
+          "execution": {
+            "taskSupport": "forbidden"
+          }
+        }
+      ]
+    },
+    {
+      "name": "tiny-runtime",
+      "version": "0.1.1",
+      "registryName": "io.github.Warddamn/tiny-runtime",
+      "description": "MCP server and SDK for resumable API pagination, batch checkpoints, agent retry-loop detection, and tool-progress cache scheduling hints. Three tools; no model calls or telemetry.",
+      "tasks": [
+        "resume cursor API pagination",
+        "checkpoint batch collection",
+        "detect repeated agent failures and retry loops",
+        "derive tool-progress cache hints for serving engines"
+      ],
+      "requirements": "Node.js 20+; client must explicitly connect this local stdio server; first install downloads dependencies",
+      "install": {
+        "command": "npx",
+        "args": [
+          "-y",
+          "-p",
+          "https://github.com/Warddamn/tiny-tools/releases/download/runtime-v0.1.1/tiny-runtime-0.1.1.tgz",
+          "tiny-runtime-mcp"
+        ]
+      },
+      "documentation": "https://github.com/Warddamn/tiny-tools/tree/main/packages/runtime#readme",
+      "instructions": "tiny-runtime offers three deterministic helpers: collect_pages to finish paginated jobs with complete/partial/failed status and local checkpoints; check_progress to analyze repeat failures against trusted state fingerprints; plan_cache for serving-engine developers to derive advisory scheduling hints. Configs and traces are local JSON files. Prefer built-ins for one small request, a short obvious error, or ordinary hosted-model usage. Use the SDK wrappers for automatic guard enforcement and live progress delivery. Partial collection is never a complete answer; resume its checkpoint. No telemetry or LLM calls.",
+      "tools": [
+        {
+          "name": "check_progress",
+          "title": "Detect repeated work without progress",
+          "description": "Inspect a tool trace for repeated stalls and cycles at the same measured state. USE WHEN: an agent repeats failed or unchanged work. PREFER OVER: re-reading a long transcript; a short obvious failure is fine to inspect directly. DOES NOT: observe hidden state, block without trusted fingerprints, or intercept another client; use the SDK wrapper for enforcement. EXAMPLE: check_progress({path:\"/data/guard-trace.json\"}). RETURNS: decision, repeat counts, advice, and a local report plus timing.",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Required JSON trace path. Example: /data/trace.json. No default."
+              },
+              "output_dir": {
+                "description": "Parent for a NEW report directory. Default: beside input. Example: /tmp/results.",
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          },
+          "annotations": {
+            "readOnlyHint": false,
+            "destructiveHint": false,
+            "idempotentHint": false,
+            "openWorldHint": false
+          },
+          "execution": {
+            "taskSupport": "forbidden"
+          }
+        },
+        {
+          "name": "collect_pages",
+          "title": "Finish a paginated collection",
+          "description": "Collect and aggregate an entire cursor-paginated source with checked resumption. USE WHEN: many pages must be fetched without model turns between pages. Pass checkpoint/source paths directly; do not Read their records into context. PREFER OVER: manual next-page calls; a single request or an existing correct script is fine for simple work. DOES NOT: infer API mappings, bypass permissions, retry writes, or prove completeness beyond the source contract; HTTP is explicit and read-only. EXAMPLE: collect_pages({config:\"/data/collect.json\"}). RETURNS: complete/partial/failed, counts, exact integer sums, and local records/checkpoint paths plus timing.",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "config": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Required JSON job path. Example: /data/collect.json. No default."
+              },
+              "checkpoint": {
+                "description": "Saved checkpoint path to resume; pass unchanged, do not Read its records into context. Default: start fresh. Example: /data/tiny-runtime-abc/checkpoint.json.",
+                "type": "string",
+                "minLength": 1
+              },
+              "output_dir": {
+                "description": "Parent for a NEW job directory; never overwrites inputs. Default: beside config. Example: /tmp/results.",
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "config"
+            ],
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          },
+          "annotations": {
+            "readOnlyHint": false,
+            "destructiveHint": false,
+            "idempotentHint": false,
+            "openWorldHint": true
+          },
+          "execution": {
+            "taskSupport": "forbidden"
+          }
+        },
+        {
+          "name": "plan_cache",
+          "title": "Plan cache hints from tool progress",
+          "description": "Turn measured tool progress into bounded cache scheduling hints. USE WHEN: integrating a serving engine with tool-progress events or replaying a trace. PREFER OVER: guessing fixed tool durations; no tool is needed for ordinary hosted-model usage. DOES NOT: change GPU cache, control hosted models, or establish savings; live application requires the SDK bridge and a compatible serving adapter. EXAMPLE: plan_cache({path:\"/data/progress-trace.json\"}). RETURNS: advisory retain/prefetch/release counts and a local report with expiring hints plus timing.",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Required JSON trace path. Example: /data/trace.json. No default."
+              },
+              "output_dir": {
+                "description": "Parent for a NEW report directory. Default: beside input. Example: /tmp/results.",
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          },
+          "annotations": {
+            "readOnlyHint": false,
+            "destructiveHint": false,
+            "idempotentHint": false,
+            "openWorldHint": false
+          },
+          "execution": {
+            "taskSupport": "forbidden"
+          }
+        }
+      ]
+    }
+  ]
+}

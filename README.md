@@ -1,8 +1,10 @@
-# tiny-tools
+# tiny-tools — MCP tools for document search, spreadsheet SQL and agent workflows
 
 **MCP tools for file analysis and reliable agent workflows.** `tiny-context` searches documents, queries spreadsheets and summarizes logs. `tiny-runtime` collects API pages with checkpoints, detects repeated failures and turns tool progress into cache-scheduling hints. Built by **AVRG3**.
 
 Choose [file tools](#install) for documents, tables and logs, or [runtime tools](#install-tiny-runtime) for pagination, retry loops and progress integration.
+
+**Looking for a tool for a specific task?** [Find the right tool, with example inputs](discovery/README.md) · [Machine-readable tool catalog](https://raw.githubusercontent.com/Warddamn/tiny-tools/main/discovery/catalog.json) · [Copyable MCP config](https://raw.githubusercontent.com/Warddamn/tiny-tools/main/discovery/mcp.json).
 
 [![GitHub release](https://img.shields.io/github/v/release/Warddamn/tiny-tools)](https://github.com/Warddamn/tiny-tools/releases/latest)
 [![CI](https://github.com/Warddamn/tiny-tools/actions/workflows/ci.yml/badge.svg)](https://github.com/Warddamn/tiny-tools/actions/workflows/ci.yml)
@@ -14,15 +16,19 @@ Choose [file tools](#install) for documents, tables and logs, or [runtime tools]
 
 - **Explain a large error log:** `summarize_log` returns repeated errors, counts and time ranges without sending every log line into context.
 - **Answer a spreadsheet question:** `query_table` runs SQL over CSV/XLSX/Parquet and returns the result instead of the source rows.
-- **Find a PDF or Office passage:** `file_map`, `query_file` and `read_section` return an outline, ranked matches and the requested section.
+- **Find a PDF, Word or PowerPoint passage:** go directly to `query_file` for ranked matches or `read_section` for a known location. `file_map` supplies an outline when needed.
+- **Resume a paginated API job:** `collect_pages` saves checkpoints and returns a clear completion status without a model turn for each page.
+- **Investigate repeated agent failures:** `check_progress` analyzes a trace; automatic blocking requires the host SDK integration.
 
 **Measure the whole task:** the tool response can be much smaller than the source file, but startup, validation and extra agent turns still cost time. Results depend on the task and client. [Agent comparison, including regressions](evals/COMPARISON.md) · [Historical first comparison](https://github.com/Warddamn/tiny-tools/blob/main/evals/COMPARISON-2026-09-19.md).
 
 The whole-file-read benchmark below measures a different baseline; its savings are not a prediction for a capable agent.
 
-## Find tiny-context
+## Find the tools
 
-Listed in the [official MCP Registry](https://registry.modelcontextprotocol.io/?q=io.github.Warddamn%2Ftiny-context) as `io.github.Warddamn/tiny-context` and indexed by [Glama](https://glama.ai/mcp/servers/Warddamn/tiny-tools). These listings expose the tool's purpose and installation information; your client must still connect it before an agent can call it.
+Official MCP Registry entries: [tiny-context](https://registry.modelcontextprotocol.io/?q=io.github.Warddamn%2Ftiny-context) (`io.github.Warddamn/tiny-context`) and [tiny-runtime](https://registry.modelcontextprotocol.io/?q=io.github.Warddamn%2Ftiny-runtime) (`io.github.Warddamn/tiny-runtime`). [Task guide](discovery/README.md) · [Plain-text overview](https://raw.githubusercontent.com/Warddamn/tiny-tools/main/llms.txt) · [Glama repository profile](https://glama.ai/mcp/servers/Warddamn/tiny-tools).
+
+The public catalog includes all 11 tool descriptions and input schemas, generated from the two actual servers and checked in CI. A directory profile does not by itself prove successful inspection or search placement; [current discovery status](DISCOVERY.md). Your client must connect and permit the chosen server before an agent can call it.
 
 ## Safety update 0.1.1
 
@@ -106,18 +112,12 @@ Or download the [portable MCPB bundle](https://github.com/Warddamn/tiny-tools/re
 
 **When to choose it:** collect a configured multi-page dataset with a clear completion status; investigate repeated failures against measured state; or integrate tool progress into an inference server. A small note, one API request or an existing correct script often needs no extra tool. The first five agent selection/answer checks passed; [validation and limits](packages/runtime/docs/VALIDATION.md) do not establish real-world token or GPU savings.
 
-## Packages
+## Available packages
 
-| Package | MCP server | What it does | Status |
-|---|---|---|---|
-| [`@tiny_tools_pw/context`](packages/context) | `tiny-context` | **Flagship.** Know things about files without reading them: outline, ranked search, surgical reads, SQL over tables, log clustering, diffs, validation, extraction — incl. PDF/DOCX/PPTX/XLSX | ✅ built, tested, benchmarked |
-| `@tiny_tools_pw/images` | `tiny-images` | batch resize / convert / compress / watermark / crop / rename / info | phase 2 |
-| `@tiny_tools_pw/pdf` | `tiny-pdf` | merge / split / extract / rotate / info / to-images / fill-form | phase 2 |
-| `@tiny_tools_pw/video` | `tiny-video` | trim / convert / gif / audio / frames / info (system ffmpeg) | phase 3 |
-| `@tiny_tools_pw/audio` | `tiny-audio` | normalize / trim / strip-silence / fade / convert (system ffmpeg) | phase 3 |
-| `@tiny_tools_pw/verify` | `tiny-verify` | render html/pdf/docs to PNG, visual diff, link check (system Chrome) | phase 3 |
-| `@tiny_tools_pw/transcribe` | `tiny-transcribe` | audio/video → text + deterministic transcript summary (system whisper.cpp) | phase 3 |
-| `@tiny_tools_pw/bgremove` | `tiny-bgremove` | background removal / replacement (ONNX, cached model) | phase 4 |
+- [`tiny-context`](packages/context): eight file-analysis tools, with a CLI and library. Published version 0.1.1.
+- [`tiny-runtime`](packages/runtime): three API pagination, retry-trace and progress tools, with a CLI and SDK. Published version 0.1.1.
+
+Other media tools in the original [build specification](AGENT_BUILD_SPEC.md) are unimplemented roadmap ideas, not available products.
 
 ## Agent usage snippet (all installed packages)
 
@@ -193,6 +193,8 @@ npm run bench     # fixtures + benchmark table → bench/RESULTS.md, embedded in
 npm run demo:runtime  # synthetic demo of all three runtime helpers
 npm run bench:runtime # compare against an ordinary correct script
 npm run evals     # headless Claude Code tool-selection evals → evals/RESULTS.md
+npm run discovery:catalog # regenerate public schemas + pinned install config from local builds
+npm run discovery:check   # fail if the public catalog differs from the actual servers
 ```
 
 Node ≥ 20, TypeScript, ESM. See `ENV.md`, `PROGRESS.md`, `DECISIONS.md`. MIT.
