@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "name": "Service schedule",
+  "formats": [
+    "pdf"
+  ],
+  "anchors": [
+    "Service Agreement"
+  ],
+  "fields": [
+    {
+      "name": "services",
+      "label": "Consulting services:",
+      "type": "text"
+    }
+  ]
+}

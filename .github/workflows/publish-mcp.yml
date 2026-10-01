@@ -41,7 +41,7 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           npm run bundle:context -- .tmp/mcpb
-          npm run verify:release -- --package .tmp/mcpb/tiny-context-standalone-0.2.0.tgz
+          npm run verify:release -- --package .tmp/mcpb/tiny-context-standalone-0.3.0.tgz
       - uses: actions/upload-artifact@v4
         with:
           name: bundle-${{ matrix.os }}
@@ -76,9 +76,9 @@ jobs:
           VERSION=$(jq -r '.version' artifacts/server.json)
           TAG="context-v${VERSION}"
           cat > "$RUNNER_TEMP/release-notes.md" <<'NOTES'
-          **New: keyed JSON/JSONL export comparisons.** Ask which orders, issues or inventory records changed even when rows are shuffled. `diff_files` records mode accepts explicit record IDs and selected fields, returns exact scoped counts and bounded before/after previews, and can save a complete local JSONL report. Ambiguous IDs and numeric precision loss fail explicitly. Eight tools remain; no new dependency, model call or telemetry. Existing SQL restrictions and parse-cache safeguards are retained.
+          **New: reusable document profiles.** Save literal labels, required document anchors and field types once, then apply the profile to recurring forms/reports in one batch. Missing, invalid or ambiguous fields need review; partial values are withheld. Supports TXT/Markdown, DOCX and text-layer PDFs. No model training, API calls, automatic inference or telemetry. Eight MCP tools remain; the profile mode extends extract.
 
-          Eight local MCP tools by **AVRG3** for spreadsheet queries, targeted PDF/Office searches, log summaries, record/document comparisons, validation and extraction. Existing correct scripts and source-side change feeds can be faster; no universal token, time or cost saving is claimed. Examples and evidence: https://github.com/Warddamn/tiny-tools/blob/main/packages/context/docs/RECORD_DIFF.md
+          By **AVRG3**. This is opt-in: every new document is still parsed and checked. Prefer a direct read for one small file or an existing correct script. Smaller output is not proof of a lower bill; setup, agent turns and caching affect cost. Contract, examples and synthetic evidence: https://github.com/Warddamn/tiny-tools/blob/main/packages/context/docs/DOCUMENT_PROFILES.md
 
           Choose the bundle for your OS: **darwin = macOS**, **win32 = Windows**, **linux = Linux**. Each contains x64/arm64 dependencies and requires Node.js 20+ or a compatible host-provided runtime. Open it in an MCPB-compatible client. The existing no-login npx installation remains in the README for other clients.
 

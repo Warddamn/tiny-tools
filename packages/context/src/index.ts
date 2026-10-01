@@ -14,3 +14,5 @@ export { validateFile } from "./lib/validate-file.js";
 export { finish, parseRange, describeRange, fmtBytes } from "./lib/result.js";
 export type { LibResult } from "./lib/result.js";
 export { outlineCode, languageFor } from "./lib/code-outline.js";
+
+export { DocumentProfile, applyDocumentProfile, type Profile, type ProfileRow } from "./lib/document-profile.js";

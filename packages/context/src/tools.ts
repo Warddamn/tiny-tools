@@ -50,7 +50,7 @@ export const TOOLS: ToolDef[] = [
   { name: "summarize_log", title: "Cluster and time-bucket a log file", description: SUMMARIZE_LOG_DESCRIPTION, schema: SummarizeLogInput, writes: false, run: summarizeLog },
   { name: "diff_files", title: "Compare documents or keyed JSON records", description: DIFF_FILES_DESCRIPTION, schema: DiffFilesInput, writes: true, run: diffFiles },
   { name: "validate_file", title: "Deterministic checks on a generated file", description: VALIDATE_FILE_DESCRIPTION, schema: ValidateFileInput, writes: false, run: validateFile },
-  { name: "extract", title: "Pull matches/values out of files", description: EXTRACT_DESCRIPTION, schema: ExtractInput, writes: false, run: extract },
+  { name: "extract", title: "Pull matches/values out of files", description: EXTRACT_DESCRIPTION, schema: ExtractInput, writes: true, run: extract },
 ];
 
 export function getTool(name: string): ToolDef {

@@ -1,7 +1,7 @@
 {
   "name": "@tiny_tools_pw/context",
-  "version": "0.2.0",
-  "description": "Eight local MCP tools for document search, spreadsheet SQL, log summaries and keyed JSON/JSONL snapshot comparisons. Detect changed orders, issues or inventory without reading whole exports. CLI included; no model calls or telemetry.",
+  "version": "0.3.0",
+  "description": "Eight local MCP tools for document search, spreadsheet SQL, log summaries, keyed JSON changes and reusable document profiles. Batch recurring labeled forms with checked fields and review flags. No model calls or telemetry.",
   "type": "module",
   "license": "MIT",
   "keywords": [
@@ -39,7 +39,10 @@
     "jsonl",
     "snapshot-comparison",
     "change-detection",
-    "api-exports"
+    "api-exports",
+    "document-profiles",
+    "reusable-templates",
+    "batch-extraction"
   ],
   "bin": {
     "tiny-context": "./dist/cli.js",

@@ -25,6 +25,14 @@ export async function verifyContextSafety(client,dir){
   await fs.writeFile(after,'[{"id":9007199254740993}]');
   const lossy=await client.callTool({name:'diff_files',arguments:{a:before,b:after,mode:'records',key:['/id']}});assert.equal(lossy.isError,true,'Lossy record ID accepted');
   console.log('PASS installed keyed JSON changes, exact report, and precision rejection');
+  const profile=path.join(dir,'profile.json'),form=path.join(dir,'form.txt'),bad=path.join(dir,'wrong-form.txt'),forms=path.join(dir,'forms.jsonl');
+  await fs.writeFile(profile,JSON.stringify({version:1,name:'Install check',formats:['text'],anchors:['Monthly report'],fields:[{name:'total',label:'Total:',type:'decimal'}]}));
+  await fs.writeFile(form,'Monthly report\nTotal: 9007199254740993.10\n');await fs.writeFile(bad,'Monthly report\nTotal: 1\nTotal: 2\n');
+  const reused=await client.callTool({name:'extract',arguments:{paths:[form,bad],profile,out:forms}});assert.ok(!reused.isError,'Installed profile batch failed');
+  const checked=(await fs.readFile(forms,'utf8')).trim().split('\n').map(s=>JSON.parse(s));assert.equal(checked[0].matched,1);assert.equal(checked[0].needs_review,1);
+  assert.equal(checked[1].fields.total.value,'9007199254740993.10');assert.equal(checked[2].fields,undefined);assert.ok(checked[2].issues.includes('total:ambiguous'));
+  const protectedProfile=await client.callTool({name:'extract',arguments:{path:form,profile,out:profile}});assert.equal(protectedProfile.isError,true);
+  console.log('PASS installed saved profiles, exact strings, mismatch refusal and protected recipe');
 }
 export async function verifyRuntimeSafety(client,dir){
   const attempt={scope:'installed',tool:'read',args:{path:'config'},state:'unchanged'};

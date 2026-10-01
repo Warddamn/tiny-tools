@@ -2,6 +2,10 @@
 
 Built by **AVRG3**. tiny-context 0.2.0 published and verified 2026-10-01 UTC (September 30 in New York); tiny-runtime remains 0.1.1.
 
+## 0.3.0 preparation
+
+Reusable document profiles are prepared; publication/registry verification is pending. New configuration targets 0.3.0. Historical verification below remains unchanged.
+
 ## Published versions
 
 - tiny-context **0.2.0**: [downloads](https://github.com/Warddamn/tiny-tools/releases/tag/context-v0.2.0), eight file tools, including explicit keyed JSON/JSONL snapshot comparisons. Retains restricted SQL and protected exports. Includes a standalone tarball plus OS-specific MCPB bundles.

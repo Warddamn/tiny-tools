@@ -7,9 +7,9 @@
   "servers": [
     {
       "name": "tiny-context",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "registryName": "io.github.Warddamn/tiny-context",
-      "description": "Eight local MCP tools for document search, spreadsheet SQL, log summaries and keyed JSON/JSONL snapshot comparisons. Detect changed orders, issues or inventory without reading whole exports. CLI included; no model calls or telemetry.",
+      "description": "Eight local MCP tools for document search, spreadsheet SQL, log summaries, keyed JSON changes and reusable document profiles. Batch recurring labeled forms with checked fields and review flags. No model calls or telemetry.",
       "tasks": [
         "search PDF Word PowerPoint documents",
         "SQL query CSV Excel Parquet",
@@ -17,7 +17,8 @@
         "compare document versions",
         "compare JSON JSONL API exports by record ID; ignore row order and select changed fields",
         "validate structured files",
-        "extract emails URLs IDs"
+        "extract emails URLs IDs",
+        "reuse saved document profiles for batch extraction from recurring labeled forms and reports"
       ],
       "requirements": "Node.js 20+; client must explicitly connect this local stdio server; first install downloads dependencies",
       "install": {
@@ -25,12 +26,12 @@
         "args": [
           "-y",
           "-p",
-          "https://github.com/Warddamn/tiny-tools/releases/download/context-v0.2.0/tiny-context-standalone-0.2.0.tgz",
+          "https://github.com/Warddamn/tiny-tools/releases/download/context-v0.3.0/tiny-context-standalone-0.3.0.tgz",
           "tiny-context-mcp"
         ]
       },
       "documentation": "https://github.com/Warddamn/tiny-tools/tree/main/packages/context#readme",
-      "instructions": "tiny-context: know things about files without reading them. Use targeted tools for large files and PDF, DOCX, PPTX, XLSX formats. Query directly for a question, read_section for a known location; map only when an outline is needed. Stop once the answer is sufficient: file_map (outline: headings, code signatures, sheets/columns, slide titles, pages, folder tree) · query_file (ranked passages with locations) · read_section (only a heading/page/line/paragraph/sheet-range/slide) · query_table (DuckDB SQL over CSV/TSV/XLSX/Parquet/JSON, table t) · summarize_log (clusters + timeline of a log) · diff_files (document/table changes; mode records compares JSON/JSONL exports by key, with optional selected fields) · validate_file (JSON/YAML/XML/CSV/schema/links/encoding) · extract (regex, emails/urls/dates/numbers, jq). Search for these tools when the task mentions: PDF, Word, Excel, PowerPoint, spreadsheet, CSV, Parquet, logs, errors/5xx, diff/compare, validate, large file, token budget. Known snapshot files and record keys: call diff_files records directly; no outline is needed. Every response is bounded and ends with a savings line. Small plain-text files: just Read them.",
+      "instructions": "tiny-context: know things about files without reading them. Use targeted tools for large files and PDF, DOCX, PPTX, XLSX formats. Query directly for a question, read_section for a known location; map only when an outline is needed. Stop once the answer is sufficient: file_map (outline: headings, code signatures, sheets/columns, slide titles, pages, folder tree) · query_file (ranked passages with locations) · read_section (only a heading/page/line/paragraph/sheet-range/slide) · query_table (DuckDB SQL over CSV/TSV/XLSX/Parquet/JSON, table t) · summarize_log (clusters + timeline of a log) · diff_files (document/table changes; mode records compares JSON/JSONL exports by key, with optional selected fields) · validate_file (JSON/YAML/XML/CSV/schema/links/encoding) · extract (regex, emails/URLs, jq, saved profiles for recurring labeled documents). Search for these tools when the task mentions: PDF, Word, Excel, PowerPoint, spreadsheet, CSV, Parquet, logs, errors/5xx, diff/compare, validate, large file, token budget. Known snapshot files and record keys: call diff_files records directly; no outline is needed. Every response is bounded and ends with a savings line. Small plain-text files: just Read them.",
       "tools": [
         {
           "name": "diff_files",
@@ -113,35 +114,43 @@
         {
           "name": "extract",
           "title": "Pull matches/values out of files",
-          "description": "Pull needles out of a haystack — regex matches, jq results, or built-in kinds (emails/urls/dates/numbers) — with locations and counts, never the surrounding bulk. Works on txt/md/code/pdf/docx/pptx/xlsx/csv/json.\nUSE WHEN: \"list every email in these PDFs\", \"all invoice numbers in this folder\", \"what URLs does this deck reference\", \"get .items[].name from this JSON\".\nPREFER OVER: Read + scanning by eye; Grep for PDF/DOCX/PPTX/XLSX (Grep can't open them) and when you want deduped values with counts. Grep is fine for one plain-text file when you also want the surrounding lines.\nDOES NOT: return context lines (use query_file), edit files, or run full jq programs without system jq (fallback supports paths, [], keys, length, | chains).\nEXAMPLE: extract({ paths: [\"/abs/docs/*.pdf\"], kind: \"emails\" })  ·  extract({ path: \"/abs/data.json\", jq: \".items[].name\" })  ·  extract({ path: \"/abs/log.txt\", pattern: \"order-(\\\\d+)\" })\nRETURNS: \"value ×count — file:location, …\" lines (deduped by default), totals per file, skipped files with reasons, then a savings line.",
+          "description": "Extract values with locations: regex, jq, built-in kinds, or reusable document profiles.\nUSE WHEN: emails/URLs/IDs; batch recurring labeled forms using a saved profile (up to 100 txt/md/docx/text-layer PDFs).\nPREFER OVER: repeated reads/field calls. Read/Grep for one small text file; reuse an existing correct script.\nDOES NOT: train, infer templates, OCR, verify meaning or guarantee cost savings. Profiles recheck exact anchors/unique labels; mismatches need review. Save rules once with Write/editor; docs/DOCUMENT_PROFILES.md.\nEXAMPLE: extract({paths:[\"/abs/*.docx\"],profile:\"/abs/profile.json\",out:\"/abs/results.jsonl\"}) · extract({path:\"/abs/a.pdf\",kind:\"emails\"})\nRETURNS: bounded matches; profiles: counts, values/locations, review reasons, optional full local report. Ledger excludes setup/model/schema costs.",
           "inputSchema": {
             "type": "object",
             "properties": {
               "path": {
-                "description": "One file (or glob). Example: '/abs/contacts.pdf'. Use `paths` for several.",
+                "description": "File or glob. Example: '/abs/report.pdf'; use paths for several.",
                 "type": "string"
               },
               "paths": {
-                "description": "Several files or globs. Example: ['/abs/docs/*.docx'].",
+                "description": "Files/globs. Example: ['/abs/docs/*.docx'].",
                 "type": "array",
                 "items": {
                   "type": "string"
                 }
               },
+              "profile": {
+                "description": "Saved version-1 profile JSON path, e.g. '/abs/profile.json'. See docs/DOCUMENT_PROFILES.md. Exclusive with pattern/jq/kind.",
+                "type": "string"
+              },
+              "out": {
+                "description": "Profile only: full JSONL report, e.g. '/abs/results.jsonl'; never overwrites. Default: preview only.",
+                "type": "string"
+              },
               "pattern": {
-                "description": "JavaScript regex to extract; the first capture group is returned when present. Example: 'Invoice #(\\\\d+)'. One of pattern | jq | kind is required.",
+                "description": "JS regex; first capture group or whole match. Example: 'order-([0-9]+)'. Choose pattern, jq, kind or profile.",
                 "type": "string"
               },
               "ignore_case": {
-                "description": "Case-insensitive `pattern`. Default false.",
+                "description": "Case-insensitive pattern. Default false.",
                 "type": "boolean"
               },
               "jq": {
-                "description": "jq filter for JSON files (system jq when installed; otherwise paths like '.items[].name', '.a.b', 'keys', 'length' and '|' chains). Example: '.items[] | .name'.",
+                "description": "JSON jq filter, e.g. '.items[].name'. Without system jq: paths, [], keys, length, values, .. and pipes only.",
                 "type": "string"
               },
               "kind": {
-                "description": "Built-in extractor instead of a pattern. Example: 'emails'.",
+                "description": "Built-in extractor, e.g. 'emails'.",
                 "type": "string",
                 "enum": [
                   "emails",
@@ -151,22 +160,22 @@
                 ]
               },
               "max_matches": {
-                "description": "Matches returned. Default 100, hard cap 500.",
+                "description": "Returned matches (default 100; profile rows 20), cap 500. Byte limit also applies.",
                 "type": "integer",
                 "minimum": 1,
                 "maximum": 500
               },
               "dedupe": {
-                "description": "Collapse identical values and count them. Default true.",
+                "description": "Collapse identical values (default true). Not for profiles.",
                 "type": "boolean"
               }
             },
             "$schema": "http://json-schema.org/draft-07/schema#"
           },
           "annotations": {
-            "readOnlyHint": true,
+            "readOnlyHint": false,
             "destructiveHint": false,
-            "idempotentHint": true,
+            "idempotentHint": false,
             "openWorldHint": false
           },
           "execution": {

@@ -4,7 +4,7 @@ Built by **AVRG3**. tiny-context helps most with large tables, long logs and PDF
 
 ## 1. Connect it
 
-If your client supports MCPB bundles, open the [bundle release](https://github.com/Warddamn/tiny-tools/releases/tag/context-v0.2.0), choose your OS under **Assets**, download the `.mcpb` file and open it in that client. The client will show its installation and permission prompts. Otherwise use the commands below.
+If your client supports MCPB bundles, open the [bundle release](https://github.com/Warddamn/tiny-tools/releases/tag/context-v0.3.0), choose your OS under **Assets**, download the `.mcpb` file and open it in that client. The client will show its installation and permission prompts. Otherwise use the commands below.
 
 Use the [install instructions](README.md#install) for your app. Node.js 20+ is required; no npm account or token is needed. After setup, restart or reconnect your client and check that **tiny-context** is connected with **eight tools**. In Claude Code, the plugin also supplies guidance on when to use each tool. With manual setup, add the [agent usage snippet](packages/context/docs/AGENT_USAGE.md) to your project's instructions.
 
@@ -54,3 +54,7 @@ A useful report includes the client and version, the kind and approximate size o
 ## Compare changing API exports (tiny-context 0.2.0)
 
 Ask which orders changed status or quantity, even when rows are shuffled. `diff_files` records mode matches explicit IDs and returns counts plus before/after previews. [Try the small known-answer example and see limits](packages/context/docs/RECORD_DIFF.md#try-a-known-answer). Use this on larger snapshots; the small fixture is only a demonstration.
+
+## Reuse recurring forms (tiny-context 0.3.0)
+
+Ask your agent to save and verify a local reading profile for repeated labeled reports, then apply it to a batch. No model training. Review mismatches explicitly. [Copyable example and limits](packages/context/docs/DOCUMENT_PROFILES.md).

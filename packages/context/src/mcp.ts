@@ -23,7 +23,7 @@ const INSTRUCTIONS =
   "file_map (outline: headings, code signatures, sheets/columns, slide titles, pages, folder tree) · query_file (ranked passages with locations) · " +
   "read_section (only a heading/page/line/paragraph/sheet-range/slide) · query_table (DuckDB SQL over CSV/TSV/XLSX/Parquet/JSON, table t) · " +
   "summarize_log (clusters + timeline of a log) · diff_files (document/table changes; mode records compares JSON/JSONL exports by key, with optional selected fields) · validate_file (JSON/YAML/XML/CSV/schema/links/encoding) · " +
-  "extract (regex, emails/urls/dates/numbers, jq). Search for these tools when the task mentions: PDF, Word, Excel, PowerPoint, spreadsheet, CSV, Parquet, logs, errors/5xx, diff/compare, validate, large file, token budget. " +
+  "extract (regex, emails/URLs, jq, saved profiles for recurring labeled documents). Search for these tools when the task mentions: PDF, Word, Excel, PowerPoint, spreadsheet, CSV, Parquet, logs, errors/5xx, diff/compare, validate, large file, token budget. " +
   "Known snapshot files and record keys: call diff_files records directly; no outline is needed. Every response is bounded and ends with a savings line. Small plain-text files: just Read them.";
 
 const server = new McpServer({ name: "tiny-context", version }, { instructions: INSTRUCTIONS });

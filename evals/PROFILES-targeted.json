@@ -1,0 +1,115 @@
+{
+  "workspace": "/var/folders/wc/bnph4vbn4hs3wd2b9fk34zf00000gp/T/tiny-profile-eval-ll1jsh",
+  "results": [
+    {
+      "id": "recurring-batch",
+      "condition": "tools",
+      "status": "pass",
+      "correct": true,
+      "selectedTool": true,
+      "bulkRead": false,
+      "actual": {
+        "matched": 24,
+        "needs_review": 1,
+        "review_file": "report-24.txt"
+      },
+      "calls": [
+        "Bash",
+        "Read",
+        "ToolSearch",
+        "mcp__tiny-context__extract"
+      ],
+      "durationMs": 16450,
+      "costUsd": 0.130407,
+      "usage": {
+        "input_tokens": 10,
+        "cache_creation_input_tokens": 21050,
+        "cache_read_input_tokens": 168935,
+        "output_tokens": 1240,
+        "output_tokens_details": {
+          "thinking_tokens": 513
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 21050,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "not_available",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 115,
+            "cache_read_input_tokens": 38555,
+            "cache_creation_input_tokens": 3492,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 3492
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard"
+      }
+    },
+    {
+      "id": "recurring-batch",
+      "condition": "builtin",
+      "status": "pass",
+      "correct": true,
+      "selectedTool": true,
+      "bulkRead": true,
+      "actual": {
+        "matched": 24,
+        "needs_review": 1,
+        "review_file": "report-24.txt"
+      },
+      "calls": [
+        "Bash",
+        "Read",
+        "Read",
+        "Bash",
+        "Bash"
+      ],
+      "durationMs": 33832,
+      "costUsd": 0.20073480000000002,
+      "usage": {
+        "input_tokens": 12,
+        "cache_creation_input_tokens": 31374,
+        "cache_read_input_tokens": 226074,
+        "output_tokens": 3000,
+        "output_tokens_details": {
+          "thinking_tokens": 1590
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 31374,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "not_available",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 74,
+            "cache_read_input_tokens": 51332,
+            "cache_creation_input_tokens": 387,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 387
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard"
+      }
+    }
+  ],
+  "note": "Single-run checks, Sonnet, same synthetic files and saved profile; tools condition includes routing guidance. Setup/creating the profile is excluded. Cache state is uncontrolled. Costs are reported inference estimates, not invoice charges. No general savings claim."
+}
