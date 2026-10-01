@@ -88,6 +88,13 @@ describe("tiny-context MCP server", () => {
     expect(r.content[0]!.text).toMatch(/1 changed section/);
     expect(r.content[0]!.text).toMatch(LEDGER);
   });
+  it("diff_files compares keyed exports with exact scoped counts over MCP", async () => {
+    const r = await call("diff_files", { a: fx("orders-before.json"), b: fx("orders-after.json"), mode: "records", key: ["/id"], fields: ["/status", "/quantity"] });
+    expect(r.isError).toBeFalsy();
+    expect(r.content[0]!.text).toContain('"added":1,"removed":1,"changed":1,"unchanged":1');
+    expect(r.content[0]!.text).toContain('"shipped"');
+    expect(r.content[0]!.text).toContain("Only selected fields");
+  });
 
   it("validate_file", async () => {
     const r = await call("validate_file", { path: fx("ragged.csv") });

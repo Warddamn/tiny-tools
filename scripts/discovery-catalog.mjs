@@ -11,7 +11,7 @@ import path from 'node:path';
 const root = fileURLToPath(new URL('..', import.meta.url));
 const repo = 'https://github.com/Warddamn/tiny-tools';
 const profiles = [
-  { key: 'context', expected: 8, tasks: ['search PDF Word PowerPoint documents', 'SQL query CSV Excel Parquet', 'summarize repeated log errors', 'compare document versions', 'validate structured files', 'extract emails URLs IDs'] },
+  { key: 'context', expected: 8, tasks: ['search PDF Word PowerPoint documents', 'SQL query CSV Excel Parquet', 'summarize repeated log errors', 'compare document versions', 'compare JSON JSONL API exports by record ID; ignore row order and select changed fields', 'validate structured files', 'extract emails URLs IDs'] },
   { key: 'runtime', expected: 3, tasks: ['resume cursor API pagination', 'checkpoint batch collection', 'detect repeated agent failures and retry loops', 'derive tool-progress cache hints for serving engines'] },
 ];
 const catalog = { schemaVersion: 1, format: 'tiny-tools project catalog; not an automatic-install protocol', author: 'AVRG3', repository: repo, documentation: `${repo}/blob/main/discovery/README.md`, servers: [] };

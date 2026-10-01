@@ -16,6 +16,15 @@ export async function verifyContextSafety(client,dir){
   const exported=path.join(dir,'answer.csv');const good=await client.callTool({name:'query_table',arguments:{path:input,sql:'SELECT SUM(value) AS total FROM t',out:exported}});
   assert.ok(!good.isError);assert.equal(await fs.readFile(exported,'utf8'),'total\n30\n');
   console.log('PASS installed SQL restrictions, protected input/output, and explicit CSV export');
+  const before=path.join(dir,'orders-before.json'),after=path.join(dir,'orders-after.json'),report=path.join(dir,'changes.jsonl');
+  await fs.writeFile(before,JSON.stringify([{id:'A',status:'open'},{id:'B',status:'open'}]));
+  await fs.writeFile(after,JSON.stringify([{id:'B',status:'closed'},{id:'A',status:'open'}]));
+  const compared=await client.callTool({name:'diff_files',arguments:{a:before,b:after,mode:'records',key:['/id'],fields:['/status'],out:report}});
+  assert.ok(!compared.isError,'Installed records comparison failed');assert.match(compared.content[0].text,/"changed":1/);assert.match(compared.content[0].text,/"unchanged":1/);
+  const changes=(await fs.readFile(report,'utf8')).trim().split('\n').map(s=>JSON.parse(s));assert.equal(changes.length,2);assert.deepEqual(changes[1].key,['B']);assert.equal(changes[1].fields[0].after.value,'closed');
+  await fs.writeFile(after,'[{"id":9007199254740993}]');
+  const lossy=await client.callTool({name:'diff_files',arguments:{a:before,b:after,mode:'records',key:['/id']}});assert.equal(lossy.isError,true,'Lossy record ID accepted');
+  console.log('PASS installed keyed JSON changes, exact report, and precision rejection');
 }
 export async function verifyRuntimeSafety(client,dir){
   const attempt={scope:'installed',tool:'read',args:{path:'config'},state:'unchanged'};

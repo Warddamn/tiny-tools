@@ -34,7 +34,9 @@
     "bundle:context": "npm run build && node scripts/build-context-release.mjs",
     "bench:safety": "npm run build && node scripts/bench-safety.mjs",
     "discovery:catalog": "npm run build && node scripts/discovery-catalog.mjs",
-    "discovery:check": "npm run build && node scripts/discovery-catalog.mjs --check"
+    "discovery:check": "npm run build && node scripts/discovery-catalog.mjs --check",
+    "bench:records": "npm run build && node scripts/bench-records.mjs",
+    "evals:records": "npm run build && node scripts/eval-records.mjs"
   },
   "devDependencies": {
     "@types/node": "^24",

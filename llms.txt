@@ -1,6 +1,6 @@
 # tiny-tools — local MCP tools by AVRG3
 
-> Two separate MCP servers for document search, spreadsheet SQL, log analysis, resumable API pagination and retry-loop diagnosis. Public GitHub installs; Node.js 20+ required. No npm account, model calls or tool telemetry. The client must explicitly connect and permit a server; discovery does not activate it.
+> Two separate MCP servers for document search, spreadsheet SQL, log analysis, keyed JSON/JSONL snapshot comparison, resumable API pagination and retry-loop diagnosis. Public GitHub installs; Node.js 20+ required. No npm account, model calls or tool telemetry. The client must explicitly connect and permit a server; discovery does not activate it.
 
 ## Start here
 
@@ -11,13 +11,14 @@
 
 ## tiny-context: documents, tables and logs
 
-Install command: `npx -y -p https://github.com/Warddamn/tiny-tools/releases/download/context-v0.1.1/tiny-context-standalone-0.1.1.tgz tiny-context-mcp`
+Install command: `npx -y -p https://github.com/Warddamn/tiny-tools/releases/download/context-v0.2.0/tiny-context-standalone-0.2.0.tgz tiny-context-mcp`
 
 - Search PDF, Word/DOCX or PowerPoint/PPTX for a clause, topic or slide: query_file(path, query). Go directly to the question; file_map is optional for an outline. Image-only scans require OCR elsewhere.
 - Read a known page, heading, slide, line range or cell range: read_section(path, locator).
 - Total, count, filter or group CSV/TSV/Excel/XLSX/Parquet rows: query_table(path, sql), using table t. One read-only query; bounded results, 64 MB input/export caps.
 - Find repeated error patterns and time ranges in a log: summarize_log(path, focus="errors").
 - Compare document versions: diff_files(a, b). Validate supported syntax/schema/internal links: validate_file(path). Extract emails, URLs, dates, regex matches or JSON values: extract(path, kind).
+- Find actual changes in JSON/JSONL order/issue/inventory snapshots: diff_files(a,b,mode="records",key=["/id"],fields=["/status","/quantity"]). Ignores record order; counts are exact within the explicit field scope. No hidden baseline or model call. Duplicate IDs/precision loss fail explicitly. Optional out saves full JSONL changes; it still scans both inputs. [Contract and example](https://github.com/Warddamn/tiny-tools/blob/main/packages/context/docs/RECORD_DIFF.md).
 - Prefer built-in Read for small plain-text files and Grep for an exact string. Do not add a tool call after a built-in already answered the question.
 - [File tool documentation](https://github.com/Warddamn/tiny-tools/tree/main/packages/context#readme) and [three runnable tasks](https://github.com/Warddamn/tiny-tools/blob/main/QUICKSTART.md).
 - [Official MCP Registry entry](https://registry.modelcontextprotocol.io/?q=io.github.Warddamn%2Ftiny-context): io.github.Warddamn/tiny-context.

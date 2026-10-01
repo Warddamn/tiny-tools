@@ -52,6 +52,16 @@ Use **tiny-context / diff_files** to summarize changes between two document or t
 {"a":"/data/handbook-before.docx","b":"/data/handbook-after.docx","mode":"summary"}
 ```
 
+## Find changed orders, issues or inventory in JSON/JSONL exports
+
+Use **tiny-context / diff_files**, `mode: "records"`, when two snapshots contain many of the same records in a different order. Specify stable identity fields and optionally the fields that matter. It reports exact added/removed/changed/unchanged counts within that scope, with bounded before/after previews.
+
+```json
+{"a":"/data/yesterday.json","b":"/data/today.json","mode":"records","key":["/id"],"fields":["/status","/quantity"],"out":"/data/changes.jsonl"}
+```
+
+Optional `out` saves complete changes locally. Duplicate IDs and numbers that would silently round cause errors. Supported inputs: JSON/JSONL/NDJSON, up to 16 MiB and 100,000 records each. It scans both snapshots; it does not fetch data or create an automatic monitor. For small files, existing correct scripts or source-side change feeds, use those simpler paths. [Known-answer example, scope and limits](../packages/context/docs/RECORD_DIFF.md).
+
 ## Resume a paginated API collection after interruption
 
 Use **tiny-runtime / collect_pages** for “fetch all cursor pages,” “resume a partially collected dataset,” or “sum records without a model turn for every page.” Supply an explicit source configuration. It writes records and checkpoints locally and distinguishes `complete`, `partial` and `failed`.

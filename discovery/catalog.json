@@ -7,14 +7,15 @@
   "servers": [
     {
       "name": "tiny-context",
-      "version": "0.1.1",
+      "version": "0.2.0",
       "registryName": "io.github.Warddamn/tiny-context",
-      "description": "MCP server (Model Context Protocol) for AI coding agents: outline, search, slice and SQL-query PDF, DOCX, PPTX, XLSX, CSV, Parquet and log files without reading whole files. 8 tools, CLI included. Local-first, no telemetry.",
+      "description": "Eight local MCP tools for document search, spreadsheet SQL, log summaries and keyed JSON/JSONL snapshot comparisons. Detect changed orders, issues or inventory without reading whole exports. CLI included; no model calls or telemetry.",
       "tasks": [
         "search PDF Word PowerPoint documents",
         "SQL query CSV Excel Parquet",
         "summarize repeated log errors",
         "compare document versions",
+        "compare JSON JSONL API exports by record ID; ignore row order and select changed fields",
         "validate structured files",
         "extract emails URLs IDs"
       ],
@@ -24,17 +25,17 @@
         "args": [
           "-y",
           "-p",
-          "https://github.com/Warddamn/tiny-tools/releases/download/context-v0.1.1/tiny-context-standalone-0.1.1.tgz",
+          "https://github.com/Warddamn/tiny-tools/releases/download/context-v0.2.0/tiny-context-standalone-0.2.0.tgz",
           "tiny-context-mcp"
         ]
       },
       "documentation": "https://github.com/Warddamn/tiny-tools/tree/main/packages/context#readme",
-      "instructions": "tiny-context: know things about files without reading them. Use targeted tools for large files and PDF, DOCX, PPTX, XLSX formats. Query directly for a question, read_section for a known location; map only when an outline is needed. Stop once the answer is sufficient: file_map (outline: headings, code signatures, sheets/columns, slide titles, pages, folder tree) · query_file (ranked passages with locations) · read_section (only a heading/page/line/paragraph/sheet-range/slide) · query_table (DuckDB SQL over CSV/TSV/XLSX/Parquet/JSON, table t) · summarize_log (clusters + timeline of a log) · diff_files (what changed, incl. office files and tables) · validate_file (JSON/YAML/XML/CSV/schema/links/encoding) · extract (regex, emails/urls/dates/numbers, jq). Search for these tools when the task mentions: PDF, Word, Excel, PowerPoint, spreadsheet, CSV, Parquet, logs, errors/5xx, diff/compare, validate, large file, token budget. Every response is bounded and ends with a savings line. Small plain-text files: just Read them.",
+      "instructions": "tiny-context: know things about files without reading them. Use targeted tools for large files and PDF, DOCX, PPTX, XLSX formats. Query directly for a question, read_section for a known location; map only when an outline is needed. Stop once the answer is sufficient: file_map (outline: headings, code signatures, sheets/columns, slide titles, pages, folder tree) · query_file (ranked passages with locations) · read_section (only a heading/page/line/paragraph/sheet-range/slide) · query_table (DuckDB SQL over CSV/TSV/XLSX/Parquet/JSON, table t) · summarize_log (clusters + timeline of a log) · diff_files (document/table changes; mode records compares JSON/JSONL exports by key, with optional selected fields) · validate_file (JSON/YAML/XML/CSV/schema/links/encoding) · extract (regex, emails/urls/dates/numbers, jq). Search for these tools when the task mentions: PDF, Word, Excel, PowerPoint, spreadsheet, CSV, Parquet, logs, errors/5xx, diff/compare, validate, large file, token budget. Known snapshot files and record keys: call diff_files records directly; no outline is needed. Every response is bounded and ends with a savings line. Small plain-text files: just Read them.",
       "tools": [
         {
           "name": "diff_files",
-          "title": "Compare two files (incl. office formats)",
-          "description": "Compare two files and report what changed — works outside git and on PDF/DOCX/PPTX/XLSX/CSV (tables get added/removed/changed row counts + samples; documents diff on extracted text).\nUSE WHEN: \"what changed between v1 and v2\", \"did the new export differ from the old one\", \"compare these two spreadsheets\", verifying a rewrite kept the rest intact.\nPREFER OVER: reading both files and comparing in your head; git diff when the files aren't in git or aren't plain text. git diff is fine for tracked plain-text files.\nDOES NOT: diff directories, merge, or diff images/binaries other than the formats listed.\nEXAMPLE: diff_files({ a: \"/abs/v1/report.docx\", b: \"/abs/v2/report.docx\" })  ·  diff_files({ a: \"/abs/a.csv\", b: \"/abs/b.csv\", mode: \"summary\" })\nRETURNS: summary mode: per-section \"+5 −1 at page 3 / lines 120–128 / ¶88 (Heading)\" plus a one-line sample; tables: added/removed/changed rows with samples. unified mode: a capped unified diff. Then a savings line.",
+          "title": "Compare documents or keyed JSON records",
+          "description": "Compare two files and report what changed — works outside git and on PDF/DOCX/PPTX/XLSX/CSV (tables get added/removed/changed row counts + samples; documents diff on extracted text).\nUSE WHEN: \"what changed between v1 and v2\", \"compare these spreadsheets\", or \"which orders/issues/inventory records changed between two API exports despite shuffled rows\" (records mode, explicit key).\nPREFER OVER: reading both files and comparing in your head; git diff when the files aren't in git or aren't plain text. git diff is fine for tracked plain-text files.\nDOES NOT: fetch snapshots, infer IDs, remember prior calls, diff directories, merge, or interpret semantic meaning. Records mode supports JSON/JSONL/NDJSON only: 16 MiB and 100000 records per file, nesting 64; rejects duplicate IDs/object keys and numbers that would round. Quote high-precision numbers. Nested array order remains significant.\nEXAMPLE: diff_files({ a: \"/abs/v1/report.docx\", b: \"/abs/v2/report.docx\" })  ·  diff_files({ a: \"/abs/a.csv\", b: \"/abs/b.csv\", mode: \"summary\" })\nRecords EXAMPLE: diff_files({ a: \"/abs/yesterday.json\", b: \"/abs/today.json\", mode: \"records\", key: [\"/id\"], fields: [\"/status\", \"/price\"] })\nRETURNS: summary/unified: capped sections or diff. records: exact added/removed/changed/unchanged counts within the declared fields, bounded before/after previews and an optional full JSONL report. Capped previews are labeled. Savings line compares response bytes against both whole inputs, not billed tokens or an optimized script.",
           "inputSchema": {
             "type": "object",
             "properties": {
@@ -47,18 +48,50 @@
                 "description": "Second file (the 'after'). Accepts absolute paths, '~' paths and paths relative to the current directory. Example: '/abs/v2/contract.docx'. Required."
               },
               "mode": {
-                "description": "'summary' (default): changed sections with locations and ± counts, ~100 tokens. 'unified': a capped unified diff.",
+                "description": "Default summary: changed sections/rows. unified: line diff. records: compare JSON/JSONL objects by explicit key, ignoring record order; requires key.",
                 "type": "string",
                 "enum": [
                   "summary",
-                  "unified"
+                  "unified",
+                  "records"
                 ]
               },
               "max_hunks": {
-                "description": "Hunks/sections reported. Default 20, max 100.",
+                "description": "Hunks/sections or changed-record previews returned. Default 20, max 100. Counts still cover the full comparison.",
                 "type": "integer",
                 "minimum": 1,
                 "maximum": 100
+              },
+              "key": {
+                "description": "records mode only: JSON Pointers identifying each record, e.g. ['/id'] or ['/account','/sku']. Required in records mode. Unique nonempty string/number values; no guessed keys.",
+                "minItems": 1,
+                "maxItems": 8,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 128
+                }
+              },
+              "records_path": {
+                "description": "records mode, JSON only: JSON Pointer to the records array, e.g. '/data/orders'. Default empty string = root array. JSONL: omit.",
+                "type": "string",
+                "maxLength": 256
+              },
+              "fields": {
+                "description": "records mode only: compare these field JSON Pointers, e.g. ['/status','/price']. Default all fields. Other changes are explicitly excluded; missing differs from null.",
+                "minItems": 1,
+                "maxItems": 32,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 128
+                }
+              },
+              "out": {
+                "description": "records mode only: optional absolute output path for complete JSONL changes, e.g. '/abs/changes.jsonl'. Default no writes. Existing files get a suffix; input files are never overwritten. Cap 64 MiB.",
+                "type": "string"
               }
             },
             "required": [
@@ -68,9 +101,9 @@
             "$schema": "http://json-schema.org/draft-07/schema#"
           },
           "annotations": {
-            "readOnlyHint": true,
+            "readOnlyHint": false,
             "destructiveHint": false,
-            "idempotentHint": true,
+            "idempotentHint": false,
             "openWorldHint": false
           },
           "execution": {
@@ -277,7 +310,7 @@
           "annotations": {
             "readOnlyHint": false,
             "destructiveHint": false,
-            "idempotentHint": true,
+            "idempotentHint": false,
             "openWorldHint": false
           },
           "execution": {

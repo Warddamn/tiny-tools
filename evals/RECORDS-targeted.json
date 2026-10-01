@@ -1,0 +1,117 @@
+{
+  "workspace": "/var/folders/wc/bnph4vbn4hs3wd2b9fk34zf00000gp/T/tiny-record-eval-w2x4MF",
+  "results": [
+    {
+      "id": "reordered",
+      "condition": "tools",
+      "status": "pass",
+      "correct": true,
+      "selectedTool": true,
+      "bulkRead": false,
+      "actual": {
+        "changed": 0,
+        "unchanged": 5000,
+        "added": 0,
+        "removed": 0
+      },
+      "calls": [
+        "Bash",
+        "ToolSearch",
+        "mcp__tiny-context__file_map",
+        "mcp__tiny-context__diff_files"
+      ],
+      "durationMs": 13009,
+      "costUsd": 0.1055566,
+      "usage": {
+        "input_tokens": 8,
+        "cache_creation_input_tokens": 17532,
+        "cache_read_input_tokens": 131063,
+        "output_tokens": 920,
+        "output_tokens_details": {
+          "thinking_tokens": 203
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 17532,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "not_available",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 47,
+            "cache_read_input_tokens": 37745,
+            "cache_creation_input_tokens": 784,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 784
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard"
+      }
+    },
+    {
+      "id": "reordered",
+      "condition": "builtin",
+      "status": "pass",
+      "correct": true,
+      "selectedTool": true,
+      "bulkRead": true,
+      "actual": {
+        "changed": 0,
+        "unchanged": 5000,
+        "added": 0,
+        "removed": 0
+      },
+      "calls": [
+        "Glob",
+        "Read",
+        "Read",
+        "Bash",
+        "Bash"
+      ],
+      "durationMs": 17873,
+      "costUsd": 0.10230419999999998,
+      "usage": {
+        "input_tokens": 10,
+        "cache_creation_input_tokens": 15049,
+        "cache_read_input_tokens": 157391,
+        "output_tokens": 1061,
+        "output_tokens_details": {
+          "thinking_tokens": 163
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 15049,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "not_available",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 38,
+            "cache_read_input_tokens": 34897,
+            "cache_creation_input_tokens": 497,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 497
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard"
+      }
+    }
+  ],
+  "note": "Single-run checks, Sonnet, same fixtures and built-ins; tools condition includes routing guidance. Not a general savings or adoption claim."
+}
