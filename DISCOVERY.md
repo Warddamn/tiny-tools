@@ -4,8 +4,8 @@ Built by **AVRG3**. For tool selection and installation, start with the [task gu
 
 ## Public entry points
 
-- **GitHub:** [repository](https://github.com/Warddamn/tiny-tools), task guide, per-server READMEs, worked examples, pinned public releases, `llms.txt`, `discovery/catalog.json` and `discovery/mcp.json`.
-- **Official MCP Registry:** `io.github.Warddamn/tiny-context` and `io.github.Warddamn/tiny-runtime`, published at version 0.1.1. Publication jobs on September 22, 2026 verified active entries and hashes against GitHub releases. The registry API timed out during the September 23 recheck; that is not evidence the entries were removed.
+- **GitHub:** repository description/topics include JSON export changes (`json-diff`, `change-detection`); [repository](https://github.com/Warddamn/tiny-tools), task guide, per-server READMEs, worked examples, pinned public releases, `llms.txt`, `discovery/catalog.json` and `discovery/mcp.json`.
+- **Official MCP Registry:** `io.github.Warddamn/tiny-context@0.2.0` published and independently verified active on October 1 UTC / September 30 New York, with exact GitHub artifact hashes. Description now includes keyed JSON/JSONL change detection. `io.github.Warddamn/tiny-runtime` remains at the verified September 22 release, 0.1.1. [Publication evidence](RELEASE.md).
 - **Glama:** [repository profile](https://glama.ai/mcp/servers/Warddamn/tiny-tools). On September 23 the public profile existed, but its [schema page](https://glama.ai/mcp/servers/Warddamn/tiny-tools/schema) said capabilities had not been inspected and showed no tools; deployment was unavailable. Profile existence alone does not establish a searchable, successfully inspected listing.
 - **npm:** not published. All active installation instructions use GitHub releases and need no npm account/token. npm publication is not a prerequisite for our current registry entries.
 

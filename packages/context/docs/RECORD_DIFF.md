@@ -36,7 +36,7 @@ Limits: JSON/JSONL/NDJSON regular files only; 16 MiB and 100,000 records per fil
 
 ## When this helps—and when it adds work
 
-Best fit: an agent needs a compact, validated answer from large snapshots and has no correct comparison script already prepared. Small files can be read directly. Existing `jq`, `jd`, SQL, scripts, or source-provided change feeds may be faster and sufficient; use them when appropriate. This scans both local snapshots every call. It does not fetch incremental changes, skip local parsing, automatically monitor files, update another system, or promise lower total task cost.
+Best fit: an agent needs a compact, validated answer from large snapshots and has no correct comparison script already prepared. Small files can be read directly. Existing `jq`, `jd`, SQL, scripts, or source-provided change feeds may be faster and sufficient; use them when appropriate. The compact serialized MCP instructions/tool catalog grew from 19,092 to 20,935 bytes (+1,843 bytes) versus 0.1.1. This is schema/instruction size, not measured model tokens; whether it is loaded up front depends on the client. This scans both local snapshots every call. It does not fetch incremental changes, skip local parsing, automatically monitor files, update another system, or promise lower total task cost.
 
 [Reproducible benchmark](../../../bench/RECORDS.md) compares response sizes and processing time against both whole-file input and a prepared correct script. [Research and design choice](../../../research/2026-09-30-efficiency.md). [Agent checks](../../../evals/RECORDS.md).
 

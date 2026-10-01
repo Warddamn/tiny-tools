@@ -1,16 +1,24 @@
 # Release and discovery
 
-Built by **AVRG3**. Both 0.1.1 releases published and verified 2026-09-22.
+Built by **AVRG3**. tiny-context 0.2.0 published and verified 2026-10-01 UTC (September 30 in New York); tiny-runtime remains 0.1.1.
 
 ## Published versions
 
-- tiny-context **0.2.0**: [downloads](https://github.com/Warddamn/tiny-tools/releases/tag/context-v0.2.0), eight file tools, including explicit keyed JSON/JSONL snapshot comparisons. Retains restricted SQL and protected exports. Includes a standalone tarball plus OS-specific MCPB bundles. Publication is complete only after the checks below pass.
+- tiny-context **0.2.0**: [downloads](https://github.com/Warddamn/tiny-tools/releases/tag/context-v0.2.0), eight file tools, including explicit keyed JSON/JSONL snapshot comparisons. Retains restricted SQL and protected exports. Includes a standalone tarball plus OS-specific MCPB bundles.
 - tiny-runtime **0.1.1**: [downloads](https://github.com/Warddamn/tiny-tools/releases/tag/runtime-v0.1.1), incremental checkpoints, corrected successful-read handling, callback deadlines and bounded cache-hint delivery.
 - Publication workflows test the actual artifacts, then verify fresh public installs and the exact active MCP Registry version and hashes. A failed run is not a completed release.
 - Older assets remain immutable for traceability. Upgrade through the new install commands; old pinned copies do not automatically change.
 - Both packages are distributed through GitHub and the official MCP Registry. npm publication/login is not required.
 
-## 0.1.1 verification
+## 0.2.0 verification
+
+[Feature PR #4](https://github.com/Warddamn/tiny-tools/pull/4) merged at `2db8c957aedd79235f09b6c61f9da90af6e36eae`. All 230 tests passed on Linux/macOS Node20/22/24 and Windows22, plus clean archive installation, benchmarks and isolated container checks. [Merged source CI](https://github.com/Warddamn/tiny-tools/actions/runs/36803837545) and [discovery CI](https://github.com/Warddamn/tiny-tools/actions/runs/36803837377) passed.
+
+[Publication run 36803854466](https://github.com/Warddamn/tiny-tools/actions/runs/36803854466) passed exact-artifact tests on all three operating systems, a fresh public npx installation, and official registry verification. A separate empty-cache public installation on the development Mac passed all eight tools plus record/SQL safety regressions. Both public verification downloads are recorded in the local dashboard's self-download ledger. Independent registry read-back also confirmed active `io.github.Warddamn/tiny-context@0.2.0` with identical download URLs and hashes. `packages/context/server.json` contains the actual published metadata. Runtime code and 0.1.1 assets were not republished.
+
+The synthetic benchmark measures response size and local processing against a correct prepared script. Paired agent trials returned correct answers and were quicker, but their reported inference cost was higher with tools; no general token-bill or CPU saving is claimed. [Evidence and limits](packages/context/docs/RECORD_DIFF.md).
+
+## Historical 0.1.1 verification
 
 [Safety PR #2](https://github.com/Warddamn/tiny-tools/pull/2) merged at `1c8c980dc1fe1326e5828f7e147150fb863a6365`. [Final PR CI](https://github.com/Warddamn/tiny-tools/actions/runs/35697737194) and [merged-source CI](https://github.com/Warddamn/tiny-tools/actions/runs/35697957188) passed all ten jobs: 196 tests on Linux/macOS Node20/22/24, required Windows22, fresh installs and benchmark gates.
 
@@ -28,7 +36,7 @@ For the historical 0.1.0 release, the three-platform publication run was [356216
 
 ## Publish a new version
 
-1. Choose a new context package version; update package.json and the lockfile consistently. The live 0.1.0 release must not be overwritten.
+1. Choose a new context package version; update its package.json, the benchmark workspace dependency range, and the lockfile consistently. Verify a fresh `npm ci`; pre-existing workspace links can hide a mismatched range. Published release assets must not be overwritten.
 2. Update PROGRESS.md and release documentation, run tests, then push the reviewed changes to main.
 3. On GitHub, choose **Actions → Publish to MCP Registry → Run workflow → main → Run workflow**. The workflow builds and tests all three bundles, creates `context-v<version>`, and publishes the generated registry metadata using GitHub OIDC. No new secret or npm token is required.
 4. Check that the final registry verification step passes. Download the release's `server.json`, confirm its package hashes match GitHub's asset digests, and update `packages/context/server.json` to the published metadata.
