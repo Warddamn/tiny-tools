@@ -9,7 +9,7 @@ Actual headless Claude Code / Sonnet runs on generated 5,000-record exports; no 
 | Duplicate identity prevents reliable keyed comparison | Correct refusal | Not run | 19.02s / — | $0.102 / — |
 | Small plain-text note | Correct; Read, no tiny-context call | Not run | 8.28s / — | $0.057 / — |
 
-These are single trials, not reliable estimates of average savings. The new tool was quicker on these two paired tasks, but **cost more in both**. Prompt/cache state, sequential run order, model variance, startup and routing guidance confound inference; do not advertise these as general time or cost reductions. Token usage is recorded in the raw result JSON, including cached tokens. The deterministic operation itself makes no model calls.
+Costs above are Claude-reported inference estimates, not an invoice or proof of additional subscription charges. These are single trials, not reliable estimates of average savings. The new tool was quicker on these two paired tasks, but **cost more in both**. Prompt/cache state, sequential run order, model variance, startup and routing guidance confound inference; do not advertise these as general time or cost reductions. Token usage is recorded in the raw result JSON, including cached tokens. The deterministic operation itself makes no model calls.
 
 The agent made an unnecessary `file_map` call in the reordered task even after instructions were clarified. Direct comparison needs no outline. This is a remaining selection inefficiency, not hidden or graded away. The built-in condition attempted whole-file reads; it still got the right answer. Those attempts are reported as a behavior metric, not an answer failure.
 
