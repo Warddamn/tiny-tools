@@ -97,10 +97,14 @@ program
   .command("diff")
   .argument("<a>", "before")
   .argument("<b>", "after")
-  .option("-m, --mode <mode>", "summary (default) or unified")
+  .option("-m, --mode <mode>", "summary (default), unified, or records")
   .option("-n, --max-hunks <n>", "hunks reported (default 20, max 100)", int)
+  .option("--key <pointers...>", "records mode: identity JSON Pointers, e.g. /id")
+  .option("--records-path <pointer>", "JSON array pointer, e.g. /data/orders (default root)")
+  .option("--fields <pointers...>", "records mode: only compare these fields (default all)")
+  .option("--out <path>", "records mode: complete changes to a new JSONL file")
   .description("What changed between two files, incl. pdf/docx/xlsx/csv (diff_files)")
-  .action((a: string, b: string, o: { mode?: string; maxHunks?: number }) => run("diff_files", { a, b, mode: o.mode, max_hunks: o.maxHunks }));
+  .action((a: string, b: string, o: { mode?: string; maxHunks?: number; key?: string[]; recordsPath?: string; fields?: string[]; out?: string }) => run("diff_files", { a, b, mode: o.mode, max_hunks: o.maxHunks, key: o.key, records_path: o.recordsPath, fields: o.fields, out: o.out }));
 
 program
   .command("validate")

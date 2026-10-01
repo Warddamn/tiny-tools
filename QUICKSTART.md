@@ -4,7 +4,7 @@ Built by **AVRG3**. tiny-context helps most with large tables, long logs and PDF
 
 ## 1. Connect it
 
-If your client supports MCPB bundles, open the [bundle release](https://github.com/Warddamn/tiny-tools/releases/tag/context-v0.1.1), choose your OS under **Assets**, download the `.mcpb` file and open it in that client. The client will show its installation and permission prompts. Otherwise use the commands below.
+If your client supports MCPB bundles, open the [bundle release](https://github.com/Warddamn/tiny-tools/releases/tag/context-v0.2.0), choose your OS under **Assets**, download the `.mcpb` file and open it in that client. The client will show its installation and permission prompts. Otherwise use the commands below.
 
 Use the [install instructions](README.md#install) for your app. Node.js 20+ is required; no npm account or token is needed. After setup, restart or reconnect your client and check that **tiny-context** is connected with **eight tools**. In Claude Code, the plugin also supplies guidance on when to use each tool. With manual setup, add the [agent usage snippet](packages/context/docs/AGENT_USAGE.md) to your project's instructions.
 
@@ -50,3 +50,7 @@ The comparisons use 12 tasks and one run per setup. They include correct answers
 A useful report includes the client and version, the kind and approximate size of the file, the question, whether the correct tool was chosen, whether the answer was right, and any installation error. Share a sanitized example in [a GitHub issue](https://github.com/Warddamn/tiny-tools/issues/new); do not upload private documents, credentials or full sensitive logs.
 
 `npm run verify:release` is a maintainer check: from a fresh temporary npm cache, it launches the same public release command and checks all eight tools with known answers. Automated checks download the release too, so download totals do not measure human or agent adoption.
+
+## Compare changing API exports (tiny-context 0.2.0)
+
+Ask which orders changed status or quantity, even when rows are shuffled. `diff_files` records mode matches explicit IDs and returns counts plus before/after previews. [Try the small known-answer example and see limits](packages/context/docs/RECORD_DIFF.md#try-a-known-answer). Use this on larger snapshots; the small fixture is only a demonstration.

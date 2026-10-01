@@ -19,7 +19,7 @@ The generated JSON catalog is also directly accessible to web-reading agents wit
 
 ## Keep descriptions useful
 
-Lead with actual tasks: PDF/Office passage search, SQL over CSV/Excel/Parquet, repeated log errors, document comparison, resumable API pagination and repeated-failure traces. Include input examples, bounded outputs, installation and when an ordinary built-in is simpler. Do not promise universal time/token/GPU savings, automatic client installation, directory ranking or confirmed adoption.
+Lead with actual tasks: PDF/Office passage search, SQL over CSV/Excel/Parquet, repeated log errors, document comparison, keyed JSON/JSONL export change detection, resumable API pagination and repeated-failure traces. Include input examples, bounded outputs, installation and when an ordinary built-in is simpler. Do not promise universal time/token/GPU savings, automatic client installation, directory ranking or confirmed adoption.
 
 After changing a server's descriptions, schemas, version or registry metadata:
 

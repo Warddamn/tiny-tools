@@ -95,15 +95,20 @@ RETURNS: totals + time span + level counts, a bucketed timeline (all vs. focused
 export const DiffFilesInput = z.object({
   a: z.string().describe(pathDesc("First file (the 'before')", "/abs/v1/contract.docx")),
   b: z.string().describe(pathDesc("Second file (the 'after')", "/abs/v2/contract.docx")),
-  mode: z.enum(["summary", "unified"]).optional().describe("'summary' (default): changed sections with locations and ± counts, ~100 tokens. 'unified': a capped unified diff."),
-  max_hunks: z.number().int().min(1).max(100).optional().describe("Hunks/sections reported. Default 20, max 100."),
+  mode: z.enum(["summary", "unified", "records"]).optional().describe("Default summary: changed sections/rows. unified: line diff. records: compare JSON/JSONL objects by explicit key, ignoring record order; requires key."),
+  max_hunks: z.number().int().min(1).max(100).optional().describe("Hunks/sections or changed-record previews returned. Default 20, max 100. Counts still cover the full comparison."),
+  key: z.array(z.string().min(1).max(128)).min(1).max(8).optional().describe("records mode only: JSON Pointers identifying each record, e.g. ['/id'] or ['/account','/sku']. Required in records mode. Unique nonempty string/number values; no guessed keys."),
+  records_path: z.string().max(256).optional().describe("records mode, JSON only: JSON Pointer to the records array, e.g. '/data/orders'. Default empty string = root array. JSONL: omit."),
+  fields: z.array(z.string().min(1).max(128)).min(1).max(32).optional().describe("records mode only: compare these field JSON Pointers, e.g. ['/status','/price']. Default all fields. Other changes are explicitly excluded; missing differs from null."),
+  out: z.string().optional().describe("records mode only: optional absolute output path for complete JSONL changes, e.g. '/abs/changes.jsonl'. Default no writes. Existing files get a suffix; input files are never overwritten. Cap 64 MiB."),
 });
 export const DIFF_FILES_DESCRIPTION = `Compare two files and report what changed — works outside git and on PDF/DOCX/PPTX/XLSX/CSV (tables get added/removed/changed row counts + samples; documents diff on extracted text).
-USE WHEN: "what changed between v1 and v2", "did the new export differ from the old one", "compare these two spreadsheets", verifying a rewrite kept the rest intact.
+USE WHEN: "what changed between v1 and v2", "compare these spreadsheets", or "which orders/issues/inventory records changed between two API exports despite shuffled rows" (records mode, explicit key).
 PREFER OVER: reading both files and comparing in your head; git diff when the files aren't in git or aren't plain text. git diff is fine for tracked plain-text files.
-DOES NOT: diff directories, merge, or diff images/binaries other than the formats listed.
+DOES NOT: fetch snapshots, infer IDs, remember prior calls, diff directories, merge, or interpret semantic meaning. Records mode supports JSON/JSONL/NDJSON only: 16 MiB and 100000 records per file, nesting 64; rejects duplicate IDs/object keys and numbers that would round. Quote high-precision numbers. Nested array order remains significant.
 EXAMPLE: diff_files({ a: "/abs/v1/report.docx", b: "/abs/v2/report.docx" })  ·  diff_files({ a: "/abs/a.csv", b: "/abs/b.csv", mode: "summary" })
-RETURNS: summary mode: per-section "+5 −1 at page 3 / lines 120–128 / ¶88 (Heading)" plus a one-line sample; tables: added/removed/changed rows with samples. unified mode: a capped unified diff. Then a savings line.`;
+Records EXAMPLE: diff_files({ a: "/abs/yesterday.json", b: "/abs/today.json", mode: "records", key: ["/id"], fields: ["/status", "/price"] })
+RETURNS: summary/unified: capped sections or diff. records: exact added/removed/changed/unchanged counts within the declared fields, bounded before/after previews and an optional full JSONL report. Capped previews are labeled. Savings line compares response bytes against both whole inputs, not billed tokens or an optimized script.`;
 
 // ───────────────────────── validate_file ─────────────────────────
 export const ValidateFileInput = z.object({

@@ -1,7 +1,7 @@
 {
   "name": "@tiny_tools_pw/context",
-  "version": "0.1.1",
-  "description": "MCP server (Model Context Protocol) for AI coding agents: outline, search, slice and SQL-query PDF, DOCX, PPTX, XLSX, CSV, Parquet and log files without reading whole files. 8 tools, CLI included. Local-first, no telemetry.",
+  "version": "0.2.0",
+  "description": "Eight local MCP tools for document search, spreadsheet SQL, log summaries and keyed JSON/JSONL snapshot comparisons. Detect changed orders, issues or inventory without reading whole exports. CLI included; no model calls or telemetry.",
   "type": "module",
   "license": "MIT",
   "keywords": [
@@ -34,7 +34,12 @@
     "diff",
     "validate",
     "document-search",
-    "spreadsheet"
+    "spreadsheet",
+    "json-diff",
+    "jsonl",
+    "snapshot-comparison",
+    "change-detection",
+    "api-exports"
   ],
   "bin": {
     "tiny-context": "./dist/cli.js",

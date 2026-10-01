@@ -1,6 +1,6 @@
 # tiny-tools — MCP tools for document search, spreadsheet SQL and agent workflows
 
-**MCP tools for file analysis and reliable agent workflows.** `tiny-context` searches documents, queries spreadsheets and summarizes logs. `tiny-runtime` collects API pages with checkpoints, detects repeated failures and turns tool progress into cache-scheduling hints. Built by **AVRG3**.
+**MCP tools for file analysis and reliable agent workflows.** `tiny-context` searches documents, queries spreadsheets, summarizes logs and finds actual changes in JSON/JSONL exports by record ID. `tiny-runtime` collects API pages with checkpoints, detects repeated failures and turns tool progress into cache-scheduling hints. Built by **AVRG3**.
 
 Choose [file tools](#install) for documents, tables and logs, or [runtime tools](#install-tiny-runtime) for pagination, retry loops and progress integration.
 
@@ -9,8 +9,8 @@ Choose [file tools](#install) for documents, tables and logs, or [runtime tools]
 [![GitHub release](https://img.shields.io/github/v/release/Warddamn/tiny-tools)](https://github.com/Warddamn/tiny-tools/releases/latest)
 [![CI](https://github.com/Warddamn/tiny-tools/actions/workflows/ci.yml/badge.svg)](https://github.com/Warddamn/tiny-tools/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/Warddamn/tiny-tools/blob/main/LICENSE)
-[![Install in Cursor](https://cursor.com/deeplink/mcp-install-dark.svg)](https://cursor.com/en/install-mcp?name=tiny-context&config=eyJjb21tYW5kIjoibnB4IiwiYXJncyI6WyIteSIsIi1wIiwiaHR0cHM6Ly9naXRodWIuY29tL1dhcmRkYW1uL3RpbnktdG9vbHMvcmVsZWFzZXMvZG93bmxvYWQvY29udGV4dC12MC4xLjEvdGlueS1jb250ZXh0LXN0YW5kYWxvbmUtMC4xLjEudGd6IiwidGlueS1jb250ZXh0LW1jcCJdfQ%3D%3D)
-[![Install in VS Code](https://img.shields.io/badge/VS_Code-Install_Server-0098FF)](https://insiders.vscode.dev/redirect?url=vscode%3Amcp%2Finstall%3F%257B%2522name%2522%253A%2522tiny-context%2522%252C%2522command%2522%253A%2522npx%2522%252C%2522args%2522%253A%255B%2522-y%2522%252C%2522-p%2522%252C%2522https%253A%252F%252Fgithub.com%252FWarddamn%252Ftiny-tools%252Freleases%252Fdownload%252Fcontext-v0.1.1%252Ftiny-context-standalone-0.1.1.tgz%2522%252C%2522tiny-context-mcp%2522%255D%257D)
+[![Install in Cursor](https://cursor.com/deeplink/mcp-install-dark.svg)](https://cursor.com/en/install-mcp?name=tiny-context&config=eyJjb21tYW5kIjoibnB4IiwiYXJncyI6WyIteSIsIi1wIiwiaHR0cHM6Ly9naXRodWIuY29tL1dhcmRkYW1uL3RpbnktdG9vbHMvcmVsZWFzZXMvZG93bmxvYWQvY29udGV4dC12MC4yLjAvdGlueS1jb250ZXh0LXN0YW5kYWxvbmUtMC4yLjAudGd6IiwidGlueS1jb250ZXh0LW1jcCJdfQ%3D%3D)
+[![Install in VS Code](https://img.shields.io/badge/VS_Code-Install_Server-0098FF)](https://insiders.vscode.dev/redirect?url=vscode%3Amcp%2Finstall%3F%257B%2522name%2522%253A%2522tiny-context%2522%252C%2522command%2522%253A%2522npx%2522%252C%2522args%2522%253A%255B%2522-y%2522%252C%2522-p%2522%252C%2522https%253A%252F%252Fgithub.com%252FWarddamn%252Ftiny-tools%252Freleases%252Fdownload%252Fcontext-v0.2.0%252Ftiny-context-standalone-0.2.0.tgz%2522%252C%2522tiny-context-mcp%2522%255D%257D)
 
 **Designed for agents seeking fewer steps on file tasks:**
 
@@ -19,6 +19,7 @@ Choose [file tools](#install) for documents, tables and logs, or [runtime tools]
 - **Find a PDF, Word or PowerPoint passage:** go directly to `query_file` for ranked matches or `read_section` for a known location. `file_map` supplies an outline when needed.
 - **Resume a paginated API job:** `collect_pages` saves checkpoints and returns a clear completion status without a model turn for each page.
 - **Investigate repeated agent failures:** `check_progress` analyzes a trace; automatic blocking requires the host SDK integration.
+- **Find changed orders, issues or inventory:** `diff_files` records mode compares JSON/JSONL snapshots by explicit IDs, ignoring record order. Select the fields that matter; get exact scoped counts, before/after previews and an optional complete local report. [Examples and limits](packages/context/docs/RECORD_DIFF.md).
 
 **Measure the whole task:** the tool response can be much smaller than the source file, but startup, validation and extra agent turns still cost time. Results depend on the task and client. [Agent comparison, including regressions](evals/COMPARISON.md) · [Historical first comparison](https://github.com/Warddamn/tiny-tools/blob/main/evals/COMPARISON-2026-09-19.md).
 
@@ -30,7 +31,13 @@ Official MCP Registry entries: [tiny-context](https://registry.modelcontextproto
 
 The public catalog includes all 11 tool descriptions and input schemas, generated from the two actual servers and checked in CI. A directory profile does not by itself prove successful inspection or search placement; [current discovery status](DISCOVERY.md). Your client must connect and permit the chosen server before an agent can call it.
 
-## Safety update 0.1.1
+## New in tiny-context 0.2.0: keyed export comparison
+
+Ask “which orders changed status?” without loading both exports into the model. The existing `diff_files` tool now supports `mode: "records"`, explicit `key` pointers and optional `fields`. It refuses duplicate identities and numbers that would silently round. No extra MCP tool, dependency, model call or telemetry. [Try a known answer](packages/context/docs/RECORD_DIFF.md#try-a-known-answer) · [Measured results, including script overhead](bench/RECORDS.md) · [Agent checks](evals/RECORDS.md).
+
+This reduces returned context for large snapshots; it still scans both local files. An existing correct script or source-side change feed can be faster. Small files usually need only built-ins.
+
+## Safety controls (introduced in 0.1.1)
 
 Upgrade older installs using the current install button/config below, then reconnect the server. Existing version-pinned installations do not update automatically.
 
@@ -40,7 +47,7 @@ Go directly to `query_file` for a question or `read_section` for a known locatio
 
 ## Install
 
-**MCPB-compatible clients:** download the bundle for your OS from the [agent bundle release](https://github.com/Warddamn/tiny-tools/releases/tag/context-v0.1.1) and open it in your client. `darwin` = macOS, `win32` = Windows, `linux` = Linux. Each bundles dependencies for x64 and arm64; a Node.js 20+ runtime is still required (some clients provide it). These are unsigned bundles with SHA-256 hashes in the registry. Downloads are approximately 77 MiB for macOS, 96 MiB for Linux and 34 MiB for Windows. All eight tools were tested from extracted bundles on macOS, Linux and Windows; not every CPU/OS combination or client UI has been tested.
+**MCPB-compatible clients:** download the bundle for your OS from the [agent bundle release](https://github.com/Warddamn/tiny-tools/releases/tag/context-v0.2.0) and open it in your client. `darwin` = macOS, `win32` = Windows, `linux` = Linux. Each bundles dependencies for x64 and arm64; a Node.js 20+ runtime is still required (some clients provide it). These are unsigned bundles with SHA-256 hashes in the registry. Downloads are approximately 77 MiB for macOS, 96 MiB for Linux and 34 MiB for Windows. All eight tools were tested from extracted bundles on macOS, Linux and Windows; not every CPU/OS combination or client UI has been tested.
 
 **Other MCP clients:** use the existing commands below. They download only the dependencies needed for the current machine.
 
@@ -49,37 +56,37 @@ Go directly to `query_file` for a question or `read_section` for a known locatio
 **Claude Code**
 
 ```bash
-claude mcp add tiny-context -- npx -y -p https://github.com/Warddamn/tiny-tools/releases/download/context-v0.1.1/tiny-context-standalone-0.1.1.tgz tiny-context-mcp
+claude mcp add tiny-context -- npx -y -p https://github.com/Warddamn/tiny-tools/releases/download/context-v0.2.0/tiny-context-standalone-0.2.0.tgz tiny-context-mcp
 ```
 
 **Codex CLI** (writes `[mcp_servers.tiny-context]` to `~/.codex/config.toml`)
 
 ```bash
-codex mcp add tiny-context -- npx -y -p https://github.com/Warddamn/tiny-tools/releases/download/context-v0.1.1/tiny-context-standalone-0.1.1.tgz tiny-context-mcp
+codex mcp add tiny-context -- npx -y -p https://github.com/Warddamn/tiny-tools/releases/download/context-v0.2.0/tiny-context-standalone-0.2.0.tgz tiny-context-mcp
 ```
 
 **Cursor** — `.cursor/mcp.json`, or click the *Install in Cursor* badge above
 
 ```json
-{ "mcpServers": { "tiny-context": { "command": "npx", "args": ["-y", "-p", "https://github.com/Warddamn/tiny-tools/releases/download/context-v0.1.1/tiny-context-standalone-0.1.1.tgz", "tiny-context-mcp"] } } }
+{ "mcpServers": { "tiny-context": { "command": "npx", "args": ["-y", "-p", "https://github.com/Warddamn/tiny-tools/releases/download/context-v0.2.0/tiny-context-standalone-0.2.0.tgz", "tiny-context-mcp"] } } }
 ```
 
 **VS Code** — `.vscode/mcp.json` (note the `servers` key), or click the *Install in VS Code* badge above
 
 ```json
-{ "servers": { "tiny-context": { "type": "stdio", "command": "npx", "args": ["-y", "-p", "https://github.com/Warddamn/tiny-tools/releases/download/context-v0.1.1/tiny-context-standalone-0.1.1.tgz", "tiny-context-mcp"] } } }
+{ "servers": { "tiny-context": { "type": "stdio", "command": "npx", "args": ["-y", "-p", "https://github.com/Warddamn/tiny-tools/releases/download/context-v0.2.0/tiny-context-standalone-0.2.0.tgz", "tiny-context-mcp"] } } }
 ```
 
 **Windsurf** — `~/.codeium/windsurf/mcp_config.json`
 
 ```json
-{ "mcpServers": { "tiny-context": { "command": "npx", "args": ["-y", "-p", "https://github.com/Warddamn/tiny-tools/releases/download/context-v0.1.1/tiny-context-standalone-0.1.1.tgz", "tiny-context-mcp"] } } }
+{ "mcpServers": { "tiny-context": { "command": "npx", "args": ["-y", "-p", "https://github.com/Warddamn/tiny-tools/releases/download/context-v0.2.0/tiny-context-standalone-0.2.0.tgz", "tiny-context-mcp"] } } }
 ```
 
 **Claude Desktop** — `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) · `%APPDATA%\Claude\claude_desktop_config.json` (Windows)
 
 ```json
-{ "mcpServers": { "tiny-context": { "command": "npx", "args": ["-y", "-p", "https://github.com/Warddamn/tiny-tools/releases/download/context-v0.1.1/tiny-context-standalone-0.1.1.tgz", "tiny-context-mcp"] } } }
+{ "mcpServers": { "tiny-context": { "command": "npx", "args": ["-y", "-p", "https://github.com/Warddamn/tiny-tools/releases/download/context-v0.2.0/tiny-context-standalone-0.2.0.tgz", "tiny-context-mcp"] } } }
 ```
 
 Then paste the snippet below into `CLAUDE.md` / `AGENTS.md` / `.cursorrules` so the agent reaches for the tools at the right moments. Claude Code users can also add the [Read guard hook](packages/context#the-read-guard-hook-recommended), an optional stricter policy. Start with the snippet; the hook did not improve the measured comparison.
@@ -126,7 +133,7 @@ Other media tools in the original [build specification](AGENT_BUILD_SPEC.md) are
 - For large or PDF/Office files, choose the shortest useful path: `query_file` for a question, `read_section` for a known location, `file_map` only when you need an outline. Skip extra calls once the answer is sufficient.
 - Questions about CSV/TSV/XLSX/Parquet data ("total by…", "how many rows…"): `query_table` with SQL (table is `t`). Never load raw rows into context.
 - Logs: `summarize_log` first (add `focus: "errors"`); Grep/`extract` only afterwards, for the exact message it surfaced.
-- Comparing two files, including office formats: `diff_files` (summary mode) instead of reading both.
+- Comparing documents: `diff_files` summary. For JSON/JSONL exports: `diff_files` mode `records`, explicit `key` JSON Pointers, optional `fields` scope; ignore reordered records, return actual changes. Prefer an existing correct script or source-side change feed when available.
 - Verifying JSON/CSV/YAML/HTML/Markdown you just wrote: `validate_file`. Pulling emails/URLs/IDs/jq values out of files: `extract`.
 - Small plain-text files (< 20 KB, e.g. notes, configs, short docs): just Read them and answer — do NOT also call file_map/query_file on a file you have already read. Grep is right for an exact string in one text file.
 ```

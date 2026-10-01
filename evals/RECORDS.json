@@ -1,0 +1,335 @@
+{
+  "workspace": "/var/folders/wc/bnph4vbn4hs3wd2b9fk34zf00000gp/T/tiny-record-eval-7cK3Np",
+  "results": [
+    {
+      "id": "orders",
+      "condition": "tools",
+      "status": "pass",
+      "correct": true,
+      "selectedTool": true,
+      "bulkRead": false,
+      "actual": {
+        "added": 0,
+        "removed": 0,
+        "changed": 3,
+        "unchanged": 4997,
+        "closed": 3
+      },
+      "calls": [
+        "ToolSearch",
+        "Glob",
+        "mcp__tiny-context__diff_files"
+      ],
+      "durationMs": 9872,
+      "costUsd": 0.1715926,
+      "usage": {
+        "input_tokens": 6,
+        "cache_creation_input_tokens": 38061,
+        "cache_read_input_tokens": 70483,
+        "output_tokens": 524,
+        "output_tokens_details": {
+          "thinking_tokens": 115
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 38061,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "not_available",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 140,
+            "cache_read_input_tokens": 36860,
+            "cache_creation_input_tokens": 1201,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 1201
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard"
+      }
+    },
+    {
+      "id": "reordered",
+      "condition": "tools",
+      "status": "fail",
+      "correct": false,
+      "selectedTool": true,
+      "bulkRead": false,
+      "actual": {
+        "changed": [],
+        "unchanged": 5000,
+        "added": [],
+        "removed": []
+      },
+      "calls": [
+        "Glob",
+        "ToolSearch",
+        "mcp__tiny-context__file_map",
+        "mcp__tiny-context__diff_files"
+      ],
+      "durationMs": 14360,
+      "costUsd": 0.0821762,
+      "usage": {
+        "input_tokens": 8,
+        "cache_creation_input_tokens": 11666,
+        "cache_read_input_tokens": 135431,
+        "output_tokens": 841,
+        "output_tokens_details": {
+          "thinking_tokens": 210
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 11666,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "not_available",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 92,
+            "cache_read_input_tokens": 37268,
+            "cache_creation_input_tokens": 775,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 775
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard"
+      }
+    },
+    {
+      "id": "ambiguous",
+      "condition": "tools",
+      "status": "pass",
+      "correct": true,
+      "selectedTool": true,
+      "bulkRead": false,
+      "actual": {
+        "reliable": false,
+        "duplicateKey": true
+      },
+      "calls": [
+        "Glob",
+        "ToolSearch",
+        "Bash",
+        "Read",
+        "mcp__tiny-context__diff_files"
+      ],
+      "durationMs": 19024,
+      "costUsd": 0.10213280000000001,
+      "usage": {
+        "input_tokens": 12,
+        "cache_creation_input_tokens": 12326,
+        "cache_read_input_tokens": 210274,
+        "output_tokens": 1075,
+        "output_tokens_details": {
+          "thinking_tokens": 342
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 12326,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "not_available",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 67,
+            "cache_read_input_tokens": 38214,
+            "cache_creation_input_tokens": 489,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 489
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard"
+      }
+    },
+    {
+      "id": "small-note",
+      "condition": "tools",
+      "status": "pass",
+      "correct": true,
+      "selectedTool": true,
+      "bulkRead": false,
+      "actual": {
+        "color": "blue"
+      },
+      "calls": [
+        "Glob",
+        "Read"
+      ],
+      "durationMs": 8281,
+      "costUsd": 0.057462400000000004,
+      "usage": {
+        "input_tokens": 6,
+        "cache_creation_input_tokens": 8972,
+        "cache_read_input_tokens": 96462,
+        "output_tokens": 227,
+        "output_tokens_details": {
+          "thinking_tokens": 51
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 8972,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "not_available",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 16,
+            "cache_read_input_tokens": 35141,
+            "cache_creation_input_tokens": 208,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 208
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard"
+      }
+    },
+    {
+      "id": "orders",
+      "condition": "builtin",
+      "status": "fail",
+      "correct": true,
+      "selectedTool": true,
+      "bulkRead": true,
+      "actual": {
+        "added": 0,
+        "removed": 0,
+        "changed": 3,
+        "unchanged": 4997,
+        "closed": 3
+      },
+      "calls": [
+        "Bash",
+        "Read",
+        "Read",
+        "Bash",
+        "Bash",
+        "Bash"
+      ],
+      "durationMs": 28086,
+      "costUsd": 0.129059,
+      "usage": {
+        "input_tokens": 12,
+        "cache_creation_input_tokens": 16908,
+        "cache_read_input_tokens": 194015,
+        "output_tokens": 2260,
+        "output_tokens_details": {
+          "thinking_tokens": 496
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 16908,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "not_available",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 125,
+            "cache_read_input_tokens": 35906,
+            "cache_creation_input_tokens": 1347,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 1347
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard"
+      }
+    },
+    {
+      "id": "reordered",
+      "condition": "builtin",
+      "status": "fail",
+      "correct": false,
+      "selectedTool": true,
+      "bulkRead": true,
+      "actual": {
+        "changed": [],
+        "unchanged": 5000,
+        "added": [],
+        "removed": []
+      },
+      "calls": [
+        "Glob",
+        "Read",
+        "Read",
+        "Bash",
+        "Bash",
+        "Bash"
+      ],
+      "durationMs": 20539,
+      "costUsd": 0.0989092,
+      "usage": {
+        "input_tokens": 12,
+        "cache_creation_input_tokens": 10459,
+        "cache_read_input_tokens": 198196,
+        "output_tokens": 1741,
+        "output_tokens_details": {
+          "thinking_tokens": 302
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 10459,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "not_available",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 117,
+            "cache_read_input_tokens": 35697,
+            "cache_creation_input_tokens": 487,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 487
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard"
+      }
+    }
+  ],
+  "note": "Single-run checks, Sonnet, same fixtures and built-ins; tools condition includes routing guidance. Not a general savings or adoption claim."
+}

@@ -4,7 +4,7 @@ Built by **AVRG3**. Both 0.1.1 releases published and verified 2026-09-22.
 
 ## Published versions
 
-- tiny-context **0.1.1**: [downloads](https://github.com/Warddamn/tiny-tools/releases/tag/context-v0.1.1), eight file tools, restricted SQL and protected exports. Includes a standalone tarball plus OS-specific MCPB bundles.
+- tiny-context **0.2.0**: [downloads](https://github.com/Warddamn/tiny-tools/releases/tag/context-v0.2.0), eight file tools, including explicit keyed JSON/JSONL snapshot comparisons. Retains restricted SQL and protected exports. Includes a standalone tarball plus OS-specific MCPB bundles. Publication is complete only after the checks below pass.
 - tiny-runtime **0.1.1**: [downloads](https://github.com/Warddamn/tiny-tools/releases/tag/runtime-v0.1.1), incremental checkpoints, corrected successful-read handling, callback deadlines and bounded cache-hint delivery.
 - Publication workflows test the actual artifacts, then verify fresh public installs and the exact active MCP Registry version and hashes. A failed run is not a completed release.
 - Older assets remain immutable for traceability. Upgrade through the new install commands; old pinned copies do not automatically change.
@@ -16,13 +16,13 @@ Built by **AVRG3**. Both 0.1.1 releases published and verified 2026-09-22.
 
 [Context publication](https://github.com/Warddamn/tiny-tools/actions/runs/35697958286) and [runtime publication](https://github.com/Warddamn/tiny-tools/actions/runs/35697960674) both succeeded. Actual MCPB artifacts passed on macOS, Windows and Linux, including installed SQL/guard regression checks. Fresh public npx installs passed on Linux and again on the development Mac with empty caches and blank npm configs. Both official registry entries are active at 0.1.1; exact package URLs and SHA-256 hashes match the public GitHub asset digests. Published metadata is checked into each package's `server.json`.
 
-To upgrade, open your client's MCP settings and replace the old tiny-context/tiny-runtime command and arguments with the current README configuration, then reconnect/restart that server. For MCPB installs, install the new 0.1.1 bundle. New install buttons and Claude plugin configs target the new release. Old releases now carry an upgrade notice; their assets remain unchanged. No npm login or token is required.
+To upgrade, open your client's MCP settings and replace the old tiny-context/tiny-runtime command and arguments with the current README configuration, then reconnect/restart that server. For MCPB installs, install the tiny-context 0.2.0 or tiny-runtime 0.1.1 bundle. New install buttons and Claude plugin configs target these versions. Old assets remain unchanged. No npm login or token is required.
 
 ## Verify a bundle locally
 
 Run `npm test`, then `npm run bundle:mcpb`. The builder uses the checked-in lockfile to install production dependencies in a temporary folder, copies only distributable workspace files, adds the other native architectures from integrity-checked packages, and packs the bundle with `@anthropic-ai/mcpb@2.1.2`.
 
-Run `npm run verify:mcpb -- .tmp/mcpb/tiny-context-0.1.1-darwin.mcpb` for the macOS output (substitute the package version and `linux` or `win32` on those systems). This extracts the actual archive outside the repository and checks all eight MCP tools plus XLSX, without npm on the server's PATH. Node itself is supplied by the test host.
+Run `npm run verify:mcpb -- .tmp/mcpb/tiny-context-0.2.0-darwin.mcpb` for the macOS output (substitute the package version and `linux` or `win32` on those systems). This extracts the actual archive outside the repository and checks all eight MCP tools plus XLSX, without npm on the server's PATH. Node itself is supplied by the test host.
 
 For the historical 0.1.0 release, the three-platform publication run was [35621683385](https://github.com/Warddamn/tiny-tools/actions/runs/35621683385); source CI was [35621684626](https://github.com/Warddamn/tiny-tools/actions/runs/35621684626). Both passed. Other CPU/OS combinations and individual client installation screens are not covered by these checks.
 

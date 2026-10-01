@@ -48,7 +48,7 @@ export const TOOLS: ToolDef[] = [
   { name: "read_section", title: "Read one located section of a file", description: READ_SECTION_DESCRIPTION, schema: ReadSectionInput, writes: false, run: readSection },
   { name: "query_table", title: "Query a CSV/XLSX/Parquet with SQL", description: QUERY_TABLE_DESCRIPTION, schema: QueryTableInput, writes: true, run: queryTable },
   { name: "summarize_log", title: "Cluster and time-bucket a log file", description: SUMMARIZE_LOG_DESCRIPTION, schema: SummarizeLogInput, writes: false, run: summarizeLog },
-  { name: "diff_files", title: "Compare two files (incl. office formats)", description: DIFF_FILES_DESCRIPTION, schema: DiffFilesInput, writes: false, run: diffFiles },
+  { name: "diff_files", title: "Compare documents or keyed JSON records", description: DIFF_FILES_DESCRIPTION, schema: DiffFilesInput, writes: true, run: diffFiles },
   { name: "validate_file", title: "Deterministic checks on a generated file", description: VALIDATE_FILE_DESCRIPTION, schema: ValidateFileInput, writes: false, run: validateFile },
   { name: "extract", title: "Pull matches/values out of files", description: EXTRACT_DESCRIPTION, schema: ExtractInput, writes: false, run: extract },
 ];

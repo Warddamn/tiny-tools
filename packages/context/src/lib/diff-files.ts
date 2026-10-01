@@ -14,10 +14,12 @@ import {
   resolveInputs,
   splitRef,
   truncateLine,
+  teach,
 } from "@tiny_tools_pw/shared";
 import type { DiffFilesArgs } from "../schemas.js";
 import { type DiffOp, diffLines, hunksOf } from "./diff.js";
 import type { LibResult } from "./result.js";
+import { diffRecords } from "./diff-records.js";
 
 const TABULAR = new Set(["csv", "xlsx"]);
 const ROW_SEP = " ␟ ";
@@ -152,6 +154,8 @@ function rangeLabel(ex: ExtractedText, start: number, end: number): string {
 }
 
 export async function diffFiles(args: DiffFilesArgs): Promise<LibResult> {
+  if (args.mode === "records") return diffRecords(args);
+  if (args.key || args.fields || args.records_path !== undefined || args.out) throw teach("Record options require mode: 'records'.", "Use records mode for JSON/JSONL with an explicit key; omit key/fields/records_path/out for summary or unified diffs.");
   const [a] = await resolveInputs(args.a);
   const [b] = await resolveInputs(args.b);
   const mode = args.mode ?? "summary";

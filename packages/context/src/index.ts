@@ -7,6 +7,8 @@ export { extract, evalJqSubset, KIND_PATTERNS } from "./lib/extract.js";
 export { queryTable } from "./lib/query-table.js";
 export { summarizeLog, parseTimestamp, templateOf } from "./lib/summarize-log.js";
 export { diffFiles } from "./lib/diff-files.js";
+export { compareRecords } from "./lib/diff-records.js";
+export type { RecordComparison, RecordChange } from "./lib/diff-records.js";
 export { diffLines, hunksOf } from "./lib/diff.js";
 export { validateFile } from "./lib/validate-file.js";
 export { finish, parseRange, describeRange, fmtBytes } from "./lib/result.js";
