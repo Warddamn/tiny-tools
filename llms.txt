@@ -11,7 +11,7 @@
 
 ## tiny-context: documents, tables and logs
 
-Install command: `npx -y -p https://github.com/Warddamn/tiny-tools/releases/download/context-v0.2.0/tiny-context-standalone-0.2.0.tgz tiny-context-mcp`
+Install command: `npx -y -p https://github.com/Warddamn/tiny-tools/releases/download/context-v0.3.0/tiny-context-standalone-0.3.0.tgz tiny-context-mcp`
 
 - Search PDF, Word/DOCX or PowerPoint/PPTX for a clause, topic or slide: query_file(path, query). Go directly to the question; file_map is optional for an outline. Image-only scans require OCR elsewhere.
 - Read a known page, heading, slide, line range or cell range: read_section(path, locator).
@@ -39,3 +39,5 @@ Install command: `npx -y -p https://github.com/Warddamn/tiny-tools/releases/down
 - [Runtime validation](https://github.com/Warddamn/tiny-tools/blob/main/packages/runtime/docs/VALIDATION.md): synthetic examples and integration limits.
 - [Discovery status](https://github.com/Warddamn/tiny-tools/blob/main/DISCOVERY.md): directory presence is not verified usage. Downloads are file-fetch events, not unique agents or successful tasks.
 - Tools do not call a model or send telemetry. Clients may send returned content to their model provider. Runtime HTTP sources and optional adapters use explicitly configured endpoints; first installation downloads dependencies.
+
+- Reuse saved document profiles for recurring labeled forms/reports: extract(paths, profile, out?). Exact required anchors, unique labels and basic types; review flags instead of guessing. No learning/API calls. Setup and parsing still cost time. [Profile contract and example](https://github.com/Warddamn/tiny-tools/blob/main/packages/context/docs/DOCUMENT_PROFILES.md).

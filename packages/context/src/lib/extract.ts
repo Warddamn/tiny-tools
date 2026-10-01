@@ -16,6 +16,7 @@ import {
   teach,
   truncateLine,
 } from "@tiny_tools_pw/shared";
+import { extractProfile } from "./extract-profile.js";
 import type { ExtractArgs } from "../schemas.js";
 import type { LibResult } from "./result.js";
 
@@ -138,6 +139,8 @@ async function jqFile(file: string, filter: string): Promise<{ values: string[];
 }
 
 export async function extract(args: ExtractArgs): Promise<LibResult> {
+  if (args.profile !== undefined) return extractProfile(args);
+  if (args.out !== undefined) throw teach("out requires profile.", "Use profile for a batch JSONL report.");
   const patterns = [...(args.path ? [args.path] : []), ...(args.paths ?? [])];
   if (patterns.length === 0) throw teach("No `path` or `paths` given.", "Pass a file, a glob like '/abs/docs/*.pdf', or a list of them.");
   const modes = [args.pattern ? "pattern" : null, args.jq ? "jq" : null, args.kind ? "kind" : null].filter(Boolean);

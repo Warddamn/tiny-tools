@@ -86,6 +86,16 @@ Installing the MCP server does not automatically intercept or stop another agent
 
 Use **tiny-runtime / plan_cache** only when developing a compatible serving-engine integration or replaying measured tool-progress traces. It returns expiring retain/prefetch/release advice; it does not change GPU memory, control hosted models or establish token savings. [Integration contract and limits](../packages/runtime/README.md).
 
+## Reuse recurring document reading rules
+
+Use **tiny-context / extract** with a saved local `profile` for repeated labeled reports/forms. It checks literal anchors and required fields across up to 100 TXT/Markdown, DOCX or text-layer PDF files in one call. Missing, invalid or duplicate fields return `needs_review` without partial values. It does not infer meaning, train on data, OCR or promise a smaller bill. Prefer a direct read for one small file or an existing correct script.
+
+```json
+{"paths":["/data/reports/*.docx"],"profile":"/data/profiles/monthly.json","out":"/output/results.jsonl"}
+```
+
+[Save and test a profile](../packages/context/docs/DOCUMENT_PROFILES.md). Every document is parsed again; the reusable item is the reading rule, not cached content.
+
 ## Evidence, installation checks and limits
 
 [Try three file tasks with expected answers](../QUICKSTART.md) · [Try the three runtime tools](../packages/runtime/QUICKSTART.md) · [Agent evaluations](../evals/COMPARISON.md) · [Runtime validation](../packages/runtime/docs/VALIDATION.md).

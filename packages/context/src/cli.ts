@@ -116,6 +116,8 @@ program
 program
   .command("extract")
   .argument("<paths...>", "files or globs")
+  .option("--profile <path>", "reuse a saved document profile JSON")
+  .option("--out <path>", "profile mode: complete JSONL report")
   .option("-p, --pattern <regex>", "regex (first capture group is returned)")
   .option("-i, --ignore-case", "case-insensitive pattern")
   .option("-j, --jq <filter>", "jq filter for JSON files")
@@ -123,8 +125,8 @@ program
   .option("-n, --max-matches <n>", "matches returned (default 100, cap 500)", int)
   .option("--no-dedupe", "list every match instead of unique values with counts")
   .description("Pull matches/values out of files with locations (extract)")
-  .action((paths: string[], o: { pattern?: string; ignoreCase?: boolean; jq?: string; kind?: string; maxMatches?: number; dedupe?: boolean }) =>
-    run("extract", { paths, pattern: o.pattern, ignore_case: o.ignoreCase, jq: o.jq, kind: o.kind, max_matches: o.maxMatches, dedupe: o.dedupe }),
+  .action((paths: string[], o: { profile?: string; out?: string; pattern?: string; ignoreCase?: boolean; jq?: string; kind?: string; maxMatches?: number; dedupe?: boolean }) =>
+    run("extract", { paths, profile: o.profile, out: o.out, pattern: o.pattern, ignore_case: o.ignoreCase, jq: o.jq, kind: o.kind, max_matches: o.maxMatches, dedupe: o.profile ? (o.dedupe === false ? false : undefined) : o.dedupe }),
   );
 
 program

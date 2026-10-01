@@ -1,8 +1,8 @@
 {
   "name": "tiny-context",
   "displayName": "tiny-context",
-  "version": "0.2.0",
-  "description": "Eight local MCP file tools: document search, spreadsheet SQL, log summaries, and exact keyed JSON/JSONL export comparisons with scoped fields and bounded results. Includes agent selection guidance. By AVRG3.",
+  "version": "0.3.0",
+  "description": "Eight local MCP tools: saved profiles for recurring labeled documents, document search, spreadsheet SQL, log summaries and keyed JSON changes. No model calls or telemetry. By AVRG3.",
   "author": {
     "name": "AVRG3",
     "url": "https://github.com/Warddamn"
@@ -25,6 +25,8 @@
     "validate",
     "duckdb",
     "json-diff",
-    "snapshot-comparison"
+    "snapshot-comparison",
+    "document-profiles",
+    "batch-extraction"
   ]
 }

@@ -5,14 +5,14 @@
     "url": "https://github.com/Warddamn"
   },
   "description": "MCP tools by AVRG3 for file analysis, resumable API batches, retry-loop detection and tool-progress integration.",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "plugins": [
     {
       "name": "tiny-context",
       "source": "./plugins/tiny-context",
       "displayName": "tiny-context",
-      "description": "Local document search, spreadsheet SQL, log summaries, and JSON/JSONL snapshot change detection by explicit record IDs. Eight MCP tools plus agent selection guidance; no model calls or telemetry.",
-      "version": "0.2.0",
+      "description": "Local document search, spreadsheet SQL, saved profiles for recurring labeled forms, and keyed JSON changes. Eight tools; no model calls or telemetry.",
+      "version": "0.3.0",
       "author": {
         "name": "AVRG3",
         "url": "https://github.com/Warddamn"

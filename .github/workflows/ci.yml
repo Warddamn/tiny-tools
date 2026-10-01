@@ -49,6 +49,7 @@ jobs:
       - run: npm ci
       - run: npm run bench
       - run: npm run bench:records
+      - run: npm run bench:profiles
       - name: fail if any context tool saves less than 80% vs the whole-file read
         run: |
           node -e '
@@ -65,6 +66,7 @@ jobs:
           path: |
             bench/RESULTS.md
             bench/RECORDS.md
+            bench/PROFILES.md
 
   public-install:
     name: new context package installs and passes safety checks
@@ -78,7 +80,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run bundle:context
-      - run: npm run verify:release -- --package .tmp/context-release/tiny-context-standalone-0.2.0.tgz
+      - run: npm run verify:release -- --package .tmp/context-release/tiny-context-standalone-0.3.0.tgz
 
   runtime-install:
     name: runtime package installs and answers three tasks

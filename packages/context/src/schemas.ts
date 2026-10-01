@@ -124,21 +124,23 @@ RETURNS: "PASS" with the checks run, or "FAIL" with line-numbered problems and w
 
 // ───────────────────────── extract ─────────────────────────
 export const ExtractInput = z.object({
-  path: z.string().optional().describe("One file (or glob). Example: '/abs/contacts.pdf'. Use `paths` for several."),
-  paths: z.array(z.string()).optional().describe("Several files or globs. Example: ['/abs/docs/*.docx']."),
-  pattern: z.string().optional().describe("JavaScript regex to extract; the first capture group is returned when present. Example: 'Invoice #(\\\\d+)'. One of pattern | jq | kind is required."),
-  ignore_case: z.boolean().optional().describe("Case-insensitive `pattern`. Default false."),
-  jq: z.string().optional().describe("jq filter for JSON files (system jq when installed; otherwise paths like '.items[].name', '.a.b', 'keys', 'length' and '|' chains). Example: '.items[] | .name'."),
-  kind: z.enum(["emails", "urls", "dates", "numbers"]).optional().describe("Built-in extractor instead of a pattern. Example: 'emails'."),
-  max_matches: z.number().int().min(1).max(500).optional().describe("Matches returned. Default 100, hard cap 500."),
-  dedupe: z.boolean().optional().describe("Collapse identical values and count them. Default true."),
+  path: z.string().optional().describe("File or glob. Example: '/abs/report.pdf'; use paths for several."),
+  paths: z.array(z.string()).optional().describe("Files/globs. Example: ['/abs/docs/*.docx']."),
+  profile: z.string().optional().describe("Saved version-1 profile JSON path, e.g. '/abs/profile.json'. See docs/DOCUMENT_PROFILES.md. Exclusive with pattern/jq/kind."),
+  out: z.string().optional().describe("Profile only: full JSONL report, e.g. '/abs/results.jsonl'; never overwrites. Default: preview only."),
+  pattern: z.string().optional().describe("JS regex; first capture group or whole match. Example: 'order-([0-9]+)'. Choose pattern, jq, kind or profile."),
+  ignore_case: z.boolean().optional().describe("Case-insensitive pattern. Default false."),
+  jq: z.string().optional().describe("JSON jq filter, e.g. '.items[].name'. Without system jq: paths, [], keys, length, values, .. and pipes only."),
+  kind: z.enum(["emails", "urls", "dates", "numbers"]).optional().describe("Built-in extractor, e.g. 'emails'."),
+  max_matches: z.number().int().min(1).max(500).optional().describe("Returned matches (default 100; profile rows 20), cap 500. Byte limit also applies."),
+  dedupe: z.boolean().optional().describe("Collapse identical values (default true). Not for profiles."),
 });
-export const EXTRACT_DESCRIPTION = `Pull needles out of a haystack — regex matches, jq results, or built-in kinds (emails/urls/dates/numbers) — with locations and counts, never the surrounding bulk. Works on txt/md/code/pdf/docx/pptx/xlsx/csv/json.
-USE WHEN: "list every email in these PDFs", "all invoice numbers in this folder", "what URLs does this deck reference", "get .items[].name from this JSON".
-PREFER OVER: Read + scanning by eye; Grep for PDF/DOCX/PPTX/XLSX (Grep can't open them) and when you want deduped values with counts. Grep is fine for one plain-text file when you also want the surrounding lines.
-DOES NOT: return context lines (use query_file), edit files, or run full jq programs without system jq (fallback supports paths, [], keys, length, | chains).
-EXAMPLE: extract({ paths: ["/abs/docs/*.pdf"], kind: "emails" })  ·  extract({ path: "/abs/data.json", jq: ".items[].name" })  ·  extract({ path: "/abs/log.txt", pattern: "order-(\\\\d+)" })
-RETURNS: "value ×count — file:location, …" lines (deduped by default), totals per file, skipped files with reasons, then a savings line.`;
+export const EXTRACT_DESCRIPTION = `Extract values with locations: regex, jq, built-in kinds, or reusable document profiles.
+USE WHEN: emails/URLs/IDs; batch recurring labeled forms using a saved profile (up to 100 txt/md/docx/text-layer PDFs).
+PREFER OVER: repeated reads/field calls. Read/Grep for one small text file; reuse an existing correct script.
+DOES NOT: train, infer templates, OCR, verify meaning or guarantee cost savings. Profiles recheck exact anchors/unique labels; mismatches need review. Save rules once with Write/editor; docs/DOCUMENT_PROFILES.md.
+EXAMPLE: extract({paths:["/abs/*.docx"],profile:"/abs/profile.json",out:"/abs/results.jsonl"}) · extract({path:"/abs/a.pdf",kind:"emails"})
+RETURNS: bounded matches; profiles: counts, values/locations, review reasons, optional full local report. Ledger excludes setup/model/schema costs.`;
 
 export type FileMapArgs = z.infer<typeof FileMapInput>;
 export type QueryFileArgs = z.infer<typeof QueryFileInput>;

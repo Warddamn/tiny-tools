@@ -16,6 +16,8 @@ try {
   await fs.writeFile(path.join(dir, 'sales.csv'), 'region,amount\nNorth,10\nNorth,20\nSouth,5\n');
   await fs.writeFile(path.join(dir, 'note.md'), '# Returns\nReturns are accepted for 30 days. Contact team@example.test.\n');
   await fs.writeFile(path.join(dir, 'note-v2.md'), '# Returns\nReturns are accepted for 60 days.\n');
+  await fs.writeFile(path.join(dir, 'form.txt'), 'Monthly report\nTotal: 12.50\n');
+  await fs.writeFile(path.join(dir, 'profile.json'), JSON.stringify({version:1,name:'Container report',formats:['text'],anchors:['Monthly report'],fields:[{name:'total',label:'Total:',type:'decimal'}]}));
   await fs.writeFile(path.join(dir, 'data.json'), '{"ok":true}\n');
   await fs.cp(path.join(root, 'packages/context/test/fixtures/orders-before.json'), path.join(dir, 'orders-before.json'));
   await fs.cp(path.join(root, 'packages/context/test/fixtures/orders-after.json'), path.join(dir, 'orders-after.json'));
@@ -32,6 +34,7 @@ try {
       ['diff_files', { a: '/fixtures/orders-before.json', b: '/fixtures/orders-after.json', mode: 'records', key: ['/id'], fields: ['/status','/quantity'], out: '/tmp/changes.jsonl' }, /"added":1,"removed":1,"changed":1,"unchanged":1/],
       ['validate_file', { path: '/fixtures/data.json' }, /PASS/],
       ['extract', { path: '/fixtures/note.md', kind: 'emails' }, /team@example\.test/],
+      ['extract', { path: '/fixtures/form.txt', profile: '/fixtures/profile.json', out: '/tmp/forms.jsonl' }, /"matched":1/],
     ]],
     ['runtime', [
       ['collect_pages', { config: '/fixtures/runtime/collect.json', output_dir: '/tmp' }, /"status": "complete"/],

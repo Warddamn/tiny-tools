@@ -108,6 +108,14 @@ describe("tiny-context MCP server", () => {
     expect(r.content[0]!.text).toMatch(LEDGER);
   });
 
+  it("extract reuses a saved profile over MCP", async () => {
+    const r = await call("extract", { path: fx("sample.pdf"), profile: fx("services-profile.json") });
+    expect(r.isError).toBeFalsy();
+    const data = JSON.parse(r.content[0]!.text.split("\n")[0]!);
+    expect(data.matched).toBe(1);
+    expect(data.rows[0].fields.services).toEqual({ value: "design operations and product development.", at: "page 3, line 2" });
+  });
+
   it("teach-errors come back as isError with a next step", async () => {
     const missing = await call("file_map", { path: fx("does-not-exist.txt") });
     expect(missing.isError).toBe(true);
