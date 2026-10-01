@@ -35,7 +35,7 @@ for (const t of TOOLS) {
       title: t.title,
       description: t.description,
       inputSchema: t.schema.shape,
-      annotations: { readOnlyHint: !t.writes, destructiveHint: false, idempotentHint: true, openWorldHint: false },
+      annotations: { readOnlyHint: !t.writes, destructiveHint: false, idempotentHint: !t.writes, openWorldHint: false },
       // Claude Code tool search: keep the gateway tool always visible; the other seven load on demand.
       ...(t.name === "file_map" ? { _meta: { "anthropic/alwaysLoad": true } } : {}),
     },

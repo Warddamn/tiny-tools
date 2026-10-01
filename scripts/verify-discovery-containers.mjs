@@ -17,6 +17,8 @@ try {
   await fs.writeFile(path.join(dir, 'note.md'), '# Returns\nReturns are accepted for 30 days. Contact team@example.test.\n');
   await fs.writeFile(path.join(dir, 'note-v2.md'), '# Returns\nReturns are accepted for 60 days.\n');
   await fs.writeFile(path.join(dir, 'data.json'), '{"ok":true}\n');
+  await fs.cp(path.join(root, 'packages/context/test/fixtures/orders-before.json'), path.join(dir, 'orders-before.json'));
+  await fs.cp(path.join(root, 'packages/context/test/fixtures/orders-after.json'), path.join(dir, 'orders-after.json'));
   await fs.writeFile(path.join(dir, 'app.log'), '2026-01-01T00:00:00Z ERROR request 12 failed\n2026-01-01T00:00:01Z ERROR request 13 failed\n');
   await fs.cp(path.join(root, 'packages/runtime/examples'), path.join(dir, 'runtime'), { recursive: true });
   for (const [key, cases] of [
@@ -27,6 +29,7 @@ try {
       ['query_table', { path: '/fixtures/sales.csv', sql: 'SELECT SUM(amount) AS total FROM t' }, /35/],
       ['summarize_log', { path: '/fixtures/app.log' }, /failed/],
       ['diff_files', { a: '/fixtures/note.md', b: '/fixtures/note-v2.md' }, /30|60/],
+      ['diff_files', { a: '/fixtures/orders-before.json', b: '/fixtures/orders-after.json', mode: 'records', key: ['/id'], fields: ['/status','/quantity'], out: '/tmp/changes.jsonl' }, /"added":1,"removed":1,"changed":1,"unchanged":1/],
       ['validate_file', { path: '/fixtures/data.json' }, /PASS/],
       ['extract', { path: '/fixtures/note.md', kind: 'emails' }, /team@example\.test/],
     ]],

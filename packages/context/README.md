@@ -232,7 +232,7 @@ Exit code 0 on success, 1 with the teach-error on stderr otherwise. `tiny-contex
 `path` · `focus?` (`errors` | `warnings` | keyword/regex) · `since?` (ISO or `2h`/`30m`/`3d`) · `max_clusters?` (15, cap 50). Masks numbers/hex/uuids/ips/paths/urls/emails before grouping; recognises ISO, `YYYY/MM/DD`, syslog, Apache CLF and epoch timestamps.
 
 ### diff_files
-`a` · `b` · `mode?` (`summary` | `unified`) · `max_hunks?` (20, cap 100). Two tables (csv/xlsx) → row-level add/remove/change (matched on the first column when it is unique); everything else → patience diff over extracted text with heading/page/¶ locations.
+`a` · `b` · `mode?` (`summary` | `unified` | `records`) · `max_hunks?` (20, cap 100). Summary mode: two tables (csv/xlsx) → row-level add/remove/change (matched on the first column when it is unique); otherwise patience diff over extracted text. Records mode: JSON/JSONL/NDJSON with required `key` JSON Pointers, optional `fields`, `records_path`, and `out` for a complete JSONL report. [Full record contract](docs/RECORD_DIFF.md).
 
 ### validate_file
 `path` · `schema?` (JSON Schema, draft-07 or 2020-12). Checks by extension: json/jsonl · yaml · xml/svg · csv/tsv · md/html links, anchors and images; always: BOM, invalid UTF-8, NUL bytes, mixed line endings.
