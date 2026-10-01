@@ -1,20 +1,24 @@
 # Release and discovery
 
-Built by **AVRG3**. tiny-context 0.2.0 published and verified 2026-10-01 UTC (September 30 in New York); tiny-runtime remains 0.1.1.
-
-## 0.3.0 preparation
-
-Reusable document profiles are prepared; publication/registry verification is pending. New configuration targets 0.3.0. Historical verification below remains unchanged.
+Built by **AVRG3**. tiny-context 0.3.0 published and verified 2026-10-01 UTC (September 30 in New York); tiny-runtime remains 0.1.1.
 
 ## Published versions
 
-- tiny-context **0.2.0**: [downloads](https://github.com/Warddamn/tiny-tools/releases/tag/context-v0.2.0), eight file tools, including explicit keyed JSON/JSONL snapshot comparisons. Retains restricted SQL and protected exports. Includes a standalone tarball plus OS-specific MCPB bundles.
+- tiny-context **0.3.0**: [downloads](https://github.com/Warddamn/tiny-tools/releases/tag/context-v0.3.0), eight file tools, including reusable document profiles for recurring labeled reports and keyed JSON/JSONL comparisons. Retains restricted SQL and protected exports. Includes a standalone tarball plus OS-specific MCPB bundles.
 - tiny-runtime **0.1.1**: [downloads](https://github.com/Warddamn/tiny-tools/releases/tag/runtime-v0.1.1), incremental checkpoints, corrected successful-read handling, callback deadlines and bounded cache-hint delivery.
 - Publication workflows test the actual artifacts, then verify fresh public installs and the exact active MCP Registry version and hashes. A failed run is not a completed release.
 - Older assets remain immutable for traceability. Upgrade through the new install commands; old pinned copies do not automatically change.
 - Both packages are distributed through GitHub and the official MCP Registry. npm publication/login is not required.
 
-## 0.2.0 verification
+## 0.3.0 verification
+
+[Feature PR #6](https://github.com/Warddamn/tiny-tools/pull/6) merged at `5f1524ed4fca5ef155ec702124e802de0783b824` after all eleven checks passed. 253 tests pass on Linux/macOS Node20/22/24 and Windows22. [Source CI](https://github.com/Warddamn/tiny-tools/actions/runs/36807396300) and [discovery CI](https://github.com/Warddamn/tiny-tools/actions/runs/36807396228) include clean installs, correctness benchmarks and isolated containers.
+
+[Publication run 36807600402](https://github.com/Warddamn/tiny-tools/actions/runs/36807600402) passed exact MCPB archives on all three OSes, a fresh public npx installation and active registry version/hash checks. Independent Mac public-install and registry read-back also pass. `packages/context/server.json` contains the actual published metadata; every bundle hash matches its GitHub release digest. Two confirmed public verification downloads are recorded in the local self-download ledger, not treated as new users. Runtime0.1.1 was not republished.
+
+Profiles reuse explicit local rules, without training, automatic paid fallback or another MCP tool. Review-first previews fix an observed repeat call. The small paired agent trial was faster and cheaper after that fix, but excluded profile creation and had uncontrolled caching; prepared scripts still ran faster locally. Initial and corrected results remain in [evals/PROFILES.md](evals/PROFILES.md). No universal bill-saving claim.
+
+## Historical 0.2.0 verification
 
 [Feature PR #4](https://github.com/Warddamn/tiny-tools/pull/4) merged at `2db8c957aedd79235f09b6c61f9da90af6e36eae`. All 230 tests passed on Linux/macOS Node20/22/24 and Windows22, plus clean archive installation, benchmarks and isolated container checks. [Merged source CI](https://github.com/Warddamn/tiny-tools/actions/runs/36803837545) and [discovery CI](https://github.com/Warddamn/tiny-tools/actions/runs/36803837377) passed.
 
@@ -28,13 +32,13 @@ The synthetic benchmark measures response size and local processing against a co
 
 [Context publication](https://github.com/Warddamn/tiny-tools/actions/runs/35697958286) and [runtime publication](https://github.com/Warddamn/tiny-tools/actions/runs/35697960674) both succeeded. Actual MCPB artifacts passed on macOS, Windows and Linux, including installed SQL/guard regression checks. Fresh public npx installs passed on Linux and again on the development Mac with empty caches and blank npm configs. Both official registry entries are active at 0.1.1; exact package URLs and SHA-256 hashes match the public GitHub asset digests. Published metadata is checked into each package's `server.json`.
 
-To upgrade, open your client's MCP settings and replace the old tiny-context/tiny-runtime command and arguments with the current README configuration, then reconnect/restart that server. For MCPB installs, install the tiny-context 0.2.0 or tiny-runtime 0.1.1 bundle. New install buttons and Claude plugin configs target these versions. Old assets remain unchanged. No npm login or token is required.
+To upgrade, open your client's MCP settings and replace the old tiny-context/tiny-runtime command and arguments with the current README configuration, then reconnect/restart that server. For MCPB installs, install the tiny-context 0.3.0 or tiny-runtime 0.1.1 bundle. New install buttons and Claude plugin configs target these versions. Old assets remain unchanged. No npm login or token is required.
 
 ## Verify a bundle locally
 
 Run `npm test`, then `npm run bundle:mcpb`. The builder uses the checked-in lockfile to install production dependencies in a temporary folder, copies only distributable workspace files, adds the other native architectures from integrity-checked packages, and packs the bundle with `@anthropic-ai/mcpb@2.1.2`.
 
-Run `npm run verify:mcpb -- .tmp/mcpb/tiny-context-0.2.0-darwin.mcpb` for the macOS output (substitute the package version and `linux` or `win32` on those systems). This extracts the actual archive outside the repository and checks all eight MCP tools plus XLSX, without npm on the server's PATH. Node itself is supplied by the test host.
+Run `npm run verify:mcpb -- .tmp/mcpb/tiny-context-0.3.0-darwin.mcpb` for the macOS output (substitute the package version and `linux` or `win32` on those systems). This extracts the actual archive outside the repository and checks all eight MCP tools plus XLSX, without npm on the server's PATH. Node itself is supplied by the test host.
 
 For the historical 0.1.0 release, the three-platform publication run was [35621683385](https://github.com/Warddamn/tiny-tools/actions/runs/35621683385); source CI was [35621684626](https://github.com/Warddamn/tiny-tools/actions/runs/35621684626). Both passed. Other CPU/OS combinations and individual client installation screens are not covered by these checks.
 

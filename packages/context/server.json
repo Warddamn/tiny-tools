@@ -2,7 +2,7 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.Warddamn/tiny-context",
   "description": "Local document queries, saved extraction profiles, spreadsheet SQL, logs and keyed JSON changes.",
-  "title": "tiny-context \u2014 efficient file tools by AVRG3",
+  "title": "tiny-context — efficient file tools by AVRG3",
   "repository": {
     "url": "https://github.com/Warddamn/tiny-tools",
     "source": "github",
@@ -10,5 +10,30 @@
   },
   "version": "0.3.0",
   "websiteUrl": "https://github.com/Warddamn/tiny-tools/tree/main/packages/context#readme",
-  "packages": []
+  "packages": [
+    {
+      "registryType": "mcpb",
+      "identifier": "https://github.com/Warddamn/tiny-tools/releases/download/context-v0.3.0/tiny-context-0.3.0-darwin.mcpb",
+      "fileSha256": "33ece543be865c44139b97674abe1f50ed87aaa99dce335f2687a3f953cca321",
+      "transport": {
+        "type": "stdio"
+      }
+    },
+    {
+      "registryType": "mcpb",
+      "identifier": "https://github.com/Warddamn/tiny-tools/releases/download/context-v0.3.0/tiny-context-0.3.0-linux.mcpb",
+      "fileSha256": "da6d760fa4c06d0562926e6ceffde5008ad403d3cc2d146522f0478c5ed306ac",
+      "transport": {
+        "type": "stdio"
+      }
+    },
+    {
+      "registryType": "mcpb",
+      "identifier": "https://github.com/Warddamn/tiny-tools/releases/download/context-v0.3.0/tiny-context-0.3.0-win32.mcpb",
+      "fileSha256": "2b75baa5b942dd4b380f7b356ec0dfdbd6a532434e505bc2338f70ed32f91006",
+      "transport": {
+        "type": "stdio"
+      }
+    }
+  ]
 }
